@@ -1,28 +1,61 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
+body {
+    background-color: #EAEEF1 !important;
+    background: #EAEEF1 !important;
+    color: #4C545B !important;
+    margin: 0px !important;
+    border: 0px !important;
+    padding: 0px !important;
+    direction: ltr;
+    font-family: Montserrat !important;
+    font-size: 14px !important;    
+    /* Margin bottom by footer height */
+    /*margin-bottom: 60px;*/
 }
 
-/* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Righteous', cursive !important;
+}
+
+.navbar {
+    background-color: #4C545B !important;
+    background-color: #4C545B !important;
+    color: white !important;
+    font-family: Righteous !important;
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-size: 22px !important;
+    height: 60px !important;
 }
 
 .btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+    color: #fff !important;
+    background: #3DBFD9 !important;
+    box-shadow: 0px 4px 14px rgba(198, 231, 250, 0.08) !important;
 }
 
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
+.md-form .prefix.active {
+    color: #3DBFD9 !important;
 }
+.fas {
+    color: #3DBFD9 !important;
+}
+
+.circle {
+    font-size: 1.5rem;
+    font-weight: 500;
+    text-align: center;
+    line-height: 100px;
+    vertical-align: central;
+    margin: 0px;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle at center,white 54%,transparent 54.5%), linear-gradient(to right,#3DBFD9 50%,black 0);
+}
+
 
 /* Sticky footer styles
 -------------------------------------------------- */
@@ -35,22 +68,6 @@ html {
   }
 }
 
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
-}
-
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
@@ -58,10 +75,7 @@ html {
   min-height: 100%;
 }
 
-body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
-}
+
 .footer {
   position: absolute;
   bottom: 0;

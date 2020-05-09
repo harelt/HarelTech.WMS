@@ -1,0 +1,49 @@
+﻿@page
+@model HarelTech.WMS.App.CompanyModel
+@{
+    ViewData["Title"] = "Company";
+    ViewData["PageTitle"] = "Quick WMS";
+}
+@Html.AntiForgeryToken()
+    <div class="animated fadeIn fast" style="margin-top:80px;">
+        <div class="text-center">
+            <h2 style="font-family: Montserrat !important;font-weight:500 !important;">
+            Select Company &amp; <br>Warhouse
+            </h2>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-10 col-md-8 col-lg-4 mx-auto">
+                <form style="color: #757575;" action="#!">
+                    <div class="form-group">
+                        <label for="Company" style="font-weight: 600;">Company</label>
+                        <select class="form-control" id="Company" name="Company">
+                            <option>Select</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Warhouse" style="font-weight: 600;">Warhouse</label>
+                        <select class="form-control" id="Warhouse" name="Warhouse">
+                            <option>Select</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-rounded btn-block my-4 waves-effect" type="submit">
+                        Next
+                        <i class="fas fa-arrow-right float-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+

@@ -19,7 +19,7 @@ namespace HarelTech.WMS.App.Pages
 
         public void OnGet()
         {
-
+            
         }
     }
 }

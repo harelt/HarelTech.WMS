@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <OpenApiReference Include="OpenAPIs\swagger.json" CodeGenerator="NSwagCSharp" Namespace="HarelTech.WMS.RestClient">
+      <SourceUri>https://localhost:44355/swagger/v1/swagger.json</SourceUri>
+      <ClassName>WmsClient</ClassName>
+      <OutputPath>WmsClient.cs</OutputPath>
+      <Options>/GenerateClientInterfaces:true</Options>
+    </OpenApiReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ServiceStack.Client.Core" Version="5.8.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HarelTech.WMS.Common\HarelTech.WMS.Common.csproj" />
+  </ItemGroup>
+</Project>

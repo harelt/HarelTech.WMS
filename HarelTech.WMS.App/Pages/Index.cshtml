@@ -2,9 +2,58 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
+    ViewData["PageTitle"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@Html.AntiForgeryToken()
+
+    <div class="animated fadeIn fast" style="margin-top:40px;">
+        <div class="row mt-5">
+            <div class="col-12 col-md-8 col-lg-4 mx-auto">
+                <div class="card border rounded" style="border-color: #3DBFD9 !important;">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <i class="fas fa-user prefix"></i>
+                                <label id="username" style="font-weight:500">Username</label>
+                                <span class="ml-3" id="company">Company</span><br />
+                                <span class="ml-3" id="warhouse">Warhouse</span>
+                            </div>
+                            <div class="col ml-5">
+                                <div id="circle_text" class="circle">5/70</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+       
+
+        <div class="row mt-4">
+            <div class="col ml-3 mr-3 mt-2 text-center rounded" style="background-color: #3DBFD9;color:white !important;">
+                <i class="mt-4 fas fa-people-carry fa-3x" style="color:white !important;"></i><br />
+                <p class="mt-2 font-weight-bold">Pick</p>
+                <p class="font-weight-bold" style="font-size:x-large">5</p>
+            </div>
+            <div class="col mr-3 mt-2 text-center rounded" style="background-color: #4C545B;color:white">
+                <i class="mt-4 fas fa-shipping-fast fa-3x" style="color:white !important;"></i><br />
+                <p class="mt-2 font-weight-bold">Ship</p>
+                <p class="font-weight-bold" style="font-size:x-large">5</p>
+            </div>
+        </div>
+        <div class="row mt-2">
+            <div class="col ml-3 mr-3 mt-2 text-center rounded" style="background-color: #4C545B;color:white">
+                <i class="mt-4 fas fa-hand-holding-medical fa-3x" style="color:white !important;"></i><br />
+                <p class="mt-2 font-weight-bold">Receive</p>
+                <p class="font-weight-bold" style="font-size:x-large">5</p>
+            </div>
+            <div class="col mr-3 mt-2 text-center rounded" style="background-color: #3DBFD9;color:white !important;">
+                <i class="mt-4 fas fa-store-alt fa-3x" style="color:white !important;"></i><br />
+                <p class="mt-2 font-weight-bold">Store</p>
+                <p class="font-weight-bold" style="font-size:x-large">5</p>
+            </div>
+        </div>
+        <div class="row mt-2">
+
+        </div>
+    </div>

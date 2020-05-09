@@ -8,6 +8,8 @@ using System.Data;
 using Microsoft.Data.SqlClient;
 using Dapper;
 using HarelTech.WMS.Common.Models;
+using HarelTech.WMS.Repository.Interfaces;
+using HarelTech.WMS.Common.Entities;
 
 namespace HarelTech.WMS.Repository
 {
@@ -43,6 +45,22 @@ namespace HarelTech.WMS.Repository
             var dw = await conn.QueryAsync<DefaultWarhouseResponse>(qry);
             return dw.FirstOrDefault();
 
+        }
+
+        public async Task<List<Warhouse>> GetWarhouses()
+        {
+            using (Context)
+            {
+                return await Context.Warhouses.ToListAsync();
+            }
+        }
+
+        public async Task<List<UserWarhouse>> GetUserWarhouses(long userId)
+        {
+            using (Context)
+            {
+                return await Context.UsersWarhouses.Where(w => w.HWMS_USER == userId).ToListAsync();
+            }
         }
     }
 }

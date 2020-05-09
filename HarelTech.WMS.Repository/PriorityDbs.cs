@@ -1,8 +1,9 @@
-﻿using HarelTech.WMS.Repository.Models;
+﻿using HarelTech.WMS.Repository.Interfaces;
+using HarelTech.WMS.Repository.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-
+using System.Threading.Tasks;
 
 namespace HarelTech.WMS.Repository
 {
@@ -21,6 +22,11 @@ namespace HarelTech.WMS.Repository
             }
         }
 
-        public Dictionary<string, Priority> Dbs { get; }
+        private Dictionary<string, Priority> Dbs { get; }
+
+        public Priority Db(string company)
+        {
+            return Dbs[company];
+        }
     }
 }

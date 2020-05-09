@@ -10,7 +10,7 @@ namespace HarelTech.WMS.Common.Entities
     /// Priority form HWMS_ITASKS
     /// </summary>
     [Table("HWMS_ITASKS")]
-    public class Task
+    public class UserTask
     {
         [Key]
         public long HWMS_ITASK { get; set; }
