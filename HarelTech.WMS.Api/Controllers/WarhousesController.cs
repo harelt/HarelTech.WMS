@@ -22,8 +22,8 @@ namespace HarelTech.WMS.Api.Controllers
         [HttpGet("{company}/{userId}")]
         public async Task<IActionResult> GetAsync(string company, long userId)
         {
-            var taskWhrs = _priority.Db(company).GetWarhouses();
-            var taskUwhrs = _priority.Db(company).GetUserWarhouses(userId);
+            var taskWhrs = _priority.CompanyDb(company).GetWarhouses();
+            var taskUwhrs = _priority.CompanyDb(company).GetUserWarhouses(userId);
             await Task.WhenAll(taskWhrs, taskUwhrs);
             
             var whrs = taskWhrs.Result;

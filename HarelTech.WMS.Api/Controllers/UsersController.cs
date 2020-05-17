@@ -47,17 +47,17 @@ namespace HarelTech.WMS.Api.Controllers
         public async Task<IActionResult> AppAuthentication(string userLogin)
         {
             if (string.IsNullOrEmpty(userLogin))
-                return BadRequest(new RequestResponseDto  { Success = false, Message = "Incorrect user login" });
+                return BadRequest(new RequestResponseDto  { Success = false, Error = "Incorrect user login" });
 
             //get user
-            var user = await _prioritySystem.GetSystemUser(userLogin);
+            var user = await _prioritySystem.GetSystemUser(userLogin).ConfigureAwait(false);
             if(user == null)
-                return BadRequest(new { message = "Incorrect user login" });
+                return BadRequest(new RequestResponseDto { Success = false, Error = "Incorrect user login" });
             //check license
             var lic = _configuration.GetValue<int>("AppSettings:Users");
             var activeUsers = await _prioritySystem.GetCurrentActiveUsers();
             if(activeUsers > lic)
-                return Ok(new RequestResponseDto { Success = false, Error = "License Violation! Please contact system admin." });
+                return BadRequest(new RequestResponseDto { Success = false, Error = "License Violation! Please contact system admin." });
 
             var isExists = await _prioritySystem.IsUserExists(user.USERID);
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using HarelTech.WMS.Api.Models;
 using HarelTech.WMS.RestClient;
@@ -52,12 +53,16 @@ namespace HarelTech.WMS.Api
 
             services.AddScoped<IUserService, UserService>();
 
-            services.AddControllers();
+            services.AddControllers()
+                .AddJsonOptions(opts =>
+                {
+                    opts.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                }); 
             //priority Db's connections
             var sqlConnectionString = Configuration.GetConnectionString("Priority");
             var dbsSection = Configuration.GetSection("ConnectionStrings:DataBases");
             var dbs = dbsSection.Get<List<string>>();
-            var dbList = new List<HarelTech.WMS.Repository.Models.DatabaseConnection>();
+            var dbList = new List<Repository.Models.DatabaseConnection>();
             foreach (var db in dbs)
             {
                 var strCon = sqlConnectionString.Replace("catalogname", db);

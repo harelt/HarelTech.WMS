@@ -1,59 +1,77 @@
 ﻿@page
+@using HarelTech.WMS.Common.Models;
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
     ViewData["PageTitle"] = "Dashboard";
+    var percent = (100- (Model.TasksSummerize.Open / Model.TasksSummerize.Total * 100)).ToString("F0");
 }
 
 @Html.AntiForgeryToken()
 
-    <div class="animated fadeIn fast" style="margin-top:40px;">
-        <div class="row mt-5">
+<style>
+    .tcube a {
+        color: inherit !important;
+    }
+</style>
+
+    <div class="animated fadeIn fast" style="margin-top:20px;">
+        <div class="row mt-2">
             <div class="col-12 col-md-8 col-lg-4 mx-auto">
-                <div class="card border rounded" style="border-color: #3DBFD9 !important;">
+                <div class="card border border-2 rounded" style="border-color: #3DBFD9 !important;border-width:2px !important;">
                     <div class="card-body">
                         <div class="row">
                             <div class="col">
                                 <i class="fas fa-user prefix"></i>
-                                <label id="username" style="font-weight:500">Username</label>
+                                <label id="username" style="font-weight:600">Username</label>
                                 <span class="ml-3" id="company">Company</span><br />
                                 <span class="ml-3" id="warhouse">Warhouse</span>
                             </div>
                             <div class="col ml-5">
-                                <div id="circle_text" class="circle">5/70</div>
+                                <div id="circle_text" class="circle" style="background: radial-gradient(circle at center,white 54%,transparent 54.5%), linear-gradient(to right,#3DBFD9 @percent%,#4C545B 0);">@percent%</div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-       
 
-        <div class="row mt-4">
-            <div class="col ml-3 mr-3 mt-2 text-center rounded" style="background-color: #3DBFD9;color:white !important;">
-                <i class="mt-4 fas fa-people-carry fa-3x" style="color:white !important;"></i><br />
-                <p class="mt-2 font-weight-bold">Pick</p>
-                <p class="font-weight-bold" style="font-size:x-large">5</p>
+        <div class="row mt-3">
+            <div class="tcube col ml-3 mr-3 mt-2 text-center rounded" style="background-color: #3DBFD9;color:white !important;">
+                <a asp-page="/Tasks/Index" asp-route-company="@Model.Company" asp-route-warhouseId="@Model.Warhouse" asp-route-taskType="@EnumTaskType.Pick">
+                    <i class="mt-4 fas fa-people-carry fa-3x" style="color:white !important;"></i><br />
+                    <p class="mt-2 font-weight-bold" style="font-size: large;">Pick</p>
+                    <p class="font-weight-bold" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Pick).Count</p>
+                </a>
             </div>
-            <div class="col mr-3 mt-2 text-center rounded" style="background-color: #4C545B;color:white">
+            <div class="tcube col mr-3 mt-2 text-center rounded" style="background-color: #4C545B;color:white">
                 <i class="mt-4 fas fa-shipping-fast fa-3x" style="color:white !important;"></i><br />
-                <p class="mt-2 font-weight-bold">Ship</p>
-                <p class="font-weight-bold" style="font-size:x-large">5</p>
+                <p class="mt-2 font-weight-bold" style="font-size: large;">Ship</p>
+                <p class="font-weight-bold" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Ship).Count</p>
             </div>
         </div>
         <div class="row mt-2">
-            <div class="col ml-3 mr-3 mt-2 text-center rounded" style="background-color: #4C545B;color:white">
-                <i class="mt-4 fas fa-hand-holding-medical fa-3x" style="color:white !important;"></i><br />
-                <p class="mt-2 font-weight-bold">Receive</p>
-                <p class="font-weight-bold" style="font-size:x-large">5</p>
+            <div class="tcube col ml-3 mr-3 mt-2 text-center rounded" style="background-color: #4C545B; color: white">
+                <a asp-page="/Tasks/Index" asp-route-company="@Model.Company" asp-route-warhouseId="@Model.Warhouse" asp-route-taskType="@EnumTaskType.Receive">
+                    <i class="mt-4 fas fa-hand-holding-medical fa-3x" style="color:white !important;"></i><br />
+                    <p class="mt-2 font-weight-bold" style="font-size: large;">Receive</p>
+                    <p class="font-weight-bold" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Receive).Count</p>
+                </a>
             </div>
-            <div class="col mr-3 mt-2 text-center rounded" style="background-color: #3DBFD9;color:white !important;">
-                <i class="mt-4 fas fa-store-alt fa-3x" style="color:white !important;"></i><br />
-                <p class="mt-2 font-weight-bold">Store</p>
-                <p class="font-weight-bold" style="font-size:x-large">5</p>
-            </div>
-        </div>
-        <div class="row mt-2">
 
+            <div class="tcube col mr-3 mt-2 text-center rounded" style="background-color: #3DBFD9;color:white !important;">
+                <i class="mt-4 fas fa-store-alt fa-3x" style="color:white !important;"></i><br />
+                <p class="mt-2 font-weight-bold" style="font-size: large;">Store</p>
+                <p class="font-weight-bold" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Store).Count</p>
+            </div>
+        </div>
+        <div class="tcube row mr-1 ml-1 mt-3 rounded" style="background-color: #3DBFD9; color: white !important;">
+            <div class="col-4 text-center">
+                <i class="mt-4 fas fa-exchange-alt fa-3x" style="color:white !important;"></i><br />
+            </div>
+            <div class="col-8">
+                <p class="mt-4 font-weight-bold" style="font-size: large;">Transfer</p>
+                <p class="font-weight-bold" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Transfer).Count</p>
+            </div>
         </div>
     </div>

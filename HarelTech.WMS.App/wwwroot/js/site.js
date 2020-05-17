@@ -1,6 +1,8 @@
 ﻿'use strict';
 window.app = {};
-app.url = "https://localhost:44362";
+app.url = "https://localhost:44387";
+app.company = "";
+app.warhouseId = 0;
 
 app.profile = {
     "id": 0,

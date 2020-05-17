@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using HarelTech.WMS.RestClient;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -26,8 +27,20 @@ namespace HarelTech.WMS.App
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRazorPages();
+            
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie();
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.Cookie.HttpOnly = true;
+            //    options.ExpireTimeSpan = TimeSpan.FromMinutes(60);
+
+            //    options.LoginPath = "/Account/Login";
+            //    //options.AccessDeniedPath = "Account/AccessDenied";
+            //    options.SlidingExpiration = true;
+                
+            //});
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,
@@ -39,8 +52,8 @@ namespace HarelTech.WMS.App
                 });
             });
             services.AddScoped<IWmsClient>(s => new WmsClient(Configuration["WebApi:Url"], Configuration["WebApi:UserName"], Configuration["WebApi:Password"]));
+            services.AddDistributedMemoryCache();
 
-            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,6 +75,7 @@ namespace HarelTech.WMS.App
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

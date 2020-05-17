@@ -76,6 +76,8 @@ namespace HarelTech.WMS.Common.Entities
         /// PO or SO details(ID)
         /// </summary>
         public long HWMS_ORDI { get; set; }
+        public long HWMS_ASSIGNUSER { get; set; }
+        public long HWMS_ITASKFDATE { get; set; }
 
     }
 }

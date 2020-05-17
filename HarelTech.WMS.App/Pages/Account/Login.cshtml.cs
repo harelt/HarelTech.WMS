@@ -57,7 +57,7 @@ namespace HarelTech.WMS.App.Pages
                 authProperties);
 
             //make login to license service, if ok, go on
-            return Partial("../Werhouse/_documents_p");
+            return RedirectToPage("Company");
             //return new JsonResult(new { success = true, message = "" });
         }
     }

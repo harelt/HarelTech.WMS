@@ -7,7 +7,6 @@ namespace HarelTech.WMS.Repository
     {
         
         public PrioritySystemContext(DbContextOptions<PrioritySystemContext> options) : base(options) { }
-        
         public virtual DbSet<WmsUser> WmsUsers { get;  }
         public virtual DbSet<SystemUser> SystemUsers { get;  }
     }

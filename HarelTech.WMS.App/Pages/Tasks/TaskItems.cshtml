@@ -1,0 +1,65 @@
+﻿@page
+@model HarelTech.WMS.App.Pages.Tasks.TaskItemsModel
+@{
+    ViewData["Title"] = "Task Items";
+}
+
+<input type="hidden" id="task_type" value="@Model.CurrentTaskType" />
+<div class="animated fadeIn fast" style="margin-top:20px;">
+    <div class="text-center">
+        <h5 class="text-center">TASKS BY</h5>
+    </div>
+    <div class="col-12 col-md-8 col-lg-4">
+        <div class="btn-group w-100" data-toggle="buttons">
+            <label class="btn btn-white form-check-label active">
+                <input class="form-check-input" type="radio" name="options" id="option1" autocomplete="off" checked onclick="change_search_placeholder('Bin')">
+                Bin #
+            </label>
+            <label class="btn btn-white form-check-label">
+                <input class="form-check-input" type="radio" name="options" id="option2" autocomplete="off" onclick="change_search_placeholder('Part')"> Part #
+            </label>
+        </div>
+    </div>
+
+    <!-- Search-->
+    <form class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
+        <input id="search_group" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Search Reference"
+               aria-label="Search" onkeyup="search_on_list();">
+        <i class="fas fa-search" aria-hidden="true"></i>
+    </form>
+</div>
+
+<div id="task_item_list" class="animated fadeInDown">
+    @foreach (var item in Model.CompleteTaskItems)
+    {
+        var bin = item.HWMS_ITASKFROMBIN ?? item.HWMS_ITASKTOBIN; 
+    <div class="card promoting-card m-3">
+        <div class="tcube card-body d-flex flex-row">
+            <span class="p-4 mr-2 mr-3 text-center" style="background-color: #9EADB9; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large"><i class="fas fa-pencil-alt" style="color: white !important;"></i>
+                <br /> @item.CompletedTasks/@item.TotalTasks</span>
+            <div class="col-9 mt-1">
+                <!-- Title -->
+                <h6 class="card-title font-weight-bold mb-2" style="font-family: Montserrat !important;"><i class="fas fa-building pr-2"></i>@item.PARTDES</h6>
+                <p class="card-text">Part #: @item.PARTNAME</p>
+                <p class="card-text" style="background-color: #E9F5FF;">Ref: @item.HWMS_REFORDER</p>
+                <p class="card-text">BIN: @bin</p>
+                @*<a href="/Tasks/TaskItems?refOrderZone=@item.HWMS_REFORDER&taskType=@ViewData["TaskType"].ToString()">
+                    <p class="card-text">@item.HWMS_REFTYPENAME: @item.HWMS_REFORDER <i class="fa fa-chevron-right float-right" aria-hidden="true"></i></p>
+                </a>*@
+            </div>
+        </div>
+    </div>
+    }
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#btn_back").show();
+        //get_group_Tasks(1);
+
+        $("#btn_back").on("click", function () {
+            parent.history.back();
+            return false;
+        })
+    });
+</script>

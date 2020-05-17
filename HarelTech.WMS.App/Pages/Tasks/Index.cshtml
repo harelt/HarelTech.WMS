@@ -1,0 +1,81 @@
+﻿@page  
+@model HarelTech.WMS.App.Pages.Tasks.IndexModel
+@{
+    ViewData["Title"] = "Task Type";
+}
+
+@Html.AntiForgeryToken()
+    <input type="hidden" id="task_type" value="@Model.CurrnetTaskType" />
+    <div class="animated fadeIn fast" style="margin-top:20px;">
+        <div class="text-center">
+            <h5 class="text-center">GROUP TASKS BY</h5>
+        </div>
+        <div class="col-12 col-md-8 col-lg-4">
+            <div class="btn-group w-100" data-toggle="buttons">
+                <label class="btn btn-white form-check-label active">
+                    <input class="form-check-input" type="radio" name="options" id="option1" autocomplete="off" checked onclick="change_search_placeholder('Search Reference')">
+                    Order/Doc #
+                </label>
+                <label class="btn btn-white form-check-label">
+                    <input class="form-check-input" type="radio" name="options" id="option2" autocomplete="off" onclick="change_search_placeholder('Search Zone')"> Zone #
+                </label>
+            </div>
+        </div>
+        
+        <!-- Search-->
+        <form class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
+            <input id="search_group" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Search Reference"
+                   aria-label="Search" onkeyup="search_on_list();">
+            <i class="fas fa-search" aria-hidden="true"></i>
+        </form>
+
+        <div id="group_tasks">
+        </div>
+    </div>
+
+<script>
+    $(document).ready(function () {
+        $("#btn_back").show();
+        get_group_Tasks(1);
+
+        $("#btn_back").on("click", function () {
+            parent.history.back();
+            return false;
+        })
+    });
+
+    function get_group_Tasks(taskGroup) {
+        var taskType = $("#task_type").val();
+        $.get(app.url + "/Tasks/?handler=GroupTasks&taskGroup=" + taskGroup + "&taskType=" + taskType, function (data) {
+            $("#group_tasks").html(data).addClass('animated fadeInDown');
+        });
+    }
+
+    function change_search_placeholder(val) {
+        if (val.includes("Reference"))
+            get_group_Tasks(1);
+        else
+            get_group_Tasks(2);
+        $("#search_group").attr("placeholder", val).fadeIn(500);
+    }
+
+    function search_on_list() {
+        
+        var input = document.getElementById("search_group");
+        var filter = input.value.toLowerCase();
+        var nodes = $("#group_tasks .card");
+
+        for (i = 0; i < nodes.length; i++) {
+            if (!filter || filter === '') {
+                nodes[i].style.display = "block";
+                continue;
+            }
+            if (nodes[i].innerText.toLowerCase().includes(filter)) {
+                nodes[i].style.display = "block";
+            } else {
+                nodes[i].style.display = "none";
+            }
+        }
+        
+    }
+</script>

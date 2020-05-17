@@ -24,7 +24,7 @@ namespace HarelTech.WMS.Repository
 
         private Dictionary<string, Priority> Dbs { get; }
 
-        public Priority Db(string company)
+        public Priority CompanyDb(string company)
         {
             return Dbs[company];
         }

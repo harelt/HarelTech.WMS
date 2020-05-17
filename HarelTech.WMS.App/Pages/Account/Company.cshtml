@@ -5,45 +5,52 @@
     ViewData["PageTitle"] = "Quick WMS";
 }
 @Html.AntiForgeryToken()
-    <div class="animated fadeIn fast" style="margin-top:80px;">
-        <div class="text-center">
-            <h2 style="font-family: Montserrat !important;font-weight:500 !important;">
-            Select Company &amp; <br>Warhouse
-            </h2>
-        </div>
-
-        <div class="row mt-5">
-            <div class="col-10 col-md-8 col-lg-4 mx-auto">
-                <form style="color: #757575;" action="#!">
-                    <div class="form-group">
-                        <label for="Company" style="font-weight: 600;">Company</label>
-                        <select class="form-control" id="Company" name="Company">
-                            <option>Select</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="Warhouse" style="font-weight: 600;">Warhouse</label>
-                        <select class="form-control" id="Warhouse" name="Warhouse">
-                            <option>Select</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                        </select>
-                    </div>
-                    <button class="btn btn-primary btn-rounded btn-block my-4 waves-effect" type="submit">
-                        Next
-                        <i class="fas fa-arrow-right float-right"></i>
-                    </button>
-                </form>
-            </div>
-        </div>
+<div class="animated fadeIn fast" style="margin-top:80px;">
+    <div class="text-center">
+        <h2 style="font-family: Montserrat !important;font-weight:500 !important;">
+        Select Company &amp; <br>Warhouse
+        </h2>
     </div>
 
+    <div class="row mt-5">
+        <div class="col-10 col-md-8 col-lg-4 mx-auto">
+            <form id="frmCompany" style="color: #757575;" method="post">
+                <div class="form-group">
+                    <label for="Company" style="font-weight: 600;">Company</label>
+                    <select class="form-control" id="Company" asp-for="@Model.Company" required>
+                        <option value="">Select</option>
+                        <option value="smoukr">smoukr</option>
+                        <option value="1">3</option>
+                        <option value="1">4</option>
+                        <option value="1">5</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="Warhouse" style="font-weight: 600;">Warhouse</label>
+                    <select class="form-control" id="Warhouse" asp-for="@Model.Warhouse" required>
+                        <option value="">Select</option>
+                        <option value="-2">W 2</option>
+                        <option value="1">3</option>
+                        <option value="1">4</option>
+                        <option value="1">5</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-block my-4 waves-effect" onclick="submit_company();">
+                    Next
+                    <i class="fas fa-arrow-right float-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function submit_company() {
+        if (!$("#frmCompany").valid())
+            return;
+        $("#frmCompany").submit();
+    }
+</script>
 
 
 
