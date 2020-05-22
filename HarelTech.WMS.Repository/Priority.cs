@@ -60,7 +60,13 @@ namespace HarelTech.WMS.Repository
         {
             using (Context)
             {
-                return await Context.UsersWarhouses.Where(w => w.HWMS_USER == userId).ToListAsync();
+                var wrhs  = await Context.UsersWarhouses.Where(w => w.HWMS_USER == userId).ToListAsync();
+                foreach (var item in wrhs)
+                {
+                    if(item.HWMS_WARHSDEF == "Y")
+                        item.IsDefault = true;
+                }
+                return wrhs;
             }
         }
 
@@ -99,18 +105,18 @@ namespace HarelTech.WMS.Repository
 
             db.Open();
             var multi = await db.QueryMultipleAsync(qry.ToString(), null);
-            
+
             ts.Tasks = multi.Read<TaskSum>().ToList();
-            ts.Open  = multi.Read<int>().Single();
+            ts.Open = multi.Read<int>().Single();
             ts.Total = multi.Read<int>().Single();
             ts.Total += ts.Open;
-            
+
             return ts;
         }
 
         public async Task<List<TaskType>> GetTasktypes()
         {
-            using(Context)
+            using (Context)
             {
                 var results = await Context.Tasktypes.Where(w => w.HWMS_ITASKTYPE != 0).ToListAsync().ConfigureAwait(false);
                 Parallel.ForEach(results, item =>
@@ -119,12 +125,12 @@ namespace HarelTech.WMS.Repository
                     Array.Reverse(arr);
                     item.HWMS_ITASKTYPEDES = new string(arr);
                 });
-                
+
                 return results;
             }
         }
 
-        private async Task<List<CompleteTasksByGroup>> GetCompleteTasksByGroupOrder(long userId, 
+        private async Task<List<CompleteTasksByGroup>> GetCompleteTasksByGroupOrder(long userId,
             long warhouseId, EnumTaskType taskType)
         {
             var qry = @$"SELECT HWMS_ITASKTYPES.HWMS_ITASKTYPE , HWMS_ITASKTYPES.HWMS_ITASKTYPENAME ,reverse(HWMS_REFTYPES.HWMS_REFTYPENAME) as HWMS_REFTYPENAME ,HWMS_ITASKS.HWMS_REFORDER , reverse(HWMS_ITASKS.HWMS_REFNAME) as HWMS_REFNAME ,
@@ -164,7 +170,7 @@ namespace HarelTech.WMS.Repository
             if (enumTaskGroup == EnumTaskGroup.Order)
                 return await GetCompleteTasksByGroupOrder(userId, warhouseId, enumTaskType).ConfigureAwait(false);
             var qry = "";
-            if (new[] { EnumTaskType.Pick, EnumTaskType.Ship, EnumTaskType.Transfer}.Contains(enumTaskType))
+            if (new[] { EnumTaskType.Pick, EnumTaskType.Ship, EnumTaskType.Transfer }.Contains(enumTaskType))
             {
                 qry = @$"SELECT HWMS_ITASKTYPES.HWMS_ITASKTYPE, reverse(HWMS_WZONES.HWMS_WZONENAME) as HWMS_REFNAME, HWMS_WZONES.HWMS_WZONECODE as HWMS_REFORDER , reverse(HWMS_WZONES.HWMS_WZONENAME) as HWMS_WZONENAME  , 'Zone' as HWMS_REFTYPENAME,
                 ( COUNT(*)-SUM(CASE WHEN HWMS_ITASKS.HWMS_ITASKSTATUS = 'F' then 0 else  1 end)) as CompleteTasks,
@@ -212,9 +218,9 @@ namespace HarelTech.WMS.Repository
         private async Task<List<CompleteTaskItem>> GetCompleteTaskItemsByGroupOrder(long userId, long warhouseId, EnumTaskType enumTaskType, string refOrder)
         {
             var qry = $@"SELECT HWMS_ITASKTYPES.HWMS_ITASKTYPE, reverse(HWMS_ITASKTYPES.HWMS_ITASKTYPEDES) as  HWMS_ITASKTYPEDES, 
-            HWMS_ITASKS.HWMS_REFORDER  ,  
+            HWMS_ITASKS.HWMS_REFORDER, HWMS_ITASKS.HWMS_ITASKNUM,  
             HWMS_ITASKS.HWMS_ITASKTZONE, HWMS_ITASKS.HWMS_ITASKFZONE,
-            HWMS_ITASKS.HWMS_ITASK , PART.PARTNAME , reverse(PART.PARTDES) as PARTDES,
+            HWMS_ITASKS.HWMS_ITASK , PART.PARTNAME , reverse(PART.PARTDES) as PARTDES, PART.SERNFLAG, PART.PART, 
             HWMS_ITASKS.HWMS_ITASKFROMBIN , HWMS_ITASKS.HWMS_ITASKTOBIN , 
             HWMS_ITASKS.HWMS_COMPLETEDQTY/1000 as CompletedTasks, HWMS_ITASKS.HWMS_TOTALQTY/1000 as TotalTasks
             FROM HWMS_ITASKS , HWMS_ITASKTYPES , HWMS_REFTYPES , PART
@@ -252,9 +258,9 @@ namespace HarelTech.WMS.Repository
             if (new[] { EnumTaskType.Pick, EnumTaskType.Ship, EnumTaskType.Transfer }.Contains(enumTaskType))
             {
                 qry = $@"SELECT HWMS_ITASKTYPES.HWMS_ITASKTYPE, reverse(HWMS_ITASKTYPES.HWMS_ITASKTYPEDES) as  HWMS_ITASKTYPEDES, 
-                HWMS_ITASKS.HWMS_REFORDER,  
+                HWMS_ITASKS.HWMS_REFORDER, HWMS_ITASKNUM,  
                 HWMS_ITASKS.HWMS_ITASKTZONE, HWMS_ITASKS.HWMS_ITASKFZONE,
-                HWMS_ITASKS.HWMS_ITASK , PART.PARTNAME, reverse(PART.PARTDES) as PARTDES,
+                HWMS_ITASKS.HWMS_ITASK , PART.PARTNAME, reverse(PART.PARTDES) as PARTDES, PART.SERNFLAG, PART.PART, 
                 HWMS_ITASKS.HWMS_ITASKFROMBIN,  
                 HWMS_ITASKS.HWMS_COMPLETEDQTY/1000 as CompletedTasks, HWMS_ITASKS.HWMS_TOTALQTY/1000 as TotalTasks
                 FROM HWMS_ITASKS , HWMS_ITASKTYPES , HWMS_REFTYPES , PART, HWMS_WZONES 
@@ -276,9 +282,9 @@ namespace HarelTech.WMS.Repository
             else
             {
                 qry = $@"SELECT HWMS_ITASKTYPES.HWMS_ITASKTYPE, reverse(HWMS_ITASKTYPES.HWMS_ITASKTYPEDES) as  HWMS_ITASKTYPEDES, 
-                HWMS_ITASKS.HWMS_REFORDER, 
+                HWMS_ITASKS.HWMS_REFORDER, HWMS_ITASKNUM,  
                 HWMS_ITASKS.HWMS_ITASKTZONE, HWMS_ITASKS.HWMS_ITASKFZONE,
-                HWMS_ITASKS.HWMS_ITASK, PART.PARTNAME, reverse(PART.PARTDES) as PARTDES,
+                HWMS_ITASKS.HWMS_ITASK, PART.PARTNAME, reverse(PART.PARTDES) as PARTDES, PART.SERNFLAG, PART.PART, 
                 HWMS_ITASKS.HWMS_ITASKTOBIN,  
                 HWMS_ITASKS.HWMS_COMPLETEDQTY/1000 as CompletedTasks, HWMS_ITASKS.HWMS_TOTALQTY/1000 as TotalTasks
                 FROM HWMS_ITASKS , HWMS_ITASKTYPES , HWMS_REFTYPES , PART, HWMS_WZONES       
@@ -297,5 +303,37 @@ namespace HarelTech.WMS.Repository
                 return await GetCompleteTaskItemsByGroupZone(qry);
             }
         }
+
+        public async Task<List<TaskLotSerial>> GetTransactionLotSerial(long warhouseId, long partId)
+        {
+            var sql = $"select TRIM(WARHSNAME) from WAREHOUSES where WARHS = {warhouseId}";
+
+            using var db = DbConnection;
+            db.Open();
+            var warhsname = await db.QuerySingleAsync<string>(sql).ConfigureAwait(false);
+
+            var qry = $@"SELECT   SERIAL.SERIALNAME as HWMS_ELOTNUMBER , CUSTOMERS.CUSTNAME AS STATUS , SERIAL.EXPIRYDATE ,WARHSBAL.BALANCE /1000 AS AVAILABLE,
+            WAREHOUSES.LOCNAME AS FROMBIN , UNIT.UNITNAME 
+            FROM    WARHSBAL , WAREHOUSES , SERIAL , CUSTOMERS , PART ,UNIT
+            WHERE   WAREHOUSES.WARHS      =    WARHSBAL.WARHS 
+            AND     WARHSBAL.SERIAL       =    SERIAL.SERIAL
+            AND     CUSTOMERS.CUST        =    WARHSBAL.CUST
+            AND     WARHSBAL.PART         =    PART.PART
+            AND     PART.PART             =    {partId}
+            AND     PART.UNIT             =    UNIT.UNIT 
+            AND     WARHSBAL.ACT          =    0
+            AND     WARHSBAL.CUST         =    CUSTOMERS.CUST 
+            AND     WAREHOUSES.WARHSNAME  =   '{warhsname}' 
+            AND     WAREHOUSES.LOCNAME    <>  '0'
+            ORDER BY SERIAL.EXPIRYDATE , FROMBIN";
+
+            var results = await db.QueryAsync<TaskLotSerial>(qry);
+            foreach (var result in results)
+            {
+                result.ExpDate = _baseDateTime.AddMinutes(result.EXPIRYDATE);
+            }
+            return results.ToList(); ;
+        }
+
     }
 }

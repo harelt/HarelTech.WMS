@@ -15,25 +15,26 @@
             <h6 class="mt-3" style="opacity: 0.6;">My Slogen goes here</h6>
         </div>
         <div class="text-center mt-5">
-            <div id="login_error" class="alert alert-danger" role="alert" hidden>
+            <div id="login_error" class="alert alert-danger" role="alert" style="display: none;">
                 <h6>LOGIN FAILED</h6>
-                <span id="login_error_message">A simple danger alert—check it out!</span>
+                <span id="login_error_message"></span>
             </div>
         </div>
         <div class="card">
             <div class="card-body px-sm-4">
-                <form style="color: #757575;" action="#!">
+                <form id="frmLogin" style="color: #757575;" method="post">
+                    <input type="hidden" id="Companies" asp-for="@Model.UserLogin.Companies" value=""/>
                     <div class="md-form">
                         <i class="fas fa-user prefix"></i>
-                        <input id="UserName" class="form-control" autofocus required>
+                        <input id="UserName" asp-for="@Model.UserLogin.UserName" class="form-control" autofocus required value="wmsuser">
                         <label for="materialLoginFormEmail">Username</label>
                     </div>
                     <div class="md-form">
                         <i class="fas fa-lock prefix"></i>
-                        <input type="password" id="Password" class="form-control" required>
+                        <input type="password" id="Password" asp-for="@Model.UserLogin.Password" class="form-control" required value="12345">
                         <label for="materialLoginFormPassword">Password</label>
                     </div>
-                    <button class="btn btn-primary btn-rounded btn-block my-4 waves-effect" type="submit">
+                    <button id="btn_login" class="btn btn-primary btn-block my-4 waves-effect">
                         Enter
                         <i class="fas fa-arrow-right float-right"></i>
                     </button>
@@ -43,55 +44,19 @@
         </div>
     </div>
     
-    @*<div class="ion-page">
-        <img src="~/images/wh.jpg" style="width:100%;height: 250px;z-index: 99999" />
-        <ion-content fullscreen>
-            <form id="frmLogin">
-                <ion-grid>
-                    <ion-col size="12">
-                        <ion-card-sm>
-                            <ion-card-header>
-                                <ion-card-title class="ion-text-center">Please Sign In</ion-card-title>
-                            </ion-card-header>
-
-                            <ion-card-content>
-                                <ion-item>
-                                    <ion-label position="floating">User Name</ion-label>
-                                    <ion-input id="UserName" required="true" value="wmsuser"></ion-input>
-                                </ion-item>
-                                <ion-item>
-                                    <ion-label position="floating">Password</ion-label>
-                                    <ion-input id="Password" type="password" required="true" value="12345"></ion-input>
-                                </ion-item>
-                            </ion-card-content>
-                        </ion-card-sm>
-                </ion-grid>
-
-                <div class="ion-padding">
-                    <ion-button expand="block" onclick="place_login();" class="ion-no-margin">
-                        <ion-icon name="lock-open-outline"></ion-icon>
-                        &nbsp; Login
-                        <ion-ripple-effect></ion-ripple-effect>
-                    </ion-button>
-                </div>
-            </form>
-        </ion-content>
-        <ion-footer color="ion-primary">
-            <ion-toolbar>
-                <ion-title class="ion-text-center">HarelTEch WMS - &copy; @DateTime.Now.Year</ion-title>
-            </ion-toolbar>
-        </ion-footer>
-    </div>*@
+    
 <script>
-    function place_login() {
-        //var data = document.getElementById('frmLogin');
-        var user = document.getElementById("UserName").value;
-        var pass = document.getElementById("Password").value;
-        if (!user || !pass) {
-            app.presentToast("User name and Password required");
-            return;
-        }
-        app.login(user, pass);
-    };
+    $(document).ready(function () {
+        $("#btn_login").on("click", function (e) {
+            e.preventDefault();
+            if (!$("#frmLogin").valid())
+                return;
+            var user = document.getElementById("UserName").value;
+            var pass = document.getElementById("Password").value;
+
+            app.signin(user, pass);
+
+        });
+    });
 
 </script>

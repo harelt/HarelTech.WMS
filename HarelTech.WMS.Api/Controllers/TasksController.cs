@@ -63,5 +63,16 @@ namespace HarelTech.WMS.Api.Controllers
             return Ok(results);
         }
 
+        [HttpPost("TransactionItems")]
+        public async Task<IActionResult> GetTransactionItems(TransactionItemsRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var results = await _priority.CompanyDb(request.Company).GetTransactionLotSerial(request.WarhouseId,
+                request.ParId);
+
+            return Ok(results);
+        }
     }
 }

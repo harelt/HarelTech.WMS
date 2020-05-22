@@ -1,6 +1,7 @@
 ﻿using HarelTech.WMS.Common.Entities;
 using HarelTech.WMS.Common.Models;
 using ServiceStack;
+using ServiceStack.Text;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -41,17 +42,25 @@ namespace HarelTech.WMS.RestClient
             //_restClient.AddHeader("Authorization", $"Bearer {response.FromJson<string>()}");
         }
 
-        public async Task<SystemUser> GetSystemUserAsync(long userId)
+        public async Task<SystemUser> GetSystemUserAsync(UserLoginModel userLogin)
         {
+            SystemUser user;
             var req = $"Users/appAuth";
-            var res = await _restClient.PostAsync<SystemUser>(req, userId);
-            return res;
+            var res = await _restClient.PostAsync<string>(req, userLogin);
+            
+            user = res.FromJson<SystemUser>();
+            if(user.Id == 0)
+            {
+                user.Response = res.FromJson<RequestResponseDto>();
+            }
+            
+            return user;
         }
 
-        public async Task<List<UserWarhouse>> GetUserWarhousesAsync(string company, long userId)
+        public async Task<List<Warhouse>> GetUserWarhousesAsync(string company, long userId)
         {
             var req = $"Warhouses/{company}/{userId}";
-            var res = await _restClient.GetAsync<List<UserWarhouse>>(req);
+            var res = await _restClient.GetAsync<List<Warhouse>>(req);
             return res;
         }
 
@@ -89,6 +98,13 @@ namespace HarelTech.WMS.RestClient
         {
             var req = $"Tasks/CompleteTaskItems";
             var res = await _restClient.PostAsync<List<CompleteTaskItem>>(req, request);
+            return res;
+        }
+
+        public async Task<List<TaskLotSerial>> GetTransactionItems(TransactionItemsRequest request)
+        {
+            var req = $"Tasks/TransactionItems";
+            var res = await _restClient.PostAsync<List<TaskLotSerial>>(req, request);
             return res;
         }
     }

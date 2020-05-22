@@ -8,6 +8,7 @@ using HarelTech.WMS.Repository.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 
 namespace HarelTech.WMS.Api.Controllers
@@ -44,13 +45,13 @@ namespace HarelTech.WMS.Api.Controllers
 
         //[Authorize]
         [HttpPost("appAuth")]
-        public async Task<IActionResult> AppAuthentication(string userLogin)
+        public async Task<IActionResult> PostAppAuthentication([FromBody]UserLoginModel userLogin)
         {
-            if (string.IsNullOrEmpty(userLogin))
+            if (!ModelState.IsValid)
                 return BadRequest(new RequestResponseDto  { Success = false, Error = "Incorrect user login" });
 
             //get user
-            var user = await _prioritySystem.GetSystemUser(userLogin).ConfigureAwait(false);
+            var user = await _prioritySystem.GetSystemUser(userLogin.UserName).ConfigureAwait(false);
             if(user == null)
                 return BadRequest(new RequestResponseDto { Success = false, Error = "Incorrect user login" });
             //check license

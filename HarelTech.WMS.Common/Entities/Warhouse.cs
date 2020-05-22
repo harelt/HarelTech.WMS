@@ -11,5 +11,7 @@ namespace HarelTech.WMS.Common.Entities
         public string WARHSNAME { get; set; }
         public string WARHSDES { get; set; }
         public string LOCNAME { get; set; }
+        [NotMapped]
+        public bool IsDefault { get; set; }
     }
 }

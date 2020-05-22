@@ -10,10 +10,11 @@ using Microsoft.AspNetCore.Mvc.Core;
 using HarelTech.WMS.Common.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
+using HarelTech.WMS.App.Models;
 
 namespace HarelTech.WMS.App.Pages
 {
-    //[Authorize]
+    [Authorize]
     public class IndexModel : PageModel
     {
         private readonly IWmsClient _wmsClient;
@@ -32,13 +33,21 @@ namespace HarelTech.WMS.App.Pages
             _wmsClient = wmsClient;
             _cache = cache;
         }
-
+        public string CompanyName { get; set; }
+        public string WarhouseName { get; set; }
+        public string UserName { get; set; }
         public async Task<IActionResult> OnGetAsync()
         {
-            Company = _cache.Get<string>("15_company");
-            Warhouse = _cache.Get<long>("15_warhouseId");
-            TasksSummerize = await _wmsClient.GetTasksSummerizeAsync(5, -2, "smoukr");
-            TaskTypes = await _wmsClient.GetTaskTypesAsync("smoukr");
+            Company = _cache.Get<string>($"{Utilities.UserId(User.Claims)}_company");
+            if (string.IsNullOrEmpty(Company))
+                return RedirectToPage("Account/Login");
+            Warhouse = _cache.Get<long>($"{Utilities.UserId(User.Claims)}_warhouseId");
+            CompanyName = _cache.Get<string>($"{Utilities.UserId(User.Claims)}_companyName");
+            WarhouseName = _cache.Get<string>($"{Utilities.UserId(User.Claims)}_warhouseName");
+            UserName = Utilities.UserName(User.Claims);
+
+            TasksSummerize = await _wmsClient.GetTasksSummerizeAsync(Utilities.UserId(User.Claims), Warhouse, Company);
+            TaskTypes = await _wmsClient.GetTaskTypesAsync(Company);
             var ids = TasksSummerize.Tasks.Select(s => s.Task).ToList();
             var missingTypes = TaskTypes.Where(w => !ids.Contains(w.HWMS_ITASKTYPE));
 
@@ -46,7 +55,6 @@ namespace HarelTech.WMS.App.Pages
             {
                 TasksSummerize.Tasks.Add(new TaskSum { Task = item.HWMS_ITASKTYPE, Count = 0 });
             }
-
 
             return Page();
         }

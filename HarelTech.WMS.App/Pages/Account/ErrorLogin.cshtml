@@ -1,0 +1,18 @@
+﻿@page
+@model HarelTech.WMS.App.Pages.ErrorLoginModel
+@{
+    ViewData["Title"] = "Error Login";
+    ViewData["PageTitle"] = "Quick WMS";
+}
+
+    <div class="text-center mt-5">
+        <div id="login_error" class="alert alert-danger" role="alert">
+            <h6>LOGIN FAILED</h6>
+            <span id="login_error_message">@Model.Error</span>
+        </div>
+        <button id="btn_login" class="btn btn-primary btn-block my-4 waves-effect" onclick="parent.history.back();">
+            Return to Login
+            <i class="fas fa-arrow-right float-right"></i>
+        </button>
+    </div>
+

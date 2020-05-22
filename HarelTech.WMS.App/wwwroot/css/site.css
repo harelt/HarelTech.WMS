@@ -71,6 +71,11 @@ btn-white:not([disabled]):not(.disabled):active, .btn-white:not([disabled]):not(
     color: #3DBFD9 !important;
 }
 
+input:focus:not([readonly]) {
+    box-shadow: 0 1px 0 0 #3DBFD9 !important;
+    border-bottom: 1px solid #3DBFD9 !important;
+}
+
 .circle {
     font-size: 1.5rem;
     font-weight: 500;

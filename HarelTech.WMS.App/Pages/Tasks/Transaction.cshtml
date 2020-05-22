@@ -1,0 +1,215 @@
+﻿@page
+@model HarelTech.WMS.App.Pages.Tasks.TransactionModel
+@{
+    ViewData["Title"] = "Transaction";
+}
+
+@Html.AntiForgeryToken()
+<input type="hidden" id="task_type" value="@Model.CurrentTaskType" />
+<div class="animated flipInY fast" style="margin-top:20px;">
+    <div class="accordion md-accordion m-3" id="accordionEx1" role="tablist" aria-multiselectable="false">
+        <!-- Accordion card -->
+        <div class="card">
+            <!-- Card header -->
+            <div class="card-header" role="tab" id="headingTwo1">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx1" href="#collapseTwo1"
+                   aria-expanded="false" aria-controls="collapseTwo1" style="color: black !important;">
+                    <h5 class="mb-0">
+                        @Model.TaskItem.PARTDES <span class="float-right" style="color: #3DBFD9 !important;">@Model.TaskItem.CompletedTasks/@Model.TaskItem.TotalTasks</span>
+                    </h5>
+                </a>
+            </div>
+
+            <!-- Card body -->
+            <div id="collapseTwo1" class="collapse" role="tabpanel" aria-labelledby="headingTwo1"
+                 data-parent="#accordionEx1">
+                <div class="card-body">
+                    <div class="row mt-2" style="font-weight: 600 !important">
+                        <div class="col-6">Task:</div>
+                        <div class="col-6">@Model.TaskItem.HWMS_ITASKTYPE</div>
+                    </div>
+                    <div class="row mt-2" style="font-weight: 600 !important">
+                        <div class="col-6">Order/Doc:</div>
+                        <div class="col-6">@Model.TaskItem.HWMS_REFORDER</div>
+                    </div>
+                    <div class="row mt-2" style="font-weight: 600 !important">
+                        <div class="col-6">Task #:</div>
+                        <div class="col-6">@Model.TaskItem.HWMS_ITASKNUM</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Search-->
+    <form class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
+        <input id="search_group" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Scan Lot"
+               aria-label="Search Bin" onkeyup="search_on_list();" autofocus>
+        <i class="fas fa-search" aria-hidden="true"></i>
+    </form>
+</div>
+<div id="task_lots" class="animated fadeInY">
+    @foreach (var item in Model.TaskLot)
+    {
+        <div class="card m-2">
+            <div class="card-body m-2">
+                <div class="row" style="font-weight: 700 !important">
+                    <div class="col-6">Lot #:</div>
+                    <div class="col-6" style="color: #3DBFD9;">@item.HWMS_ELOTNUMBER</div>
+                </div>
+                <div class="row mt-1" style="font-size: 12px !important;">
+                    <div class="col-6">Status:</div>
+                    <div class="col-6">@item.STATUS</div>
+                </div>
+                <div class="row mt-1" style="font-size: 12px !important;">
+                    <div class="col-6">Exp:</div>
+                    <div class="col-6">@item.ExpDate.ToString("dd/MM/yyyy")</div>
+                </div>
+                <hr />
+
+                <div class="row mt-2" style="font-weight: 600 !important">
+                    <div class="col-6">Available:</div>
+                    <div class="col-6">@item.AVAILABLE @item.UNITNAME</div>
+                </div>
+                <div class="row mt-4" style="font-weight: 600 !important;background-color: #E9F5FF;">
+                    <div class="col-6">From Bin/Area:</div>
+                    <div class="col-6">@item.FROMBIN</div>
+                </div>
+                <div class="row" style="font-weight: 600 !important;background-color: #E9F5FF;">
+                    <div class="col-6">To Bin/Area:</div>
+                    <div class="col-6">@Model.TaskItem.HWMS_ITASKTOBIN</div>
+                </div>
+                <div class="row text-center mt-4">
+                    <div class="col-4" style="font-weight: 600 !important;">Quantity:</div>
+                    <div class="col-8">
+                        <div class="def-number-input number-input safari_only" style="background-color:#3DBFD9;">
+                            <button onclick="this.parentNode.querySelector('input[type=number]').stepDown()" class="minus"></button>
+                            <input class="quantity" min="0" max="@item.AVAILABLE" name="quantity" value="1" type="number" required>
+                            <button onclick="this.parentNode.querySelector('input[type=number]').stepUp()" class="plus"></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+</div>
+
+
+
+<script>
+    $(document).ready(function () {
+        $("#btn_back").show();
+        //get_group_Tasks(1);
+
+        $("#btn_back").on("click", function () {
+            parent.history.back();
+            return false;
+        })
+    });
+
+    function search_on_list() {
+        var input = document.getElementById("search_group");
+        var filter = input.value.toLowerCase();
+        var nodes = $("#task_lots .card");
+
+        for (i = 0; i < nodes.length; i++) {
+            if (!filter || filter === '') {
+                nodes[i].style.display = "block";
+                continue;
+            }
+            if (nodes[i].innerText.toLowerCase().includes(filter)) {
+                nodes[i].style.display = "block";
+            } else {
+                nodes[i].style.display = "none";
+            }
+        }
+    }
+</script>
+
+<style>
+  .number-input input[type="number"] {
+-webkit-appearance: textfield;
+-moz-appearance: textfield;
+}
+
+.number-input input[type=number]::-webkit-inner-spin-button,
+.number-input input[type=number]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+}
+
+.number-input {
+margin-bottom: 0.5rem;
+}
+
+    .number-input button {
+        -webkit-appearance: none;
+        background-color: #3DBFD9;
+        border: none;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin: 0;
+        position: relative;
+        color: white !important;
+    }
+
+.number-input button:before,
+.number-input button:after {
+display: inline-block;
+position: absolute;
+content: '';
+height: 2px;
+transform: translate(-50%, -50%);
+}
+
+.number-input button.plus:after {
+transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.number-input input[type=number] {
+text-align: center;
+}
+
+.number-input.number-input {
+border: 1px solid #ced4da;
+width: 10rem;
+border-radius: .25rem;
+}
+
+.number-input.number-input button {
+width: 2.6rem;
+height: .7rem;
+}
+
+.number-input.number-input button.minus {
+padding-left: 10px;
+}
+
+.number-input.number-input button:before,
+.number-input.number-input button:after {
+width: .7rem;
+background-color: white;
+}
+
+.number-input.number-input input[type=number] {
+max-width: 4rem;
+padding: .5rem;
+border: 1px solid #ced4da;
+border-width: 0 1px;
+font-size: 1rem;
+height: 2rem;
+color: #495057;
+}
+
+@@media not all and (min-resolution:.001dpcm) {
+@@supports (-webkit-appearance: none) and (stroke-color:transparent) {
+
+.number-input.def-number-input.safari_only button:before,
+.number-input.def-number-input.safari_only button:after {
+margin-top: -.3rem;
+}
+}
+}
+</style>
+

@@ -7,18 +7,23 @@
 </style>
 @foreach (var item in Model)
 {
-   
+
     <div class="card promoting-card m-3">
         <div class="tcube card-body d-flex flex-row">
-                <span class="p-4 mr-2 mr-3" style="background-color: #9EADB9; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large">@item.CompleteTasks/@item.TotalTasks</span>
-                <div class="col-9 mt-1">
-                    <!-- Title -->
-                    <h6 class="card-title font-weight-bold mb-2" style="font-family: Montserrat !important;"><i class="fas fa-building pr-2"></i>@item.HWMS_REFNAME</h6>
-                    <!-- Subtitle -->
-                    <a href="/Tasks/TaskItems?refOrderZone=@item.HWMS_REFORDER&taskType=@ViewData["TaskType"].ToString()">
-                        <p class="card-text">@item.HWMS_REFTYPENAME: @item.HWMS_REFORDER <i class="fa fa-chevron-right float-right" aria-hidden="true"></i></p>
-                    </a>
-                </div>
+            @if (item.CompleteTasks == 0)
+            {<span class="p-4 mr-2 mr-3" style="background-color: #9EADB9; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large">@item.CompleteTasks/@item.TotalTasks</span>}
+            else if (item.CompleteTasks < item.TotalTasks)
+            {<span class="p-4 mr-2 mr-3" style="background-color: #FFD2D5; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large">@item.CompleteTasks/@item.TotalTasks</span> }
+            else
+            {<span class="p-4 mr-2 mr-3" style="background-color: #3DBFD9; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large">@item.CompleteTasks/@item.TotalTasks</span>}
+            <div class="col-9 mt-1">
+                <!-- Title -->
+                <h6 class="card-title font-weight-bold mb-2" style="font-family: Montserrat !important;"><i class="fas fa-building pr-2"></i>@item.HWMS_REFNAME</h6>
+                <!-- Subtitle -->
+                <a href="/Tasks/TaskItems?refOrderZone=@item.HWMS_REFORDER&taskType=@ViewData["TaskType"].ToString()">
+                    <p class="card-text">@item.HWMS_REFTYPENAME: @item.HWMS_REFORDER <i class="fa fa-chevron-right float-right" aria-hidden="true"></i></p>
+                </a>
+            </div>
         </div>
     </div>
 }

@@ -4,7 +4,9 @@
 @{
     ViewData["Title"] = "Home page";
     ViewData["PageTitle"] = "Dashboard";
-    var percent = (100- (Model.TasksSummerize.Open / Model.TasksSummerize.Total * 100)).ToString("F0");
+    var percent = "0";
+    if(Model.TasksSummerize.Total != 0)
+     percent = (100- (Model.TasksSummerize.Open / Model.TasksSummerize.Total * 100)).ToString("F0");
 }
 
 @Html.AntiForgeryToken()
@@ -23,11 +25,11 @@
                         <div class="row">
                             <div class="col">
                                 <i class="fas fa-user prefix"></i>
-                                <label id="username" style="font-weight:600">Username</label>
-                                <span class="ml-3" id="company">Company</span><br />
-                                <span class="ml-3" id="warhouse">Warhouse</span>
+                                <label id="username" style="font-weight:600">@Model.UserName</label>
+                                <label class="ml-3" id="company">@Model.CompanyName</label>
+                                <label class="ml-3" id="warhouse">@Model.WarhouseName</label>
                             </div>
-                            <div class="col ml-5">
+                            <div class="col-4 ml-2">
                                 <div id="circle_text" class="circle" style="background: radial-gradient(circle at center,white 54%,transparent 54.5%), linear-gradient(to right,#3DBFD9 @percent%,#4C545B 0);">@percent%</div>
                             </div>
                         </div>

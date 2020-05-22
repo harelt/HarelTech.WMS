@@ -35,8 +35,8 @@ namespace HarelTech.WMS.Repository
         public async Task<SystemUser> GetSystemUser(string userLogin)
         {
             using var db = DbConnection;
-            var qry = $@"SELECT [USERLOGIN],[T$USER] as Id, [USERNAME], [USERID], [USERGROUP] 
-                FROM USERS where USERLOGIN = system.dbo.hebconvert('{userLogin}')";
+            var qry = $@"SELECT [USERLOGIN],[T$USER] as Id, reverse([USERNAME]) as USERNAME, [USERID], [USERGROUP] 
+                FROM USERS where USERLOGIN = reverse('{userLogin}')";
             db.Open();
             
             var result = await db.QueryAsync<SystemUser>(qry);

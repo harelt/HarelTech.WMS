@@ -52,8 +52,7 @@ namespace HarelTech.WMS.App
                 });
             });
             services.AddScoped<IWmsClient>(s => new WmsClient(Configuration["WebApi:Url"], Configuration["WebApi:UserName"], Configuration["WebApi:Password"]));
-            services.AddDistributedMemoryCache();
-
+            services.AddMemoryCache();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

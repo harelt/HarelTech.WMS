@@ -34,6 +34,7 @@ namespace HarelTech.WMS.App.Pages.Tasks
             WarhouseId = _cache.Get<long>("15_warhouseId");
             CurrentTaskType = taskType;
             var taskGroup = _cache.Get<EnumTaskGroup>("15_taskGroup");
+            _cache.Set("15_taskType", taskType);
             //var company = Request.Cookies["company"] ?? "smoukr";
 
             var tasksTypes = await _wmsClient.GetTaskTypesAsync(Company);
@@ -48,8 +49,16 @@ namespace HarelTech.WMS.App.Pages.Tasks
                 UserId = 15,
                 WarhouseId = WarhouseId
             });
-
+            _cache.Set("15_CompleteTaskItems", CompleteTaskItems);
             return await Task.FromResult(Page());
+        }
+
+        public async Task<IActionResult> OnGetTaskTransaction(long part)
+        {
+            CompleteTaskItems = _cache.Get<List<CompleteTaskItem>>("15_CompleteTaskItems");
+            var taskItem = CompleteTaskItems.FirstOrDefault(w => w.PART == part);
+
+            return await Task.FromResult(RedirectToPage("Transaction", taskItem));
         }
     }
 }

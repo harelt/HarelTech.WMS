@@ -3,28 +3,28 @@
 @{
     ViewData["Title"] = "Task Items";
 }
-
+@Html.AntiForgeryToken()
 <input type="hidden" id="task_type" value="@Model.CurrentTaskType" />
-<div class="animated fadeIn fast" style="margin-top:20px;">
+<div class="animated fadeIn faster" style="margin-top:20px;">
     <div class="text-center">
         <h5 class="text-center">TASKS BY</h5>
     </div>
     <div class="col-12 col-md-8 col-lg-4">
         <div class="btn-group w-100" data-toggle="buttons">
             <label class="btn btn-white form-check-label active">
-                <input class="form-check-input" type="radio" name="options" id="option1" autocomplete="off" checked onclick="change_search_placeholder('Bin')">
+                <input class="form-check-input" type="radio" name="options" id="option1" autocomplete="off" checked onclick="order_by('Bin')">
                 Bin #
             </label>
             <label class="btn btn-white form-check-label">
-                <input class="form-check-input" type="radio" name="options" id="option2" autocomplete="off" onclick="change_search_placeholder('Part')"> Part #
+                <input class="form-check-input" type="radio" name="options" id="option2" autocomplete="off" onclick="order_by('Part')"> Part #
             </label>
         </div>
     </div>
 
     <!-- Search-->
     <form class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
-        <input id="search_group" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Search Reference"
-               aria-label="Search" onkeyup="search_on_list();">
+        <input id="search_group" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Search Bin"
+               aria-label="Search Bin" onkeyup="search_on_list();" autofocus>
         <i class="fas fa-search" aria-hidden="true"></i>
     </form>
 </div>
@@ -32,27 +32,49 @@
 <div id="task_item_list" class="animated fadeInDown">
     @foreach (var item in Model.CompleteTaskItems)
     {
-        var bin = item.HWMS_ITASKFROMBIN ?? item.HWMS_ITASKTOBIN; 
-    <div class="card promoting-card m-3">
-        <div class="tcube card-body d-flex flex-row">
-            <span class="p-4 mr-2 mr-3 text-center" style="background-color: #9EADB9; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large"><i class="fas fa-pencil-alt" style="color: white !important;"></i>
-                <br /> @item.CompletedTasks/@item.TotalTasks</span>
+        var bin = item.HWMS_ITASKFROMBIN ?? item.HWMS_ITASKTOBIN;
+        <div class="card promoting-card m-3">
+            <div class="tcube card-body d-flex flex-row">
+                @if (item.CompletedTasks == 0)
+                {
+                    <span class="p-4 mr-2 mr-3 text-center" style="background-color: #9EADB9; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large">
+                        <i class="fas fa-pencil-alt" style="color: white !important;"></i>
+                        <br /> @item.CompletedTasks/@item.TotalTasks
+                    </span>
+                }
+                else if (item.CompletedTasks < item.TotalTasks)
+                {
+                    <span class="p-4 mr-2 mr-3 text-center" style="background-color: #FFD2D5; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large">
+                        <i class="fas fa-pencil-alt" style="color: white !important;"></i>
+                        <br /> @item.CompletedTasks/@item.TotalTasks
+                    </span>
+                }
+                else
+                {
+                    <span class="p-4 mr-2 mr-3 text-center" style="background-color: #3DBFD9; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large">
+                        <i class="fas fa-pencil-alt" style="color: white !important;"></i>
+                        <br /> @item.CompletedTasks/@item.TotalTasks
+                    </span>
+                }
             <div class="col-9 mt-1">
                 <!-- Title -->
-                <h6 class="card-title font-weight-bold mb-2" style="font-family: Montserrat !important;"><i class="fas fa-building pr-2"></i>@item.PARTDES</h6>
-                <p class="card-text">Part #: @item.PARTNAME</p>
+                @*<a href="/Tasks/TaskItems/TaskTransaction?part=@item.PART"><h6 class="card-title font-weight-bold mb-2" style="font-family: Montserrat !important;">@item.PARTDES</h6><i class="fa fa-chevron-right float-right" aria-hidden="true"></i></a>*@
+                <h6 class="card-title font-weight-bold mb-2" style="font-family: Montserrat !important;">@item.PARTDES</h6>
+                <a asp-page-handler="TaskTransaction" asp-route-part="@item.PART">
+                    <p class="part card-text">Part #: @item.PARTNAME <i class="fa fa-chevron-right float-right" aria-hidden="true"></i></p></a>
                 <p class="card-text" style="background-color: #E9F5FF;">Ref: @item.HWMS_REFORDER</p>
-                <p class="card-text">BIN: @bin</p>
+                <p class="bin card-text">BIN: @bin</p>
                 @*<a href="/Tasks/TaskItems?refOrderZone=@item.HWMS_REFORDER&taskType=@ViewData["TaskType"].ToString()">
-                    <p class="card-text">@item.HWMS_REFTYPENAME: @item.HWMS_REFORDER <i class="fa fa-chevron-right float-right" aria-hidden="true"></i></p>
-                </a>*@
+            <p class="card-text">@item.HWMS_REFTYPENAME: @item.HWMS_REFORDER <i class="fa fa-chevron-right float-right" aria-hidden="true"></i></p>
+        </a>*@
+            </div>
             </div>
         </div>
-    </div>
     }
 </div>
 
 <script>
+    var search_subject = "Bin";
     $(document).ready(function () {
         $("#btn_back").show();
         //get_group_Tasks(1);
@@ -62,4 +84,38 @@
             return false;
         })
     });
+
+    function order_by(val) {
+        search_subject = val;
+        if (val === "Bin")
+            $("#search_group").attr("placeholder", "Search Bin").fadeIn(500);
+        else
+            $("#search_group").attr("placeholder", "Search Part").fadeIn(500);
+    }
+
+    function search_on_list() {
+
+        var input = document.getElementById("search_group");
+        var filter = input.value.toLowerCase();
+        var nodes = $("#task_item_list .card");
+        var inodes;
+        if (search_subject === "Bin")
+            inodes = $("#task_item_list .bin");
+        else
+            inodes = $("#task_item_list .part");
+
+        for (i = 0; i < nodes.length; i++) {
+            if (!filter || filter === '') {
+                nodes[i].style.display = "block";
+                continue;
+            }
+
+            if (inodes[i].innerText.toLowerCase().includes(filter)) {
+                nodes[i].style.display = "block";
+            } else {
+                nodes[i].style.display = "none";
+            }
+        }
+
+    }
 </script>

@@ -9,11 +9,12 @@ namespace HarelTech.WMS.RestClient
 {
     public interface IWmsClient
     {
-        Task<SystemUser> GetSystemUserAsync(long userId);
-        Task<List<UserWarhouse>> GetUserWarhousesAsync(string company, long userId);
+        Task<SystemUser> GetSystemUserAsync(UserLoginModel userLogin);
+        Task<List<Warhouse>> GetUserWarhousesAsync(string company, long userId);
         Task<TasksSummerize> GetTasksSummerizeAsync(long userId, long warhouseId, string company);
         Task<List<TaskType>> GetTaskTypesAsync(string company);
         Task<List<CompleteTasksByGroup>> GetCompleteTasksByGroups(CompleteTasksByGroupRequest request);
         Task<List<CompleteTaskItem>> GetCompleteTaskItems(CompleteTaskItemsRequest request);
+        Task<List<TaskLotSerial>> GetTransactionItems(TransactionItemsRequest request);
     }
 }

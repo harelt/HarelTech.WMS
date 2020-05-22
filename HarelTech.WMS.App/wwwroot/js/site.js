@@ -32,23 +32,14 @@ function priorityReady() {
 //    this.setRequestHeader('Access-Control-Allow-Origin', '*');
 //};
 app.showLoader = async function () {
-    app.loader = document.createElement('ion-loading');
-    app.loader.message = 'Please wait...';
-    app.loader.spinner = 'lines';
-    //loading.duration = 2000;
-
-    document.body.appendChild(app.loader);
-    await app.loader.present();
-
-    const { role, data } = await app.loader.onDidDismiss();
-    console.log('Loading dismissed!');
+    $("#mdb-preloader").show();
 };
 app.hideLoader = async function () {
-    app.loader.dismiss();
+    $("#mdb-preloader").hide();
 };
 
 
-window.app.login = async function (username, password) {
+window.app.signin = async function (username, password) {
     app.showLoader();
     var config = {
         url: "https://harel-tech-dev.trio-cloud.com",
@@ -63,52 +54,31 @@ window.app.login = async function (username, password) {
         password: password
     };
 
-    try {
-
-        login(config).then(
-            (loginFunctions) => {
-                console.log(loginFunctions);
-                loginFunctions.companies().then(function myfunction(data) {
-                    cons.log(data.Company);
-                });
-                console.log('Your are in!! Enjoy!');
-                axios({
-                    method: 'get',
-                    url: app.url + '/Account/Login/?handler=Auth',
-                    //headers: { 'Content-Type': 'application/json' },
-                    data: { userName: username, password: password }
-                }).then(function (response) {
-
-                    customElements.define('product-p', class Product extends HTMLElement {
-                        connectedCallback() {
-
-                            $("#app-nav").html(response.data);
-                        }
-                    });
-
-                    app.nav.push('product-p').then(done => {
-                        app.nav.componentOnReady();
-                    });
-
-
-                }).catch(function (error) {
-                    console.log(error);
-                }).then(function () {
-                    app.hideLoader();
-                });
-            },
-            reason => {
-                console.log(reason.message);
-            }
-        );
-
-    }
-    catch (err) {
-        console.log(err);
-    }
-    //const promise = Promise.resolve(login(config));
-    //promise.then(loginSuccess, loginFail);
-
+    var cmps = [];
+    login(config).then(
+        (loginFunctions) => {
+            console.log(loginFunctions);
+            loginFunctions.companies().then(function myfunction(data) {
+                for (var i = 0; i < data.Company.length; i++) {
+                    var cmp = { dname: data.Company[i].dname, title: data.Company[i].title };
+                    cmps.push(cmp);
+                }
+                $("#frmLogin #Companies").val(JSON.stringify(cmps));
+                //console.log(JSON.stringify(cmps));
+                //console.log('Your are in!! Enjoy!');
+                $("#frmLogin").submit();
+            });
+            
+        },
+        reason => {
+            $("#login_error_message").html(reason.message);
+            $("#login_error").show();
+            //app.presentToast(reason.message);
+            console.log(reason.message);
+        }
+    );
+    
+    
 };
 
 window.app.showMessage = function (message) {
@@ -134,11 +104,9 @@ window.app.updateFields = function updateFields(result, frmName) {
 };
 
 window.app.presentToast = async function presentToast(message) {
-    let toast = document.createElement('ion-toast');
-    toast.color = "danger";
-    toast.message = message;
-    toast.duration = 4000;
+    toastr.options = {
+        "positionClass": "toast-bottom-left"
+    }
+    toastr["error"](message);
 
-    document.body.appendChild(toast);
-    return toast.present();
 };

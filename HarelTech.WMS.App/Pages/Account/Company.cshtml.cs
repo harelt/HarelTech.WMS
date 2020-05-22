@@ -2,9 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HarelTech.WMS.App.Models;
+using HarelTech.WMS.Common.Models;
 using HarelTech.WMS.RestClient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace HarelTech.WMS.App
@@ -17,20 +20,37 @@ namespace HarelTech.WMS.App
         public string Company { get; set; }
         [BindProperty]
         public long Warhouse { get; set; }
+        
         public CompanyModel(IWmsClient wmsClient, IMemoryCache cache)
         {
             _wmsClient = wmsClient;
             _cache = cache;
         }
-        public void OnGet()
+        public async Task<IActionResult> OnGet(string companies)
         {
-            
+            var cmps =  System.Text.Json.JsonSerializer.Deserialize<List<Company>>(companies);
+            //cmps.Insert(0, new Common.Models.Company { dname = "", title = "Select" });
+
+            ViewData["Companies"] = new SelectList(cmps, "dname", "title");
+            var wrhs = await _wmsClient.GetUserWarhousesAsync(cmps[0].dname, Utilities.UserId(User.Claims));
+
+            ViewData["Warhouses"] = new SelectList(wrhs.OrderByDescending(o => o.IsDefault), "warhs", "warhsdes");
+            return await Task.FromResult(Page());
+        }
+
+        public async Task<IActionResult> OnGetWarhouses(string company)
+        {
+            var wrhs = await _wmsClient.GetUserWarhousesAsync(company, Utilities.UserId(User.Claims));
+
+            return new JsonResult(new { success = true, warhouses = wrhs.OrderByDescending(o => o.IsDefault) });
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            _cache.Set("15_company", Company, DateTime.Now.AddHours(8));
-            _cache.Set("15_warhouseId", Warhouse, DateTime.Now.AddHours(8));
+            _cache.Set($"{Utilities.UserId(User.Claims)}_company", Company);
+            _cache.Set($"{Utilities.UserId(User.Claims)}_warhouseId", Warhouse);
+            _cache.Set($"{Utilities.UserId(User.Claims)}_companyName", Request.Form["CompanyName"].ToString());
+            _cache.Set($"{Utilities.UserId(User.Claims)}_warhouseName", Request.Form["WarhouseName"].ToString());
             return await Task.FromResult(RedirectToPage("../Index"));
         }
     }

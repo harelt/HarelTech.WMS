@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HarelTech.WMS.Common.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HarelTech.WMS.Common.Entities
@@ -13,5 +14,7 @@ namespace HarelTech.WMS.Common.Entities
         public string USERNAME { get; set; }
         public long USERID { get; set; }
         public long USERGROUP { get; set; }
+        [NotMapped]
+        public RequestResponseDto Response { get; set; }
     }
 }
