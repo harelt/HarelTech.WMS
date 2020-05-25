@@ -4,6 +4,8 @@ using ServiceStack;
 using ServiceStack.Text;
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace HarelTech.WMS.RestClient
@@ -23,7 +25,27 @@ namespace HarelTech.WMS.RestClient
             _userName = userName;
             _password = password;
 
-            _restClient = new JsonServiceClient(_apiUrl) { OnAuthenticationRequired = ClientAuth, AlwaysSendBasicAuthHeader = true }.WithCache();
+            _restClient = new JsonHttpClient(_apiUrl)
+            {
+                HttpMessageHandler = new HttpClientHandler
+                {
+                    UseCookies = true,
+                    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+                    ServerCertificateCustomValidationCallback = (req, cert, chain, errors) => true
+                }
+            }.WithCache();
+            //_restClient = new JsonServiceClient(_apiUrl) 
+            //{
+            //    //HttpMessageHandler = new HttpClientHandler
+            //    //{
+            //    //    UseCookies = true,
+            //    //    AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate,
+            //    //    ServerCertificateCustomValidationCallback = (req, cert, chain, errors) => true
+            //    //},
+            //    OnAuthenticationRequired = ClientAuth, AlwaysSendBasicAuthHeader = true,
+               
+            //}.WithCache();
+            
 
 
         }

@@ -12,7 +12,7 @@
     </OpenApiReference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ServiceStack.Client.Core" Version="5.8.0" />
+    <PackageReference Include="ServiceStack.HttpClient.Core" Version="5.8.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HarelTech.WMS.Common\HarelTech.WMS.Common.csproj" />

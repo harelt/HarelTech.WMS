@@ -15,5 +15,15 @@ namespace HarelTech.WMS.App.Models
         {
             return claims.FirstOrDefault(w => w.Type == ClaimTypes.Name).Value;
         }
+
+        public static string UserLogin(IEnumerable<Claim> claims)
+        {
+            return claims.FirstOrDefault(w => w.Type == ClaimTypes.NameIdentifier).Value;
+        }
+
+        public static string Password(IEnumerable<Claim> claims)
+        {
+            return claims.FirstOrDefault(w => w.Type == ClaimTypes.Sid).Value;
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HarelTech.WMS.App.Models;
 using HarelTech.WMS.Common.Models;
 using HarelTech.WMS.RestClient;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,8 @@ namespace HarelTech.WMS.App.Pages.Tasks
         public bool DisplayToBin { get; set; }
         [BindProperty]
         public bool ChangeToBin { get; set; }
+        public string UserName;
+        public string Password;
         public TransactionModel(IWmsClient wmsClient, IMemoryCache cache)
         {
             _wmsClient = wmsClient;
@@ -45,6 +48,8 @@ namespace HarelTech.WMS.App.Pages.Tasks
             WarhouseId = _cache.Get<long>("15_warhouseId");
             CurrentTaskType = _cache.Get<EnumTaskType>("15_taskType");
             TaskItem = taskItem;
+            UserName = Utilities.UserLogin(User.Claims);
+            Password = Utilities.Password(User.Claims);
 
             TaskLot = await _wmsClient.GetTransactionItems(new TransactionItemsRequest
             {

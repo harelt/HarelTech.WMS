@@ -6,6 +6,7 @@
 
 @Html.AntiForgeryToken()
 <input type="hidden" id="task_type" value="@Model.CurrentTaskType" />
+<input type="hidden" id="priority_ready" value="false"/>
 <div class="animated flipInY fast" style="margin-top:20px;">
     <div class="accordion md-accordion m-3" id="accordionEx1" role="tablist" aria-multiselectable="false">
         <!-- Accordion card -->
@@ -98,7 +99,16 @@
 
 
 <script>
+    var tasksForm;
+    var config;
+    var filter;
+
     $(document).ready(function () {
+        $("#priority_ready").on("change", function () {
+            window.app.taskForm('@Model.UserName', '@Model.Password', filter, '@Model.Company');
+           // window.app.signin('@Model.UserName', '@Model.Password')
+        });
+
         $("#btn_back").show();
         //get_group_Tasks(1);
 
@@ -106,7 +116,65 @@
             parent.history.back();
             return false;
         })
+        app.showLoader();
+
+        config = {username: '@Model.UserName', password: '@Model.Password',
+        url: app.priorityUrl,
+        language: 3,
+        appname: 'wmsapp'};
+
+        filter = {
+        or: 0,
+        ignorecase: 0,
+        QueryValues:
+            [
+                {
+                field: "HWMS_ITASKNUM",
+                fromval: "@Model.TaskItem.HWMS_ITASKNUM",
+                }
+            ]
+        };
+
+
     });
+
+    async function set_priority_form() {
+        login(config).then(function () {
+            console.log("Login done...");
+            return formStart('HWMS_ITASKS', showMessage, null, { "company": "@Model.Company" }, 1);
+        }).then(function (form) {
+            console.log("Form done...");
+            tasksForm = form;
+            tasksForm.setSearchFilter(filter).then(function () {
+                console.log("Aearch filter done...");
+                tasksForm.getRows(1).then(function () {
+                    console.log("Row fetched done done...");
+                    tasksForm.fieldUpdate("HMWS_ISTATUS", "A", null, function (msg) { alert(msg); });
+                    tasksForm.fieldUpdate("HMWS_AUSERLOGIN", "@Model.UserName", null, function (msg) { alert(msg); } );
+                    tasksForm.saveRow(0, null, function (msg) { alert(msg); });
+                    app.hideLoader();
+            });
+        });
+
+    });
+
+}
+
+    function showMessage(message) {
+        //if (message.type != "warning") {
+        //    alert(message.message);
+        //} else {
+        if (confirm(message.message)) {
+            message.form.warningConfirm(1);
+        } else {
+            message.form.warningConfirm(0);
+        }
+        //}
+    }
+
+    function updateFields() {
+
+    }
 
     function search_on_list() {
         var input = document.getElementById("search_group");

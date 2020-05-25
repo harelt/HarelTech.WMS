@@ -39,7 +39,7 @@ namespace HarelTech.WMS.App.Pages
 
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.USERLOGIN),
+                new Claim(ClaimTypes.NameIdentifier, UserLogin.UserName),
                 new Claim(ClaimTypes.Name, user.USERNAME),
                 //new Claim(ClaimTypes.Email, "test@gmail.com"),
                 new Claim(ClaimTypes.UserData, user.Id.ToString()),

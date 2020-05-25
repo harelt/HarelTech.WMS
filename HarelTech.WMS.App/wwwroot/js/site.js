@@ -3,6 +3,9 @@ window.app = {};
 app.url = "https://localhost:44387";
 app.company = "";
 app.warhouseId = 0;
+app.priorityUrl = "https://harel-tech-dev.trio-cloud.com";
+app.tasksForm;
+app.tasksSubForm;
 
 app.profile = {
     "id": 0,
@@ -12,19 +15,24 @@ app.profile = {
     "user_group": 0
 };
 
-function priorityReady() {
+function priorityReady () {
     console.log("Priority Ready");
-    //  login({
-    //      username: 'tabula', password: 'LioHarel1!',
-    //      url: 'https://prioritysoftware.github.io/', tabulaini: 'tabula.ini',
-    //      language: 3, company: 'HarelTech', appname: 'EMS'})
-    //      .then(function () {
-    //          console.log("Login Success");
-    //    //return formStart('DOCUMENTS_P', showMessage, updateFields);
-    //}).then(function(form) {
-    //              myForm = form;
-    //        });
+    $("#priority_ready").val(true).trigger('change');
 }
+
+//function priorityReady() {
+//    console.log("Priority Ready");
+//    //  login({
+//    //      username: 'tabula', password: 'LioHarel1!',
+//    //      url: 'https://prioritysoftware.github.io/', tabulaini: 'tabula.ini',
+//    //      language: 3, company: 'HarelTech', appname: 'EMS'})
+//    //      .then(function () {
+//    //          console.log("Login Success");
+//    //    //return formStart('DOCUMENTS_P', showMessage, updateFields);
+//    //}).then(function(form) {
+//    //              myForm = form;
+//    //        });
+//}
 
 //XMLHttpRequest.prototype.origOpen = XMLHttpRequest.prototype.open;
 //XMLHttpRequest.prototype.open = function () {
@@ -42,7 +50,7 @@ app.hideLoader = async function () {
 window.app.signin = async function (username, password) {
     app.showLoader();
     var config = {
-        url: "https://harel-tech-dev.trio-cloud.com",
+        url: app.priorityUrl,
         tabulaini: "tabula.ini",
         language: 3,
         //company: "smoukr",
@@ -110,3 +118,104 @@ window.app.presentToast = async function presentToast(message) {
     toastr["error"](message);
 
 };
+
+window.app.taskForm = async function (username, password, filter, company) {
+    debugger;
+    var config = {
+        url: app.priorityUrl,
+        tabulaini: "tabula.ini",
+        language: 3,
+        //company: "smoukr",
+        //profile: {
+        //    company: 'smoukr'
+        //},
+        appname: 'wmsapp',
+        username: username,
+        password: password
+    };
+    login(config).then(
+        (loginFunctions) => {
+            console.log("Login done...");
+            formStart('HWMS_ITASKS', showMessage, null, { "company": company }, 1).then(function (form) {
+                console.log("Form done...");
+                app.tasksForm = form;
+                app.tasksForm.setSearchFilter(filter).then(function () {
+                    console.log("Search filter done...");
+                    app.tasksForm.getRows(1).then(function () {
+                        console.log("Row fetched done done...");
+                        app.tasksForm.fieldUpdate("HWMS_ITASKSTATUS", "A", null, function (msg) { alert(msg); });
+                        app.tasksForm.fieldUpdate("HWMS_AUSERLOGIN", username, null, function (msg) { alert(msg); });
+                        app.tasksForm.saveRow(0, null, function (msg) { alert(msg); });
+                        app.hideLoader();
+                    });
+                });
+            })
+        },
+        reason => {
+            $("#login_error_message").html(reason.message);
+            $("#login_error").show();
+            //app.presentToast(reason.message);
+            console.log(reason.message);
+        }
+    );
+    
+}
+
+windows.app.PostLotTransaction = async function () {
+
+    app.tasksForm.startSubForm("HWMS_ITASKLOTS", null, null, null, function (msg) { alert("sub form HWMS_ITASKLOTS" + msg); }).then(function (subForm) {
+        app.tasksSubForm = subForm;
+    });
+}
+
+windows.app.PostSerialTransaction = async function () {
+
+    app.tasksForm.startSubForm("HWMS_ITASKSER", null, null, null, function (msg) { alert("sub form HWMS_ITASKSER " + msg); }).then(function (subForm) {
+        app.tasksSubForm = subForm;
+    });
+}
+
+windows.app.AddLotRow = async function (row, taskType) {
+
+    app.tasksSubForm.newRow(null, function (msg) { alert("sub form " + msg); });
+    if (taskType !== 3)
+        app.tasksSubForm.fieldUpdate("HWMS_ELOTNUMBER", "");
+    else {
+        app.tasksSubForm.fieldUpdate("HWMS_NLOTNUMBER", "");
+        app.tasksSubForm.fieldUpdate("HWMS_EXPDATE", "dd/MM/yyyy");
+    }
+        
+    app.tasksSubForm.fieldUpdate("HWMS_LOTQUANTITY", "");
+    app.tasksSubForm.fieldUpdate("HWMS_FROMBIN", "");
+    app.tasksSubForm.fieldUpdate("HWMS_TOBIN", "");
+    app.tasksSubForm.saveRow(0, null, function (msg) { alert("sub form save AddLotRow: " + msg); })
+}
+
+windows.app.AddSerialRow = async function (row, taskType) {
+    app.tasksSubForm.newRow(null, function (msg) { alert("sub form AddSerialRow" + msg); })
+
+    if (taskType !== 3)
+        app.tasksSubForm.fieldUpdate("HWMS_SERNUM", "");
+    else 
+        app.tasksSubForm.fieldUpdate("HWMS_NSERNUM", "");
+    
+    app.tasksSubForm.fieldUpdate("HWMS_FROMBIN", "");
+    app.tasksSubForm.fieldUpdate("HWMS_FROMBIN", "");
+    app.tasksSubForm.fieldUpdate("HWMS_TOBIN", "");
+    app.tasksSubForm.saveRow(0, null, function (msg) { alert("sub form save AddSerialRow: " + msg); })
+}
+
+windows.app.CloseSubForm = async function (formName) {
+    app.tasksSubForm.endCurrentForm(null, function (msg) {
+        alert("close sub form " + formName + ": " + msg); });
+}
+
+windows.app.CloseForm = async function (finilize) {
+    if (finilize) {
+        app.tasksForm.fieldUpdate("HWMS_ITASKSTATUS", "F", null, function (msg) { alert("HWMS_ITASKSTATUS: " + msg); });
+        app.tasksForm.saveRow(0, null, function (msg) { alert("HWMS_ITASKSTATUS: " + msg); });
+    }
+    app.tasksSubForm.endCurrentForm(null, function (msg) {
+        alert("close sub form " + formName + ": " + msg);
+    });
+}

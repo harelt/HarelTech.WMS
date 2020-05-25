@@ -20,7 +20,7 @@
                 <!-- Title -->
                 <h6 class="card-title font-weight-bold mb-2" style="font-family: Montserrat !important;"><i class="fas fa-building pr-2"></i>@item.HWMS_REFNAME</h6>
                 <!-- Subtitle -->
-                <a href="/Tasks/TaskItems?refOrderZone=@item.HWMS_REFORDER&taskType=@ViewData["TaskType"].ToString()">
+                <a asp-page="/Tasks/TaskItems" asp-route-refOrderZone="@item.HWMS_REFORDER" asp-route-OrderZone="@item.HWMS_REFORDER" asp-route-taskType="@ViewData["TaskType"].ToString()">
                     <p class="card-text">@item.HWMS_REFTYPENAME: @item.HWMS_REFORDER <i class="fa fa-chevron-right float-right" aria-hidden="true"></i></p>
                 </a>
             </div>
