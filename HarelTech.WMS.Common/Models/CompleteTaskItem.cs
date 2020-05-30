@@ -1,4 +1,6 @@
-﻿namespace HarelTech.WMS.Common.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace HarelTech.WMS.Common.Models
 {
     public class CompleteTaskItem
     {
@@ -17,5 +19,7 @@
         public long TotalTasks { get; set; }
         public string SERNFLAG { get; set; }
         public string HWMS_ITASKNUM { get; set; }
+        [NotMapped]
+        public string RefOrderOrZone { get; set; }
     }
 }

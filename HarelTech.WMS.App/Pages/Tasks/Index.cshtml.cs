@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HarelTech.WMS.App.Models;
 using HarelTech.WMS.Common.Models;
 using HarelTech.WMS.RestClient;
 using Microsoft.AspNetCore.Mvc;
@@ -29,8 +30,9 @@ namespace HarelTech.WMS.App.Pages.Tasks
         
         public async Task<IActionResult> OnGetAsync(EnumTaskType taskType)
         {
-            Company = _cache.Get<string>("15_company");
-            WarhouseId = _cache.Get<long>("15_warhouseId");
+            var userid = Utilities.UserId(User.Claims);
+            Company = _cache.Get<string>($"{userid}_company");
+            WarhouseId = _cache.Get<long>($"{userid}_warhouseId");
             CurrnetTaskType = taskType;
             
             var tasksTypes = await _wmsClient.GetTaskTypesAsync(Company);
@@ -43,18 +45,19 @@ namespace HarelTech.WMS.App.Pages.Tasks
 
         public async Task<IActionResult> OnGetGroupTasks(EnumTaskGroup taskGroup, EnumTaskType taskType)
         {
-            var userId = 15;
-            _cache.Set("15_taskGroup", taskGroup);
+            var userid = Utilities.UserId(User.Claims);
+            _cache.Set($"{userid}_taskGroup", taskGroup);
             return await Task.FromResult(ViewComponent("GroupTasksByType", new CompleteTasksByGroupRequest
             {
-                Company = _cache.Get<string>("15_company"),
+                Company = _cache.Get<string>($"{userid}_company"),
                 TaskGroup = taskGroup,
-                WarhouseId = _cache.Get<long>("15_warhouseId"),
+                WarhouseId = _cache.Get<long>($"{userid}_warhouseId"),
                 TaskType = taskType,
-                UserId = userId
+                UserId = userid
             }));
             
         }
-               
+
+      
     }
 }

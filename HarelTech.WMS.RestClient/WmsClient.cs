@@ -129,5 +129,26 @@ namespace HarelTech.WMS.RestClient
             var res = await _restClient.PostAsync<List<TaskLotSerial>>(req, request);
             return res;
         }
+
+        public async Task<bool> AddTaskLots(AddTaskLotsRequest request)
+        {
+            var req = $"Tasks/AddTaskLots";
+            var res = await _restClient.PostAsync<bool>(req, request);
+            return res;
+        }
+
+        public async Task<List<string>> GetBins(string company, long warhouseId)
+        {
+            var req = $"Tasks/Bins/{company}/{warhouseId}";
+            var res = await _restClient.GetAsync<List<string>>(req);
+            return res;
+        }
+
+        public async Task<int> DeleteTaskLots(string company, long taskId)
+        {
+            var req = $"Tasks/DeleteTaskLots/{company}/{taskId}";
+            var res = await _restClient.DeleteAsync<int>(req);
+            return res;
+        }
     }
 }

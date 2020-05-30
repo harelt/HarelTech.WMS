@@ -89,7 +89,7 @@ window.app.signin = async function (username, password) {
     
 };
 
-window.app.showMessage = function (message) {
+showMessage = function (message) {
     if (message.type !== "warning") {
         alert(message.message);
     } else {
@@ -119,8 +119,7 @@ window.app.presentToast = async function presentToast(message) {
 
 };
 
-window.app.taskForm = async function (username, password, filter, company) {
-    debugger;
+window.app.taskForm = async function (username, password, filter, company, qty, taskId) {
     var config = {
         url: app.priorityUrl,
         tabulaini: "tabula.ini",
@@ -136,24 +135,57 @@ window.app.taskForm = async function (username, password, filter, company) {
     login(config).then(
         (loginFunctions) => {
             console.log("Login done...");
-            formStart('HWMS_ITASKS', showMessage, null, { "company": company }, 1).then(function (form) {
+            formStart('HWMS_ITASKS', showMessage, null, { "company": company }, 1).then(function (tasksForm) {
                 console.log("Form done...");
-                app.tasksForm = form;
-                app.tasksForm.setSearchFilter(filter).then(function () {
+                tasksForm.setSearchFilter(filter).then(function () {
                     console.log("Search filter done...");
-                    app.tasksForm.getRows(1).then(function () {
+                    tasksForm.getRows(1).then(function () {
                         console.log("Row fetched done done...");
-                        app.tasksForm.fieldUpdate("HWMS_ITASKSTATUS", "A", null, function (msg) { alert(msg); });
-                        app.tasksForm.fieldUpdate("HWMS_AUSERLOGIN", username, null, function (msg) { alert(msg); });
-                        app.tasksForm.saveRow(0, null, function (msg) { alert(msg); });
-                        app.hideLoader();
+                        //tasksForm.fieldUpdate("HWMS_AUSERLOGIN", username, null, function (msg) { alert(msg); });
+                        tasksForm.fieldUpdate("HWMS_COMPLETEDQTY", qty, null, function (msg) { alert(msg); });
+                        tasksForm.fieldUpdate("HWMS_ITASKSTATUS", "F", null, function (msg) { alert(msg); });
+                        tasksForm.saveRow(0,null,
+                            function (response) {
+                                app.hideLoader();
+                                if (!response.fatal && !response.type === 'error' && !response.type ==='apiError') {
+                                    //all good
+                                    $("#modalConfirm #p_message").html(response.message);
+                                    $("#modalConfirm").modal("show");
+                                    $("#modalConfirm #confirm_btn").on("click", function () {
+                                        tasksForm.warningConfirm(1);
+                                        tasksForm.endCurrentForm();
+//                                        app.hideLoader();
+                                        //trigger click to return previous screen
+                                        $("#btn_back")[0].click()
+                                    });
+                                    
+                                }
+                                else {
+                                    //rollback, delete lots by HWMS_ITASK
+                                    $("#modalConfirm #p_message").html(response.message);
+                                    $("#modalConfirm").modal("show");
+                                    $("#modalConfirm #confirm_btn").on("click", function () {
+                                        tasksForm.warningConfirm(0);
+                                        $.ajax({
+                                            url: app.url + "Tasks/Transaction/?handler=DeleteTaskLots&taskId=" + taskId,
+                                            type: 'DELETE',
+                                            success: function (result) {
+                                                tasksForm.endCurrentForm();
+                                                app.hideLoader();
+                                                $("#btn_back")[0].click()
+                                            }
+                                        });
+
+                                    });
+                                    
+                                }
+                            });
                     });
                 });
             })
         },
         reason => {
-            $("#login_error_message").html(reason.message);
-            $("#login_error").show();
+            app.presentToast(reason.message);
             //app.presentToast(reason.message);
             console.log(reason.message);
         }
@@ -161,56 +193,81 @@ window.app.taskForm = async function (username, password, filter, company) {
     
 }
 
-windows.app.PostLotTransaction = async function () {
+window.app.PostLotTransaction = async function (rows, taskType) {
+    debugger;
+    //app.tasksForm.isAlive(function () { alert('live'); }, function () { alert('dead'); }) 
+    app.tasksForm.startSubForm("HWMS_ITASKLOTS", null, null,
+        function (subform) {
+            app.tasksSubForm = subform;
+            window.app.AddLotRows(rows, taskType);
+        },
+        function (msg) { alert("sub form HWMS_ITASKLOTS" + msg); });
 
-    app.tasksForm.startSubForm("HWMS_ITASKLOTS", null, null, null, function (msg) { alert("sub form HWMS_ITASKLOTS" + msg); }).then(function (subForm) {
-        app.tasksSubForm = subForm;
-    });
-}
+};
 
-windows.app.PostSerialTransaction = async function () {
+window.app.PostSerialTransaction = async function () {
 
     app.tasksForm.startSubForm("HWMS_ITASKSER", null, null, null, function (msg) { alert("sub form HWMS_ITASKSER " + msg); }).then(function (subForm) {
         app.tasksSubForm = subForm;
     });
-}
+};
 
-windows.app.AddLotRow = async function (row, taskType) {
+window.app.AddLotRows = async function (rows, taskType) {
+    debugger;
 
-    app.tasksSubForm.newRow(null, function (msg) { alert("sub form " + msg); });
-    if (taskType !== 3)
-        app.tasksSubForm.fieldUpdate("HWMS_ELOTNUMBER", "");
-    else {
-        app.tasksSubForm.fieldUpdate("HWMS_NLOTNUMBER", "");
-        app.tasksSubForm.fieldUpdate("HWMS_EXPDATE", "dd/MM/yyyy");
-    }
-        
-    app.tasksSubForm.fieldUpdate("HWMS_LOTQUANTITY", "");
-    app.tasksSubForm.fieldUpdate("HWMS_FROMBIN", "");
-    app.tasksSubForm.fieldUpdate("HWMS_TOBIN", "");
-    app.tasksSubForm.saveRow(0, null, function (msg) { alert("sub form save AddLotRow: " + msg); })
-}
+    app.tasksForm.startSubForm("HWMS_ITASKLOTS", null, null,
+        function (subform) {
+            //app.tasksSubForm = subform;
+            rows.forEach(item => {
+                //app.tasksSubForm.newRow().then(function (row) {
+                    if (taskType === 3) {
+                        subform.fieldUpdate("HWMS_EXPDATE", item.ExpDate);
+                    }
+                subform.fieldUpdate("HWMS_LOTNUMBER", item.HWMS_ELOTNUMBER);
+                subform.fieldUpdate("HWMS_LOTQUANTITY", item.Quantity);
+                subform.fieldUpdate("HWMS_FROMBIN", item.FROMBIN);
+                subform.fieldUpdate("HWMS_TOBIN", item.TOBIN);
+                //});
+                subform.saveRow(0).then(function (reason) { console.log(reason); });
+            });
 
-windows.app.AddSerialRow = async function (row, taskType) {
-    app.tasksSubForm.newRow(null, function (msg) { alert("sub form AddSerialRow" + msg); })
-
-    if (taskType !== 3)
-        app.tasksSubForm.fieldUpdate("HWMS_SERNUM", "");
-    else 
-        app.tasksSubForm.fieldUpdate("HWMS_NSERNUM", "");
+            subform.endCurrentForm();
+            //app.tasksForm.fieldUpdate("HWMS_ITASKSTATUS", 'F').then(function () {
+            //    app.tasksForm.endCurrentForm();
+            //    app.tasksSubForm = null;
+            //    app.tasksForm = null;
+            //});
+            
+        },
+        function (msg) { alert("sub form HWMS_ITASKLOTS" + msg); });
     
-    app.tasksSubForm.fieldUpdate("HWMS_FROMBIN", "");
-    app.tasksSubForm.fieldUpdate("HWMS_FROMBIN", "");
-    app.tasksSubForm.fieldUpdate("HWMS_TOBIN", "");
-    app.tasksSubForm.saveRow(0, null, function (msg) { alert("sub form save AddSerialRow: " + msg); })
+    //window.app.CloseSubForm(app.subform.na);
 }
 
-windows.app.CloseSubForm = async function (formName) {
+window.app.AddSerialRows = async function (rows, taskType) {
+
+    for (var i = 0; i < rows.length; i++) {
+        app.tasksSubForm.newRow(null, function (msg) { alert("sub form AddSerialRow" + msg); })
+        if (taskType !== 3)
+            app.tasksSubForm.fieldUpdate("HWMS_SERNUM", rows[i].HWMS_ELOTNUMBER);
+        else
+            app.tasksSubForm.fieldUpdate("HWMS_NSERNUM", rows[i].HWMS_ELOTNUMBER);
+
+        app.tasksSubForm.fieldUpdate("HWMS_FROMBIN", rows[i].FROMBIN);
+        app.tasksSubForm.fieldUpdate("HWMS_TOBIN", rows[i].TOBIN);
+        app.tasksSubForm.fieldUpdate("HWMS_TOBIN", rows[i].Quantity);
+        app.tasksSubForm.saveRow(0, null, function (msg) { alert("sub form save AddSerialRow: " + msg); })
+    }
+    
+};
+
+window.app.CloseSubForm = async function (formName) {
     app.tasksSubForm.endCurrentForm(null, function (msg) {
-        alert("close sub form " + formName + ": " + msg); });
-}
+        alert("close form " + formName + ": " + msg);
+    });
+};
 
-windows.app.CloseForm = async function (finilize) {
+window.app.CloseForm = async function (finilize) {
     if (finilize) {
         app.tasksForm.fieldUpdate("HWMS_ITASKSTATUS", "F", null, function (msg) { alert("HWMS_ITASKSTATUS: " + msg); });
         app.tasksForm.saveRow(0, null, function (msg) { alert("HWMS_ITASKSTATUS: " + msg); });
@@ -218,4 +275,5 @@ windows.app.CloseForm = async function (finilize) {
     app.tasksSubForm.endCurrentForm(null, function (msg) {
         alert("close sub form " + formName + ": " + msg);
     });
-}
+};
+

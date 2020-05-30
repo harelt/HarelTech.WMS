@@ -4,9 +4,12 @@
 @{
     ViewData["Title"] = "Home page";
     ViewData["PageTitle"] = "Dashboard";
-    var percent = "0";
-    if(Model.TasksSummerize.Total != 0)
-     percent = (100- (Model.TasksSummerize.Open / Model.TasksSummerize.Total * 100)).ToString("F0");
+    var percent = 0.0;
+    if (Model.TasksSummerize.Total != 0)
+    {
+        percent = 100 - ((double)Model.TasksSummerize.Open / Model.TasksSummerize.Total * 100);
+        //percent = Math.Round(percent, 0);
+    }
 }
 
 @Html.AntiForgeryToken()

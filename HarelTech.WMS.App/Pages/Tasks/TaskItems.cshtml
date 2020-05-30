@@ -60,8 +60,15 @@
                 <!-- Title -->
                 @*<a href="/Tasks/TaskItems/TaskTransaction?part=@item.PART"><h6 class="card-title font-weight-bold mb-2" style="font-family: Montserrat !important;">@item.PARTDES</h6><i class="fa fa-chevron-right float-right" aria-hidden="true"></i></a>*@
                 <h6 class="card-title font-weight-bold mb-2" style="font-family: Montserrat !important;">@item.PARTDES</h6>
+                @if (item.CompletedTasks < item.TotalTasks)
+                {
                 <a asp-page-handler="TaskTransaction" asp-route-part="@item.PART">
                     <p class="part card-text">Part #: @item.PARTNAME <i class="fa fa-chevron-right float-right" aria-hidden="true"></i></p></a>
+                }
+                else
+                {
+                    <p class="part card-text">Part #: @item.PARTNAME <i class="fa fa-chevron-right float-right" aria-hidden="true"></i></p>
+                }
                 <p class="card-text" style="background-color: #E9F5FF;">Ref: @item.HWMS_REFORDER</p>
                 <p class="bin card-text">BIN: @bin</p>
             </div>

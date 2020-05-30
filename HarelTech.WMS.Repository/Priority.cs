@@ -11,6 +11,7 @@ using HarelTech.WMS.Common.Models;
 using HarelTech.WMS.Repository.Interfaces;
 using HarelTech.WMS.Common.Entities;
 using Microsoft.Extensions.Caching.Memory;
+using System.Diagnostics.CodeAnalysis;
 
 namespace HarelTech.WMS.Repository
 {
@@ -92,14 +93,14 @@ namespace HarelTech.WMS.Repository
                 AND ( HWMS_ASSIGNUSER = 0  OR HWMS_ASSIGNUSER = {userId} ) ;
             ");
             var d = DateTime.Now.Date;
-            var dnumber = d.Subtract(_baseDateTime).Minutes;
+            var dnumber = d.Subtract(_baseDateTime).TotalMinutes;
             qry.AppendLine($@"SELECT  COUNT(1) as TotalDone
                 FROM  HWMS_ITASKS 
                 WHERE HWMS_ITASKSTATUS = 'F'
                 AND   HWMS_ITASKWARHS  = {warhouseId}
                 AND   HWMS_ITASK > 0
                 AND   HWMS_ITASKFDATE  = {dnumber}
-                AND   HWMS_USERUPDATED = 5
+                AND   HWMS_USERUPDATED = {userId}
                 AND ( HWMS_ASSIGNUSER  = 0  OR HWMS_ASSIGNUSER = {userId} ) ;
             ");
 
@@ -227,7 +228,7 @@ namespace HarelTech.WMS.Repository
             WHERE HWMS_ITASKS.HWMS_ITASKTYPE =  HWMS_ITASKTYPES.HWMS_ITASKTYPE
             AND  HWMS_REFTYPES.HWMS_REFTYPE  = HWMS_ITASKS.HWMS_REFTYPE
             AND  HWMS_ITASKS.HWMS_ITASKPART = PART.PART
-            AND  HWMS_ITASKSTATUS NOT IN ( 'C' )
+            AND  HWMS_ITASKSTATUS IN ( 'A', 'P' )
             AND  HWMS_ITASKS.HWMS_ITASKWARHS = {warhouseId}
             AND  HWMS_ITASKTYPES.HWMS_ITASKTYPE = {(int)enumTaskType}
             AND  HWMS_ITASKS.HWMS_ITASK > 0
@@ -267,7 +268,7 @@ namespace HarelTech.WMS.Repository
                 WHERE HWMS_ITASKS.HWMS_ITASKTYPE =  HWMS_ITASKTYPES.HWMS_ITASKTYPE
                 AND  HWMS_REFTYPES.HWMS_REFTYPE  = HWMS_ITASKS.HWMS_REFTYPE
                 AND  HWMS_ITASKS.HWMS_ITASKPART = PART.PART
-                AND  HWMS_ITASKSTATUS NOT IN ( 'C' )
+                AND  HWMS_ITASKSTATUS IN ( 'A', 'P' )
                 AND  HWMS_ITASKS.HWMS_ITASKWARHS = {warhouseId}
                 AND  HWMS_ITASKTYPES.HWMS_ITASKTYPE = {(int)enumTaskType}
                 AND  HWMS_ITASKS.HWMS_ITASK > 0
@@ -291,7 +292,7 @@ namespace HarelTech.WMS.Repository
                 WHERE HWMS_ITASKS.HWMS_ITASKTYPE =  HWMS_ITASKTYPES.HWMS_ITASKTYPE
                 AND  HWMS_REFTYPES.HWMS_REFTYPE  = HWMS_ITASKS.HWMS_REFTYPE
                 AND  HWMS_ITASKS.HWMS_ITASKPART = PART.PART
-                AND  HWMS_ITASKSTATUS NOT IN ( 'C' )
+                AND  HWMS_ITASKSTATUS IN ( 'A', 'P' )
                 AND  HWMS_ITASKS.HWMS_ITASKWARHS = {warhouseId}
                 AND  HWMS_ITASKTYPES.HWMS_ITASKTYPE = {(int)enumTaskType}
                 AND  HWMS_ITASKS.HWMS_ITASK > 0
@@ -312,11 +313,12 @@ namespace HarelTech.WMS.Repository
             db.Open();
             var warhsname = await db.QuerySingleAsync<string>(sql).ConfigureAwait(false);
 
-            var qry = $@"SELECT   SERIAL.SERIALNAME as HWMS_ELOTNUMBER , CUSTOMERS.CUSTNAME AS STATUS , SERIAL.EXPIRYDATE ,WARHSBAL.BALANCE /1000 AS AVAILABLE,
+            var qry = $@"SELECT SERIAL.SERIAL as LOT,  SERIAL.SERIALNAME as HWMS_ELOTNUMBER , CUSTOMERS.CUSTNAME AS STATUS , SERIAL.EXPIRYDATE ,WARHSBAL.BALANCE /1000 AS AVAILABLE,
             WAREHOUSES.LOCNAME AS FROMBIN , UNIT.UNITNAME 
             FROM    WARHSBAL , WAREHOUSES , SERIAL , CUSTOMERS , PART ,UNIT
             WHERE   WAREHOUSES.WARHS      =    WARHSBAL.WARHS 
             AND     WARHSBAL.SERIAL       =    SERIAL.SERIAL
+            AND     WARHSBAL.BALANCE  >  0  
             AND     CUSTOMERS.CUST        =    WARHSBAL.CUST
             AND     WARHSBAL.PART         =    PART.PART
             AND     PART.PART             =    {partId}
@@ -330,10 +332,44 @@ namespace HarelTech.WMS.Repository
             var results = await db.QueryAsync<TaskLotSerial>(qry);
             foreach (var result in results)
             {
-                result.ExpDate = _baseDateTime.AddMinutes(result.EXPIRYDATE);
+                result.ExpDate = _baseDateTime.AddMinutes(result.EXPIRYDATE).ToString("dd/MM/yyyy");
             }
             return results.ToList(); ;
         }
 
+        public async Task<bool> AddTaskLots(List<TaskLot> taskLots)
+        {
+            using var ctx = Context;
+            await ctx.TaskLots.AddRangeAsync(taskLots).ConfigureAwait(false);
+            await ctx.SaveChangesAsync().ConfigureAwait(false);
+            return true;
+        }
+
+        public async Task<List<string>> GetBins(long warhouseId)
+        {
+            var sql = $"select TRIM(WARHSNAME) from WAREHOUSES where WARHS = {warhouseId}";
+
+            using var db = DbConnection;
+            db.Open();
+            var warhsname = await db.QuerySingleAsync<string>(sql).ConfigureAwait(false);
+
+            sql = $@"SELECT LOCNAME
+                FROM WAREHOUSES
+                WHERE WARHSNAME = '{warhsname}'
+                AND WARHS > 0
+                AND LOCNAME<> '0' ";
+
+            var results = await db.QueryAsync<string>(sql);
+
+            return results.ToList();
+        }
+
+        public async Task<int> DeleteTaskLots(long taskId)
+        {
+            using var db = DbConnection;
+            var sql = $"delete HWMS_ITASKLOTS where HWMS_ITASK = {taskId}";
+            return await db.ExecuteAsync(sql).ConfigureAwait(false);
+
+        }
     }
 }

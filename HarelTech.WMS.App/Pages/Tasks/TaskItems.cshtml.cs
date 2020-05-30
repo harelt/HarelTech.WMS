@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HarelTech.WMS.App.Models;
 using HarelTech.WMS.Common.Models;
 using HarelTech.WMS.RestClient;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,7 @@ namespace HarelTech.WMS.App.Pages.Tasks
         public EnumTaskType CurrentTaskType { get; set; }
         [BindProperty]
         public List<CompleteTaskItem> CompleteTaskItems { get; set; }
+
         public TaskItemsModel(IWmsClient wmsClient, IMemoryCache cache)
         {
             _wmsClient = wmsClient;
@@ -30,11 +32,12 @@ namespace HarelTech.WMS.App.Pages.Tasks
         }
         public async Task<IActionResult> OnGet(EnumTaskType taskType, string refOrderZone)
         {
-            Company = _cache.Get<string>("15_company");
-            WarhouseId = _cache.Get<long>("15_warhouseId");
+            var userid = Utilities.UserId(User.Claims);
+            Company = _cache.Get<string>($"{userid}_company");
+            WarhouseId = _cache.Get<long>($"{userid}_warhouseId");
             CurrentTaskType = taskType;
-            var taskGroup = _cache.Get<EnumTaskGroup>("15_taskGroup");
-            _cache.Set("15_taskType", taskType);
+            var taskGroup = _cache.Get<EnumTaskGroup>($"{userid}_taskGroup");
+            _cache.Set($"{userid}_taskType", taskType);
             //var company = Request.Cookies["company"] ?? "smoukr";
 
             var tasksTypes = await _wmsClient.GetTaskTypesAsync(Company);
@@ -46,16 +49,18 @@ namespace HarelTech.WMS.App.Pages.Tasks
                 RefOrderOrZone = refOrderZone,
                 TaskType = CurrentTaskType,
                 TaskGroup = taskGroup,
-                UserId = 15,
+                UserId = userid,
                 WarhouseId = WarhouseId
             });
-            _cache.Set("15_CompleteTaskItems", CompleteTaskItems);
+            CompleteTaskItems.ForEach(f => f.RefOrderOrZone = refOrderZone);
+            _cache.Set($"{userid}_CompleteTaskItems", CompleteTaskItems);
             return await Task.FromResult(Page());
         }
 
         public async Task<IActionResult> OnGetTaskTransaction(long part)
         {
-            CompleteTaskItems = _cache.Get<List<CompleteTaskItem>>("15_CompleteTaskItems");
+            var userid = Utilities.UserId(User.Claims);
+            CompleteTaskItems = _cache.Get<List<CompleteTaskItem>>($"{userid}_CompleteTaskItems");
             var taskItem = CompleteTaskItems.FirstOrDefault(w => w.PART == part);
 
             return await Task.FromResult(RedirectToPage("Transaction", taskItem));

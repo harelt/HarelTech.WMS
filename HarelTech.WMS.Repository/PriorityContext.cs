@@ -12,7 +12,6 @@ namespace HarelTech.WMS.Repository
         public virtual DbSet<TaskLot> TaskLots { get; set; }
         public virtual DbSet<UserWarhouse> UsersWarhouses { get; set; }
         public virtual DbSet<TaskType> Tasktypes { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //base.OnModelCreating(modelBuilder);

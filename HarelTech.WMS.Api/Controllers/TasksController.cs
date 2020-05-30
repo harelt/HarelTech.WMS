@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HarelTech.WMS.Common.Entities;
 using HarelTech.WMS.Common.Models;
 using HarelTech.WMS.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
+using ServiceStack.Text;
 
 namespace HarelTech.WMS.Api.Controllers
 {
@@ -19,14 +22,14 @@ namespace HarelTech.WMS.Api.Controllers
         {
             _priority = priority;
         }
-       
+
         [HttpGet("Dashboard/{userId}/{warhouseId}/{company}")]
-        public async Task<IActionResult> GetTasksSummerize(long userId, long warhouseId, string company )
+        public async Task<IActionResult> GetTasksSummerize(long userId, long warhouseId, string company)
         {
             if (userId == 0 || warhouseId == 0 || string.IsNullOrEmpty(company))
                 return BadRequest("Invalid parameters request");
 
-            var results =  await _priority.CompanyDb(company).GetTaskSummerise(userId, warhouseId);
+            var results = await _priority.CompanyDb(company).GetTaskSummerise(userId, warhouseId);
             return Ok(results);
         }
 
@@ -73,6 +76,47 @@ namespace HarelTech.WMS.Api.Controllers
                 request.ParId);
 
             return Ok(results);
+        }
+
+        [HttpPost("AddTaskLots")]
+        public async Task<IActionResult> AddTaskLots(AddTaskLotsRequest request)
+        {
+            Log.Information($"AddTaskLots: {request.Dump()}");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var lots = new List<TaskLot>();
+            foreach (var item in request.Lots)
+            {
+                lots.Add(new TaskLot
+                {
+                    HWMS_EXPDATE = 0,
+                    HWMS_FROMBIN = item.FROMBIN,
+                    HWMS_ITASK = item.HWMS_ITASK,
+                    HWMS_LOT = item.HWMS_LOT,
+                    HWMS_LOTNUMBER = item.HWMS_ELOTNUMBER,
+                    HWMS_LOTQUANTITY = item.Quantity * 1000,
+                    HWMS_TOBIN = item.TOBIN,
+                    HWMS_FCUSTNAME = item.HWMS_FCUSTNAME,
+                    HWMS_TCUSTNAME = item.HWMS_TCUSTNAME
+                });
+            }
+            var result = await _priority.CompanyDb(request.Company).AddTaskLots(lots);
+            return Ok(result);
+        }
+
+        [HttpGet("Bins/{company}/{warhouseId}")]
+        public async Task<IActionResult> GetBins(string company, long warhouseId)
+        {
+            var results = await _priority.CompanyDb(company).GetBins(warhouseId);
+            return Ok(results);
+        }
+
+        [HttpDelete("DeleteTaskLots/{company}/{taskId}")]
+        public async Task<IActionResult> DeleteTaskLots(string company, long taskId)
+        {
+            var result = await _priority.CompanyDb(company).DeleteTaskLots(taskId);
+            return Ok(result);
         }
     }
 }

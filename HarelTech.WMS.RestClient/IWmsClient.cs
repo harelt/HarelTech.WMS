@@ -16,5 +16,8 @@ namespace HarelTech.WMS.RestClient
         Task<List<CompleteTasksByGroup>> GetCompleteTasksByGroups(CompleteTasksByGroupRequest request);
         Task<List<CompleteTaskItem>> GetCompleteTaskItems(CompleteTaskItemsRequest request);
         Task<List<TaskLotSerial>> GetTransactionItems(TransactionItemsRequest request);
+        Task<bool> AddTaskLots(AddTaskLotsRequest request);
+        Task<List<string>> GetBins(string company, long warhouseId);
+        Task<int> DeleteTaskLots(string company, long taskId);
     }
 }

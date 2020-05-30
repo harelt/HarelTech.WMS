@@ -173,15 +173,15 @@
                         <div class="sidenav-bg rgba-blue-strong"></div>
                     </div>
                     @*<div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
-            <ul class="navbar-nav flex-grow-1">
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Index">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Exit</a>
-                </li>
-            </ul>
-        </div>*@
+                            <ul class="navbar-nav flex-grow-1">
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/Index">Dashboard</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Exit</a>
+                                </li>
+                            </ul>
+                        </div>*@
                 </div>
             </nav>
         </header>
@@ -192,12 +192,31 @@
         </main>
     </div>
 
-    @*<footer class="border-top footer text-muted">
-            <div class="container text-center">
-                &copy; 2020 - HarelTech Ltd.
-            </div>
-        </footer>*@
+    <!--Modal: modalConfirm-->
+    <div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-notify modal-info" role="document">
+            <!--Content-->
+            <div class="modal-content text-center">
+                <!--Header-->
+                <div class="modal-header d-flex justify-content-center">
+                    <p class="heading">Priority Message</p>
+                </div>
 
+                <!--Body-->
+                <div class="modal-body">
+                    <p id="p_message"></p>
+                </div>
+
+                <!--Footer-->
+                <div class="modal-footer flex-center">
+                    <a id="confirm_btn" type="button" class="btn  btn-info waves-effect" data-dismiss="modal">Ok</a>
+                </div>
+            </div>
+            <!--/.Content-->
+        </div>
+    </div>
+    <!--Modal: modalConfirm-->
     <!-- JQuery -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <!-- Bootstrap tooltips -->

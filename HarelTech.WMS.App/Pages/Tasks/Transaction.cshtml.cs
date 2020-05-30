@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using HarelTech.WMS.App.Models;
 using HarelTech.WMS.Common.Models;
@@ -36,6 +37,7 @@ namespace HarelTech.WMS.App.Pages.Tasks
         public bool ChangeToBin { get; set; }
         public string UserName;
         public string Password;
+        public string TaskLotJson { get; set; }
         public TransactionModel(IWmsClient wmsClient, IMemoryCache cache)
         {
             _wmsClient = wmsClient;
@@ -43,10 +45,11 @@ namespace HarelTech.WMS.App.Pages.Tasks
         }
         public async Task<IActionResult> OnGet(CompleteTaskItem taskItem)
         {
+            var userid = Utilities.UserId(User.Claims);
             ViewData["PageTitle"] = "Transaction";
-            Company = _cache.Get<string>("15_company");
-            WarhouseId = _cache.Get<long>("15_warhouseId");
-            CurrentTaskType = _cache.Get<EnumTaskType>("15_taskType");
+            Company = _cache.Get<string>($"{userid}_company");
+            WarhouseId = _cache.Get<long>($"{userid}_warhouseId");
+            CurrentTaskType = _cache.Get<EnumTaskType>($"{userid}_taskType");
             TaskItem = taskItem;
             UserName = Utilities.UserLogin(User.Claims);
             Password = Utilities.Password(User.Claims);
@@ -78,15 +81,49 @@ namespace HarelTech.WMS.App.Pages.Tasks
                 default:
                     break;
             }
-            if(CurrentTaskType == EnumTaskType.Pick)
-            {
-                
-            }
-            else if(CurrentTaskType == EnumTaskType.Ship)
-            {
-                
-            }
+
+            TaskLotJson = JsonSerializer.Serialize(TaskLot, new JsonSerializerOptions() { WriteIndented=false, AllowTrailingCommas =true });
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostAddTaskLots([FromBody]List<TaskLotSerial> taskLots)
+        {
+            var userid = Utilities.UserId(User.Claims);
+            var result = await _wmsClient.AddTaskLots(new AddTaskLotsRequest
+            {
+                Company = _cache.Get<string>($"{userid}_company"),
+                Lots = taskLots
+            });
+
+            return new JsonResult(new { Success = result });
+        }
+
+        public async Task<IActionResult> OnGetBins()
+        {
+            var userid = Utilities.UserId(User.Claims);
+            Company = _cache.Get<string>($"{userid}_company");
+            WarhouseId = _cache.Get<long>($"{userid}_warhouseId");
+            var key = $"{WarhouseId}_bins";
+            if (_cache.TryGetValue(key, out List<string> bins))
+                return new JsonResult(new { Success = true, bins });
+
+            bins = await _wmsClient.GetBins(Company, WarhouseId);
+            if(bins != null && bins.Count > 0)
+            {
+                _cache.Set(key, bins, DateTime.Now.AddHours(2));
+                return new JsonResult(new { Success = true, bins });
+            }
+
+            return new JsonResult(new { Success = false });
+
+        }
+
+        public async Task<IActionResult> OnDeleteTaskLots(long taskId)
+        {
+            var userid = Utilities.UserId(User.Claims);
+            Company = _cache.Get<string>($"{userid}_company");
+            var result = await _wmsClient.DeleteTaskLots(Company, taskId);
+            return new JsonResult(new { Success = true, result });
         }
     }
 }

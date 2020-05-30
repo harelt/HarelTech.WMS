@@ -1,14 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
 
-namespace HarelTech.WMS.Common.Entities
+namespace HarelTech.WMS.Common.Models
 {
-    [Table("HWMS_ITASKLOTS")]
-    public class TaskLot
+    [Table("HWMS_ITASKLOT")]
+    public class ITASKLOT
     {
-        [Key]
+        [Key, Column("HWMS_ITASKLOT")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long HWMS_ITASKLOT { get; set; }
+        public long Id { get; set; }
         [MaxLength(22)]
         public string HWMS_LOTNUMBER { get; set; }
         public long HWMS_LOT { get; set; }
@@ -19,8 +22,6 @@ namespace HarelTech.WMS.Common.Entities
         public string HWMS_TOBIN { get; set; }
         public long HWMS_EXPDATE { get; set; }
         public long HWMS_ITASK { get; set; }
-        public string HWMS_FCUSTNAME { get; set; }
-        public string HWMS_TCUSTNAME { get; set; }
 
     }
 }
