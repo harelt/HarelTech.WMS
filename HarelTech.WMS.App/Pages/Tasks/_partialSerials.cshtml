@@ -50,8 +50,8 @@
                 </div>
                 <form id="frmSearchSerials" class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
                     <input id="search_serials" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Search Serial"
-                           aria-label="Search" onkeyup="search_serials_list();" style="font-size: 1rem;" autofocus>
-                    <i class="fas fa-search" aria-hidden="true"></i>&nbsp;&nbsp;
+                           aria-label="Search" style="font-size: 1rem;" autofocus>
+                    <i class="fas fa-search" aria-hidden="true" onclick="search_serials_list();"></i>&nbsp;&nbsp;
                     <i id="i_show_serial_list" class="fas fa-list-alt" aria-hidden="true" data-toggle="collapse" data-target="#list_serials"></i>
                 </form>
                 <div id="list_serials" class="collapse">
@@ -59,7 +59,7 @@
                 @if(Model.HWMS_ITASKTYPE == 3)
                 {
                     <div id="manual_add_serial" class="text-center collapse">
-                        <a><i class="fas fa-plus-circle"></i> Add Serial</a>
+                        <a href="#" onclick="AddManualSerial();"><i class="fas fa-plus-circle"></i> Add Serial</a>
                     </div>
                 }
                 <hr />
@@ -76,6 +76,11 @@
 </div>
 
 <script>
+    $("#search_serials").keypress(function (event) {
+        if (event.keyCode !== 13) return;
+        search_serials_list();
+    });
+
     function change_serial_selection(card) {
         var c = $("#list_serials_selected " + card);
         if (c.length === 0) {
@@ -85,13 +90,25 @@
         }
         else {
             $(card).prependTo("#list_serials");
+            $(card).hide();
             app.presentToast("Serial removed from list", top, "success");
             $("#serials_complete_tasks").html($("#list_serials_selected .card").length);
         }
     }
 
     function AddManualSerial() {
-
+        debugger;
+        var index = $("#list_serials .card").length + 1;
+        var serialNumber = $("#search_serials").val();
+        debugger;
+        $.get(app.url + "/Tasks/Transaction/?handler=AddNewSerialCard&id=" + index + "&serialNumber=" + serialNumber,
+            function (data) {
+                $("#list_serials_selected").prepend(data);
+            });
+        //var newserial = $("#serial_card_").clone();
+        //newserial[0].id = "#serial_card_" + index;
+        //newserial[0].dataset["data-serialno"] = $("#search_serials").val();
+        //newserial[0].getElementsByTagName
     }
 </script>
 

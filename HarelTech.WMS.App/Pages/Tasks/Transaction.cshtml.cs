@@ -132,5 +132,17 @@ namespace HarelTech.WMS.App.Pages.Tasks
             var result = await _wmsClient.DeleteTaskLots(Company, taskId);
             return new JsonResult(new { Success = true, result });
         }
+
+        public async Task<IActionResult> OnGetAddNewSerialCard(int id, string serialNumber)
+        {
+            ViewData["Id"] = id;
+            ViewData["SerialNumber"] = serialNumber;
+
+            return await Task.FromResult(new PartialViewResult
+            {
+                ViewName = "_newSerialCard",
+                ViewData = ViewData
+            });
+        }
     }
 }

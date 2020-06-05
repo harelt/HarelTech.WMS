@@ -1,0 +1,20 @@
+﻿@{ 
+    var id = ViewData["Id"];
+    var serialNumber = ViewData["SerialNumber"];
+}
+<div id="serial_card_@id" class="tcube card promoting-card m-3" data-serial="0" data-serialno="@serialNumber">
+    <!-- Card content -->
+    <div class="card-body d-flex flex-row">
+        <!-- Content -->
+        <div class="w-100">
+            <!-- Title -->
+            <h5>Serial #: <span id="span_serial_number">@serialNumber</span></h5>
+            <h5>Status  : Goods</h5>
+            <div class="form-check checkbox-teal mb-2 p-0">
+                <input type="checkbox" class="form-check-input" id="chk_@id"
+                       onchange="change_serial_selection('#serial_card_@id');" checked>
+                <label class="form-check-label" for="chk_@id">Add Serial</label>
+            </div>
+        </div>
+    </div>
+</div>
