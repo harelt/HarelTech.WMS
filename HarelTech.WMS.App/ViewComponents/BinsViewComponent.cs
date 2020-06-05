@@ -28,11 +28,11 @@ namespace HarelTech.WMS.App.ViewComponents
             bins = await _wmsClient.GetBins(company, warhouseId);
             if (bins != null && bins.Count > 0)
             {
-                _cache.Set(key, bins, DateTime.Now.AddHours(2));
+                _cache.Set(key, bins, DateTime.Now.AddMinutes(5));
                 return View(bins);
             }
 
-            return View();
+            return View(new List<string>());
         }
 
     }

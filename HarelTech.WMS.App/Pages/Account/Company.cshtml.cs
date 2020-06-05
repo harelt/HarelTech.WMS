@@ -35,6 +35,7 @@ namespace HarelTech.WMS.App
             var wrhs = await _wmsClient.GetUserWarhousesAsync(cmps[0].dname, Utilities.UserId(User.Claims));
 
             ViewData["Warhouses"] = new SelectList(wrhs.OrderByDescending(o => o.IsDefault), "warhs", "warhsdes");
+            _cache.Set($"{Utilities.UserId(User.Claims)}_companies", companies, DateTime.Now.AddHours(8));
             return await Task.FromResult(Page());
         }
 

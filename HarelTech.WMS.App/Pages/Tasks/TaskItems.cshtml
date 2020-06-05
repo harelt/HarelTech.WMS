@@ -2,6 +2,7 @@
 @model HarelTech.WMS.App.Pages.Tasks.TaskItemsModel
 @{
     ViewData["Title"] = "Task Items";
+    var curType = (int)Model.CurrentTaskType;
 }
 @Html.AntiForgeryToken()
 <input type="hidden" id="task_type" value="@Model.CurrentTaskType" />
@@ -67,9 +68,9 @@
                 }
                 else
                 {
-                    <p class="part card-text">Part #: @item.PARTNAME <i class="fa fa-chevron-right float-right" aria-hidden="true"></i></p>
+                    <p class="part card-text">Part #: @item.PARTNAME </p>
                 }
-                <p class="card-text" style="background-color: #E9F5FF;">Ref: @item.HWMS_REFORDER</p>
+                <p class="card-text" style="background-color: #E9F5FF;">Sales Ord: @item.HWMS_REFTYPENAME</p>
                 <p class="bin card-text">BIN: @bin</p>
             </div>
             </div>
@@ -80,13 +81,9 @@
 <script>
     var search_subject = "Bin";
     $(document).ready(function () {
+        $("#btn_back").attr("href", app.url + "/Tasks/Index?taskType=@curType");
         $("#btn_back").show();
         //get_group_Tasks(1);
-
-        $("#btn_back").on("click", function () {
-            parent.history.back();
-            return false;
-        })
     });
 
     function order_by(val) {

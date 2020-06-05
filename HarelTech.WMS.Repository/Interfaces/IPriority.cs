@@ -19,5 +19,9 @@ namespace HarelTech.WMS.Repository.Interfaces
         Task<List<string>> GetBins(long warhouseId);
 
         Task<int> DeleteTaskLots(long taskId);
+
+        Task<int> ActivateTask(long taskId, long userId);
+
+        Task<List<SerialModel>> GetSerials(long partId, long serialId, string locName);
     }
 }

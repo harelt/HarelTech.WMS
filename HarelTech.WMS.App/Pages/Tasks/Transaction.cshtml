@@ -12,14 +12,15 @@
 <input type="hidden" id="priority_ready" value="false" />
 <input type="hidden" id="total_tasks" value="@Model.TaskItem.TotalTasks" />
 <input type="hidden" id="jsonTasks" value="@Model.TaskLotJson" />
+
 <div class="animated flipInY fast" style="margin-top:20px;">
-    <div class="accordion md-accordion m-3" id="accordionEx1" role="tablist" aria-multiselectable="false">
+    <div class="accordion md-accordion m-3" id="accordionTs" role="tablist" aria-multiselectable="false">
         <!-- Accordion card -->
         <div class="card">
             <!-- Card header -->
-            <div class="card-header" role="tab" id="headingTwo1">
-                <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx1" href="#collapseTwo1"
-                   aria-expanded="false" aria-controls="collapseTwo1" style="color: black !important;">
+            <div class="card-header" role="tab" id="headingTwoTs">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordionTs" href="#collapseTwoTs"
+                   aria-expanded="false" aria-controls="collapseTwoTs" style="color: black !important;">
                     <h5 class="mb-0">
                         @Model.TaskItem.PARTDES <span class="float-right" style="color: #3DBFD9 !important;"><span id="complete_tasks">@Model.TaskItem.CompletedTasks</span>/@Model.TaskItem.TotalTasks</span>
                     </h5>
@@ -27,12 +28,12 @@
             </div>
 
             <!-- Card body -->
-            <div id="collapseTwo1" class="collapse" role="tabpanel" aria-labelledby="headingTwo1"
+            <div id="collapseTwoTs" class="collapse" role="tabpanel" aria-labelledby="headingTwoTs"
                  data-parent="#accordionEx1">
                 <div class="card-body">
                     <div class="row mt-2" style="font-weight: 600 !important">
-                        <div class="col-6">Task:</div>
-                        <div class="col-6">@Model.TaskItem.HWMS_ITASKTYPE</div>
+                        <div class="col-6">Ref:</div>
+                        <div class="col-6">@Model.TaskItem.HWMS_REFNAME</div>
                     </div>
                     <div class="row mt-2" style="font-weight: 600 !important">
                         <div class="col-6">Order/Doc:</div>
@@ -54,50 +55,70 @@
         <i class="fas fa-search" aria-hidden="true"></i>
     </form>
 </div>
-<div id="task_lots" class="animated fadeInY">
+<div id="task_lots" class="animated fadeInY" style="margin-bottom: 4rem !important;">
     @foreach (var item in Model.TaskLot)
     {
-        <input type="hidden" id="lot_id"/>
-        <div id="card_@i" class="card m-2" data-lotnumber="@item.HWMS_ELOTNUMBER" data-lot="@item.HWMS_LOT" data-taskid="@Model.TaskItem.HWMS_ITASK">
-            <div class="card-body m-2">
-                <div class="row" style="font-weight: 700 !important">
-                    <div class="col-6">Lot #:</div>
-                    <div class="col-6" style="color: #3DBFD9;">@item.HWMS_ELOTNUMBER</div>
-                </div>
-                <div class="row mt-1" style="font-size: 12px !important;">
-                    <div class="col-6">Status:</div>
-                    <div class="col-6" id="status_@i">@item.STATUS</div>
-                </div>
-                <div class="row mt-1" style="font-size: 12px !important;">
-                    <div class="col-6">Exp:</div>
-                    <div class="col-6" id="exp_date_@i">@item.ExpDate</div>
-                </div>
-                <hr />
+        var sernflag = Model.TaskItem.SERNFLAG == "Y" ? "disabled":"";
+        var background = Model.TaskItem.SERNFLAG == "Y" ? "lightgray":"white";
+    <input type="hidden" id="lot_id" />
+    <div id="card_@i" class="card m-2" data-lotnumber="@item.HWMS_ELOTNUMBER" data-lot="@item.HWMS_LOT" data-taskid="@Model.TaskItem.HWMS_ITASK" data-serials="">
+        <div class="card-body m-2">
+            <div class="row" style="font-weight: 700 !important">
+                <div class="col-6">Lot #:</div>
+                <div class="col-6" style="color: #3DBFD9;">@item.HWMS_ELOTNUMBER</div>
+            </div>
+            <div class="row mt-1" style="font-size: 12px !important;">
+                <div class="col-6">Status:</div>
+                <div class="col-6" id="status_@i">@item.STATUS</div>
+            </div>
+            <div class="row mt-1" style="font-size: 12px !important;">
+                <div class="col-6">Exp:</div>
+                <div class="col-6" id="exp_date_@i">@item.ExpDate</div>
+            </div>
+            <hr />
 
-                <div class="row mt-2" style="font-weight: 600 !important">
-                    <div class="col-6">Available:</div>
-                    <div class="col-6">@item.AVAILABLE @item.UNITNAME</div>
-                </div>
-                <div class="row mt-4" style="font-weight: 600 !important;background-color: #E9F5FF;">
-                    <div class="col-6">From Bin/Area:</div>
-                    <div class="col-6" id="frombin_@i">@item.FROMBIN</div>
-                </div>
-                <div class="row" style="font-weight: 600 !important;background-color: #E9F5FF;">
-                    <div class="col-6">To Bin/Area:</div>
-                    <div class="col-6" id="tobin_@i">@Model.TaskItem.HWMS_ITASKTOBIN</div>
-                </div>
-                <div class="row text-center mt-4">
-                    <div class="col-4" style="font-weight: 600 !important;">Quantity:</div>
-                    <div class="col-8">
-                        <div class="def-number-input number-input safari_only" style="background-color:#3DBFD9;">
-                            <button onclick="minusQty('qty_@i');" class="minus"></button>
-                            <input id="qty_@i" class="quantity" min="0" max="@item.AVAILABLE" name="quantity" value="0" type="number" onchange="update_total_tasks();" required>
-                            <button onclick="plusQty('qty_@i');" class="plus"></button>
-                        </div>
+            <div class="row mt-2" style="font-weight: 600 !important">
+                <div class="col-6">Available:</div>
+                <div class="col-6">@item.AVAILABLE @item.UNITNAME</div>
+            </div>
+            <div class="row mt-4" style="font-weight: 600 !important;background-color: #E9F5FF;">
+                <div class="col-6">From Bin/Area:</div>
+                <div class="col-6" id="frombin_@i">@item.FROMBIN</div>
+            </div>
+            <div class="row" style="font-weight: 600 !important;background-color: #E9F5FF;">
+                <div class="col-6">To Bin/Area:</div>
+                @if (!Model.ChangeToBin)
+                    {<div class="col-6" id="tobin_@i">@Model.TaskItem.HWMS_ITASKTOBIN</div>}
+                    else
+                    {<div class="col-6" id="tobin_@i">
+                        <a data-toggle="modal" data-target="#binsModalPreview" data-spanid="span_tobin_@i">
+                            <span id="span_tobin_@i" data-wow-iteration="5">@Model.TaskItem.HWMS_ITASKTOBIN</span>
+                            <i class="fas fa-arrow-right float-right"></i>
+                        </a>
+                    </div>
+                    }
+            </div>
+            <div class="row text-center mt-4">
+                <div class="col-4" style="font-weight: 600 !important;">Quantity:</div>
+                <div class="col-8">
+                    <div class="def-number-input number-input safari_only" style="background-color:#3DBFD9;">
+                        <button onclick="minusQty('qty_@i');" class="minus" @sernflag></button>
+                        <input id="qty_@i" class="quantity" min="0" max="@item.AVAILABLE" name="quantity" value="0" type="number" onchange="update_total_tasks();" required style="background-color: @background;" @sernflag>
+                        <button onclick="plusQty('qty_@i');" class="plus" @sernflag></button>
                     </div>
                 </div>
             </div>
+            @if(sernflag != "")
+                    {
+            <div class="row mr-2 ml-2">
+                <a data-toggle="modal" data-target="#serialsModalPreview" data-card="#card_@i"
+                   data-lot="@item.HWMS_ELOTNUMBER" data-partid="@Model.TaskItem.PART"
+                   data-locname="@Model.TaskItem.HWMS_ITASKFROMBIN" data-serial="@item.HWMS_LOT"
+                   class="btn btn-outline-cyan btn-block mt-2" style="color: #3DBFD9;border-color: #3DBFD9 !important">Add Serial numbers <i class="fas fa-arrow-right float-right"></i></a>
+            </div>
+                    }
         </div>
+    </div>
         i++;
     }
 
@@ -110,59 +131,13 @@
     <p id="btn_complete_task" class="w-100 disabled btn-dark mt-2 text-white" onclick="complete_task();">Post Transaction <i class="fas fa-arrow-right mt-2" style="color:white !important"></i></p>
 </nav>
 <!--Modal: modalConfirmPartialCompleteTask-->
-<div class="modal fade" id="modalConfirmPartialCompleteTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-notify modal-danger modal-dialog-centered" role="document">
-        <!--Content-->
-        <div class="modal-content text-center">
-            <!--Header-->
-            <div class="modal-header d-flex justify-content-center">
-                <p class="heading">Are you sure?</p>
-            </div>
-
-            <!--Body-->
-            <div class="modal-body">
-                <p id="p_message">Task will be completed and closed with missing quantitys:</p>
-                <p>Total Tasks: @Model.TaskItem.TotalTasks</p>
-                <p>Total Reported: <span id="total_reported"></span></p>
-            </div>
-
-            <!--Footer-->
-            <div class="modal-footer flex-center">
-                <a href="" class="btn  btn-outline-danger">Yes</a>
-                <a type="button" class="btn  btn-danger waves-effect" data-dismiss="modal">No</a>
-            </div>
-        </div>
-        <!--/.Content-->
-    </div>
-</div>
-<!--Modal: modalConfirmDelete-->
+@await Html.PartialAsync("_modalConfirmPartialCompleteTask")
 <!--Modal: modalConfirmCompleteTask-->
-<div class="modal fade" id="modalConfirmCompleteTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-notify modal-info modal-dialog-centered" role="document">
-        <!--Content-->
-        <div class="modal-content text-center">
-            <!--Header-->
-            <div class="modal-header d-flex justify-content-center">
-                <p class="heading">Are you sure?</p>
-            </div>
-
-            <!--Body-->
-            <div class="modal-body">
-                <p id="p_message">Task will be completed and closed</p>
-            </div>
-
-            <!--Footer-->
-            <div class="modal-footer flex-center">
-                <a href="#" onclick="finalize_task();" class="btn  btn-outline-info waves-effect">Yes</a>
-                <a type="button" class="btn  btn-danger waves-effect" data-dismiss="modal">No</a>
-            </div>
-        </div>
-        <!--/.Content-->
-    </div>
-</div>
-<!--Modal: modalConfirmDelete-->
+@await Html.PartialAsync("_modalConfirmCompleteTask")
+<!-- Bins -->
+@await Html.PartialAsync("_partialBins")
+<!-- Serials -->
+@await Html.PartialAsync("_partialSerials", Model.TaskItem)
 
 
 <script>
@@ -170,22 +145,40 @@
     var config;
     var filter;
     var totalQty = 0;
-
+    var tobin = "";
+    var card_serial;
+    var card_serials;
     $(document).ready(function () {
 
-        $("#btn_back").attr("href", "/Tasks/TaskItems?taskType=@curType&refOrderZone=@Model.TaskItem.RefOrderOrZone");
-        //$("#btn_back").attr("asp-taskType", @curType);
-        //$("#btn_back").attr("asp-refOrderZone", '@Model.TaskItem.RefOrderOrZone');
+        $("#btn_back").attr("href", app.url + "/Tasks/TaskItems?taskType=@curType&refOrderZone=@Model.TaskItem.RefOrderOrZone");
         $("#btn_back").show();
             //get_group_Tasks(1);
 
-        @*$("#btn_back").on("click", function () {
-            $("#btn_back").attr("href", "/Tasks/TaskItems");
-            $("#btn_back").attr("asp-taskType", @Model.CurrentTaskType);
-            $("#btn_back").attr("asp-refOrderZone", @Model.TaskItem.RefOrderOrZone);
-            parent.history.back();
-            return false;
-        })*@
+        //fire if bin selected
+        $("#binsModalPreview").on("shown.bs.modal", function (e) {
+            tobin = $(e.relatedTarget).data('spanid');
+            app.showLoader();
+            $.get(app.url + "/Tasks/Transaction/?handler=Bins", function (data) {
+                $("#list_bins").html(data);
+            });
+            app.hideLoader();
+        });
+
+        //fire if serial selected
+        $("#serialsModalPreview").on("shown.bs.modal", function (e) {
+            var lot = $(e.relatedTarget).data('lot');
+            var partid = $(e.relatedTarget).data('partid');
+            var locname = $(e.relatedTarget).data('locname');
+            var serial = $(e.relatedTarget).data('serial');
+            card_serial = $(e.relatedTarget).data('card');
+            $("#serialsModalPreview #lot_number").html(lot);
+            app.showLoader();
+            $.get(app.url + "/Tasks/Transaction/?handler=Serials&partId=" + partid + "&locName=" +
+                locname + "&serial=" + serial, function (data) {
+                $("#list_serials").html(data);
+            });
+            app.hideLoader();
+        });
 
 
         config = {username: '@Model.UserName', password: '@Model.Password',
@@ -283,14 +276,17 @@
             $("#modalConfirmCompleteTask").modal("show");
         }
         else {
-            
+
             $("#modalConfirmPartialCompleteTask #p_message").html(`Quantity reported is lower than ${totalTasks} ins!`);
             $("#modalConfirmPartialCompleteTask").modal("show");
         }
     }
 
-    function finalize_task() {
-        $("#modalConfirmCompleteTask").modal('hide')
+    function finalize_task(cmodel) {
+        if (cmodel==='c')
+            $("#modalConfirmCompleteTask").modal('hide')
+        else
+            $("#modalConfirmPartialCompleteTask").modal('hide')
         app.showLoader();
 
         var tasks = JSON.parse($("#jsonTasks").val());
@@ -300,12 +296,16 @@
             var qty = parseInt($("#qty_" + i).val());
             if (qty === 0)
                 continue;
+            var serials = [];
+            if (card_serials) {
+                serials = card_serials.find(o => o.card === "#card_" + i).serials;
+            }
 
             taskLots.push({
-                "HWMS_ELOTNUMBER": $("#card_" + i).data("lotnumber"),
+                "HWMS_ELOTNUMBER": $("#card_" + i).data("lotnumber").toString(),
                 "Quantity": qty,
                 "FROMBIN": $("#frombin_" + i).html(),
-                "TOBIN": $("#tobin_" + i).html(),
+                "TOBIN": $("#span_tobin_" + i).html(),
                 "ExpDate": $("#exp_date_" + i).html(),
                 "HWMS_LOT": $("#card_" + i).data("lot"),
                 "HWMS_ITASK": $("#card_" + i).data("taskid"),
@@ -314,8 +314,9 @@
                 "AVAILABLE": 0,
                 "UNITNAME": '',
                 "HWMS_FCUSTNAME": $("#status_" + i).html(),
-                "HWMS_TCUSTNAME": $("#status_" + i).html()
-            });
+                "HWMS_TCUSTNAME": $("#status_" + i).html(),
+                "Serials": serials
+             });
 
         }
 
@@ -323,7 +324,7 @@
         debugger;
         $.ajax({
             type: "POST",
-            url: "/Tasks/Transaction/?handler=AddTaskLots",
+            url: app.url + "/Tasks/Transaction/?handler=AddTaskLots",
             beforeSend: function (xhr) {
                 xhr.setRequestHeader("RequestVerificationToken",
                     $('input:hidden[name="__RequestVerificationToken"]').val());
@@ -345,6 +346,86 @@
 
         //window.app.AddLotRows(ctasks, $("#task_type").val());
 
+    }
+
+    function bin_selected(bin) {
+        $("#binsModalPreview").modal('hide')
+        $("#" + tobin).html(bin);
+        $("#" + tobin).addClass("animated flash");
+    }
+
+    function search_bin_list() {
+        var input = document.getElementById("search_bin");
+        var filter = input.value.toLowerCase();
+        var nodes = $("#list_bins .card h5");
+
+        for (i = 0; i < nodes.length; i++) {
+            if (!filter || filter === '') {
+                $("#list_bins #card_" + i).show(); //nodes[i].style.display = "block";
+                continue;
+            }
+
+            var node = new String(nodes[i].innerText.toLowerCase());
+            if (node.startsWith(filter)) {
+                $("#list_bins #card_" + i).show();
+            } else {
+                $("#list_bins #card_" + i).hide();
+            }
+        }
+    }
+
+    function search_serials_list() {
+        var input = document.getElementById("search_serials");
+        var filter = input.value;
+        var nodes = $("#list_serials .card h5 span");
+        var show = true;
+        for (i = 0; i < nodes.length; i++) {
+            if (!filter || filter === '') {
+                show = false;                
+                $("#list_serials #card_" + i).show(); //nodes[i].style.display = "block";
+                continue;
+            }
+            var node = nodes[i].innerText;
+
+            if (node.startsWith(filter)) {
+                $("#list_serials #card_" + i).show();
+            } else {
+                $("#list_serials #card_" + i).hide();
+            }
+        }
+        if (show) {
+            $("#list_serials").toggle('show');
+            $("manual_add_serial").toggle('hide');
+        }
+        else {
+            $("#list_serials").toggle('collapse');
+            $("manual_add_serial").toggle('show');
+        }
+        $("#search_serials").focus().select()
+    }
+
+    function submit_selected_serials() {
+        debugger;
+        var chbs = $("#list_serials_selected .card");
+        var serials = [];
+
+        if (chbs.length === 0) {
+            app.presentToast("No serial selected.", 1, "error");
+            return;
+        }
+
+        for (var i = 0; i < chbs.length; i++) {
+            var serial = chbs[i].dataset["serial"];
+            var serialno = chbs[i].dataset["serialno"];
+            serials.push({ "SerialId": parseInt(serial), "SerialNumber": serialno });
+        }
+                
+        card_serials = [];
+        $(card_serial + " .quantity").val(serials.length);
+        card_serials.push({ card: card_serial, serials: serials });
+        card_serial = "";
+        update_total_tasks();
+        $("#serialsModalPreview").modal('hide');
     }
 </script>
 

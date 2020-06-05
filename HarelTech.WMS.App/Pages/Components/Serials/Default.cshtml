@@ -1,0 +1,39 @@
+﻿@model IEnumerable<HarelTech.WMS.Common.Models.SerialModel>
+@{ 
+   var i= 0;
+}
+<style>
+    .checkbox-teal [type="checkbox"]:checked + label:before {
+        border-color: transparent #3DBFD9 #3DBFD9 transparent;
+    }
+</style>
+@if (Model == null || Model.Count() == 0)
+{
+    <h3>Error getting serials. Please try again.</h3>
+    return;
+}
+
+@foreach (var item in Model)
+{
+    <!-- Card -->
+    <div id="serial_card_@i" class="tcube card promoting-card m-3" data-serial="@item.Serial" data-serialno="@item.SerialNumber">
+        <!-- Card content -->
+        <div class="card-body d-flex flex-row">
+            <!-- Content -->
+            <div class="w-100">
+                <!-- Title -->
+                <h5>Serial #: <span>@item.SerialNumber</span></h5>
+                <h5>Status  : @item.Status</h5>
+                <div class="form-check checkbox-teal mb-2 p-0">
+                    <input type="checkbox" class="form-check-input" id="chk_@i" 
+                           onchange="change_serial_selection('#serial_card_@i');">
+                    <label class="form-check-label" for="chk_@i">Add Serial</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    i++;
+    <!-- Card -->
+}
+
+

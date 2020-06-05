@@ -1,26 +1,33 @@
-﻿@model IEnumerable<string> 
-<!DOCTYPE html>
+﻿@model IEnumerable<string>
+@{ 
+   var i= 0;
+}
+<style>
+    /*.tcube a {
+        color: #3DBFD9 !important;
+    }*/
+</style>
+@if (Model == null || Model.Count() == 0)
+{
+    <h3>Error getting bins. Please try again.</h3>
+    return;
+}
 
-<div class="animated fadeIn fast" style="margin-top:20px;">
-    <div class="text-center">
-        <h5 class="text-center">Select Bin</h5>
-    </div>
-    <div class="col-12 col-md-8 col-lg-4">
-        <div class="btn-group w-100" data-toggle="buttons">
-            <label class="btn btn-white form-check-label active">
-                <input class="form-check-input" type="radio" name="options" id="option1" autocomplete="off" checked onclick="change_search_placeholder('Search Reference')">
-                Order/Doc #
-            </label>
-            <label class="btn btn-white form-check-label">
-                <input class="form-check-input" type="radio" name="options" id="option2" autocomplete="off" onclick="change_search_placeholder('Search Zone')"> Zone #
-            </label>
+@foreach (var item in Model)
+{
+    <!-- Card -->
+    <div id="card_@i" class="tcube card promoting-card m-3">
+        <!-- Card content -->
+        <div class="card-body d-flex flex-row">
+            <!-- Content -->
+            <div class="w-100">
+                <!-- Title -->
+                <h5 class="card-title font-weight-bold"><a onclick="bin_selected('@item');">@item<i class="fa fa-chevron-right float-right" style="color: #3DBFD9 !important"></i></a></h5>
+            </div>
         </div>
     </div>
+    i++;
+    <!-- Card -->
+}
 
-    <!-- Search-->
-    <form class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
-        <input id="search_vin" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Search Bin"
-               aria-label="Search" onkeyup="search_bin_list();" autofocus>
-        <i class="fas fa-search" aria-hidden="true"></i>
-    </form>
-</div>
+

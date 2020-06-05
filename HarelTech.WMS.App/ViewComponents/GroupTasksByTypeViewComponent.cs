@@ -20,6 +20,7 @@ namespace HarelTech.WMS.App.ViewComponents
         {
             
             var results = await _wmsClient.GetCompleteTasksByGroups(request).ConfigureAwait(false);
+            results.RemoveAll(w => w.TotalTasks == w.CompleteTasks);
             ViewData["TaskType"] = request.TaskType;
             return View(results);
         }

@@ -1,0 +1,123 @@
+﻿@model HarelTech.WMS.Common.Models.CompleteTaskItem
+<!-- Modal -->
+<div class="modal fade right" id="serialsModalPreview" tabindex="-1" role="dialog" aria-labelledby="exampleModalPreviewLabel" aria-hidden="true">
+    <div class="modal-dialog-full-width modal-dialog momodel modal-fluid" role="document">
+        <div class="modal-content-full-width modal-content ">
+            <div class=" modal-header-full-width   modal-header text-center">
+                <a href="#" id="btn_back" data-dismiss="modal"><i class="fas fa-chevron-left" style="font-size: 22px;margin-top: 5px;"></i></a>
+                <span class="navbar-brand mx-auto w-100" id="exampleModalPreviewLabel">Select Serials</span>
+            </div>
+            <div class="modal-body" style="background-color: #EAEEF1 !important;">
+                <div class="accordion md-accordion m-3" id="accordionEx1" role="tablist" aria-multiselectable="false">
+                    <!-- Accordion card -->
+                    <div class="card">
+                        <!-- Card header -->
+                        <div class="card-header" role="tab" id="headingTwo1">
+                            <a class="collapsed" data-toggle="collapse" data-parent="#accordionEx1" href="#collapseTwo1"
+                               aria-expanded="false" aria-controls="collapseTwo1" style="color: black !important;">
+                                <h5 class="mb-0">
+                                    @Model.PARTDES <span class="float-right" style="color: #3DBFD9 !important;"><span id="serials_complete_tasks">@Model.CompletedTasks</span>/@Model.TotalTasks</span>
+                                </h5>
+                            </a>
+                            <hr />
+                            <h5 class="mb-0">Lot #: <span id="lot_number"></span></h5>
+                            @*<div class="row" style="font-weight: 700 !important">
+                        <div class="col-6">Lot #:</div>
+                        <div class="col-6" style="color: #3DBFD9;">@item.HWMS_ELOTNUMBER</div>
+                    </div>*@
+                        </div>
+
+                        <!-- Card body -->
+                        <div id="collapseTwo1" class="collapse" role="tabpanel" aria-labelledby="headingTwo1"
+                             data-parent="#accordionEx1">
+                            <div class="card-body">
+                                <div class="row mt-2" style="font-weight: 600 !important">
+                                    <div class="col-6">Ref:</div>
+                                    <div class="col-6">@Model.RefOrderOrZone</div>
+                                </div>
+                                <div class="row mt-2" style="font-weight: 600 !important">
+                                    <div class="col-6">Order/Doc:</div>
+                                    <div class="col-6">@Model.HWMS_REFORDER</div>
+                                </div>
+                                <div class="row mt-2" style="font-weight: 600 !important">
+                                    <div class="col-6">Task #:</div>
+                                    <div class="col-6">@Model.HWMS_ITASKNUM</div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <form id="frmSearchSerials" class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
+                    <input id="search_serials" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Search Serial"
+                           aria-label="Search" onkeyup="search_serials_list();" style="font-size: 1rem;" autofocus>
+                    <i class="fas fa-search" aria-hidden="true"></i>&nbsp;&nbsp;
+                    <i id="i_show_serial_list" class="fas fa-list-alt" aria-hidden="true" data-toggle="collapse" data-target="#list_serials"></i>
+                </form>
+                <div id="list_serials" class="collapse">
+                </div>
+                @if(Model.HWMS_ITASKTYPE == 3)
+                {
+                    <div id="manual_add_serial" class="text-center collapse">
+                        <a><i class="fas fa-plus-circle"></i> Add Serial</a>
+                    </div>
+                }
+                <hr />
+                <div id="list_serials_selected">
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <nav class="navbar fixed-bottom navbar-expand-lg text-center" style="background-color: #3DBFD9 !important">
+        <p id="btn_complete_task" class="w-100 mt-2 ml-2 mr-2 text-white" onclick="submit_selected_serials();">Submit Selected Serials <i class="fas fa-arrow-right mt-2" style="color:white !important"></i></p>
+    </nav>
+</div>
+
+<script>
+    function change_serial_selection(card) {
+        var c = $("#list_serials_selected " + card);
+        if (c.length === 0) {
+            $(card).prependTo("#list_serials_selected");
+            app.presentToast("Serial added to list", top, "success");
+            $("#serials_complete_tasks").html($("#list_serials_selected .card").length);
+        }
+        else {
+            $(card).prependTo("#list_serials");
+            app.presentToast("Serial removed from list", top, "success");
+            $("#serials_complete_tasks").html($("#list_serials_selected .card").length);
+        }
+    }
+
+    function AddManualSerial() {
+
+    }
+</script>
+
+<style>
+    .modal-dialog-full-width {
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: none !important;
+    }
+
+    .modal-content-full-width {
+        height: auto !important;
+        min-height: 100% !important;
+        border-radius: 0 !important;
+    }
+
+    .modal-header-full-width {
+        border-bottom: 1px solid #9ea2a2 !important;
+        background-color: #4C545B;
+        color: white !important;
+        height: 60px !important;
+    }
+
+    .modal-footer-full-width {
+        border-top: 1px solid #9ea2a2 !important;
+    }
+</style>

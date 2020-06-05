@@ -7,6 +7,8 @@ namespace HarelTech.WMS.Common.Models
         public long HWMS_ITASKTYPE { get; set; }
         public string HWMS_ITASKTYPEDES { get; set; }
         public string HWMS_REFORDER { get; set; }
+        public string HWMS_REFNAME { get; set; }
+        public string HWMS_REFTYPENAME { get; set; }
         public long HWMS_ITASK { get; set; }
         public long PART { get; set; }
         public string PARTNAME { get; set; }

@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using HarelTech.WMS.Common.Models;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HarelTech.WMS.Common.Entities
@@ -21,6 +23,8 @@ namespace HarelTech.WMS.Common.Entities
         public long HWMS_ITASK { get; set; }
         public string HWMS_FCUSTNAME { get; set; }
         public string HWMS_TCUSTNAME { get; set; }
+        [NotMapped]
+        public List<Serial> Serials { get; set; }
 
     }
 }

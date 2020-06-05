@@ -7,6 +7,7 @@ using HarelTech.WMS.Common.Models;
 using HarelTech.WMS.Repository.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Serilog;
 using ServiceStack.Text;
 
@@ -88,7 +89,7 @@ namespace HarelTech.WMS.Api.Controllers
             var lots = new List<TaskLot>();
             foreach (var item in request.Lots)
             {
-                lots.Add(new TaskLot
+                var tl = new TaskLot
                 {
                     HWMS_EXPDATE = 0,
                     HWMS_FROMBIN = item.FROMBIN,
@@ -98,8 +99,9 @@ namespace HarelTech.WMS.Api.Controllers
                     HWMS_LOTQUANTITY = item.Quantity * 1000,
                     HWMS_TOBIN = item.TOBIN,
                     HWMS_FCUSTNAME = item.HWMS_FCUSTNAME,
-                    HWMS_TCUSTNAME = item.HWMS_TCUSTNAME
-                });
+                    HWMS_TCUSTNAME = item.HWMS_TCUSTNAME,
+                    Serials = item.Serials
+                };
             }
             var result = await _priority.CompanyDb(request.Company).AddTaskLots(lots);
             return Ok(result);
@@ -117,6 +119,30 @@ namespace HarelTech.WMS.Api.Controllers
         {
             var result = await _priority.CompanyDb(company).DeleteTaskLots(taskId);
             return Ok(result);
+        }
+
+        [HttpPost("ActivateTask")]
+        public async Task<IActionResult> ActivateTask(ActivateTaskRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            
+            var result = await _priority.CompanyDb(request.Company).ActivateTask(request.TaskId, request.UserId);
+
+            return Ok(result);
+        }
+
+        [HttpPost("Serials")]
+        public async Task<IActionResult> GetSerials(SerialsRequest serialsRequest)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            if(string.IsNullOrEmpty(serialsRequest.LocName))
+                serialsRequest.LocName = "";
+            var results = await _priority.CompanyDb(serialsRequest.Company).GetSerials(serialsRequest.PartId,
+                serialsRequest.SerialId, serialsRequest.LocName);
+
+            return Ok(results);
         }
     }
 }

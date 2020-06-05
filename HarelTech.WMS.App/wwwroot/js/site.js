@@ -6,6 +6,7 @@ app.warhouseId = 0;
 app.priorityUrl = "https://harel-tech-dev.trio-cloud.com";
 app.tasksForm;
 app.tasksSubForm;
+app.taskId = 0;
 
 app.profile = {
     "id": 0,
@@ -17,7 +18,6 @@ app.profile = {
 
 function priorityReady () {
     console.log("Priority Ready");
-    $("#priority_ready").val(true).trigger('change');
 }
 
 //function priorityReady() {
@@ -89,16 +89,41 @@ window.app.signin = async function (username, password) {
     
 };
 
-showMessage = function (message) {
-    if (message.type !== "warning") {
-        alert(message.message);
-    } else {
-        if (confirm(message.message)) {
-            message.form.warningConfirm(1);
-        } else {
-            message.form.warningConfirm(0);
-        }
+function showMessage(message) {
+    debugger;
+    if (message.type === "information" || message.type === "warning") {
+        //all good
+        $("#modalConfirm #p_message").html(message.message);
+        $("#modalConfirm").modal("show");
+        $("#modalConfirm #confirm_btn").on("click", function () {
+            if (message.type === "warning") {
+                //then confirm
+                message.form.warningConfirm(1);
+            }
+            message.form.endCurrentForm();
+            //trigger click to return previous screen
+            $("#btn_back")[0].click()
+        });
     }
+    else {
+        //rollback, delete lots by HWMS_ITASK
+        $("#modalConfirm #p_message").html(response.message);
+        $("#modalConfirm").modal("show");
+        $("#modalConfirm #confirm_btn").on("click", function () {
+            tasksForm.warningConfirm(0);
+            $.ajax({
+                url: app.url + "Tasks/Transaction/?handler=DeleteTaskLots&taskId=" + app.taskId,
+                type: 'DELETE',
+                success: function (result) {
+                    tasksForm.endCurrentForm();
+                    app.hideLoader();
+                    $("#btn_back")[0].click()
+                }
+            });
+
+        });
+    }
+    
 };
 
 window.app.updateFields = function updateFields(result, frmName) {
@@ -111,15 +136,36 @@ window.app.updateFields = function updateFields(result, frmName) {
     }
 };
 
-window.app.presentToast = async function presentToast(message) {
-    toastr.options = {
-        "positionClass": "toast-bottom-left"
+window.app.presentToast = async function presentToast(message, top, msgtype) {
+    if (top) {
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": true,
+            "positionClass": "md-toast-bottom-center",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": 300,
+            "hideDuration": 1000,
+            "timeOut": 2000,
+            "extendedTimeOut": 1000,
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
     }
-    toastr["error"](message);
+    else
+    toastr.options = {
+        "positionClass": "lg-toast-bottom-center"
+        }
+    toastr[msgtype](message);
 
 };
 
 window.app.taskForm = async function (username, password, filter, company, qty, taskId) {
+    app.taskId = taskId;
     var config = {
         url: app.priorityUrl,
         tabulaini: "tabula.ini",
@@ -144,54 +190,20 @@ window.app.taskForm = async function (username, password, filter, company, qty, 
                         //tasksForm.fieldUpdate("HWMS_AUSERLOGIN", username, null, function (msg) { alert(msg); });
                         tasksForm.fieldUpdate("HWMS_COMPLETEDQTY", qty, null, function (msg) { alert(msg); });
                         tasksForm.fieldUpdate("HWMS_ITASKSTATUS", "F", null, function (msg) { alert(msg); });
-                        tasksForm.saveRow(0,null,
-                            function (response) {
-                                app.hideLoader();
-                                if (!response.fatal && !response.type === 'error' && !response.type ==='apiError') {
-                                    //all good
-                                    $("#modalConfirm #p_message").html(response.message);
-                                    $("#modalConfirm").modal("show");
-                                    $("#modalConfirm #confirm_btn").on("click", function () {
-                                        tasksForm.warningConfirm(1);
-                                        tasksForm.endCurrentForm();
-//                                        app.hideLoader();
-                                        //trigger click to return previous screen
-                                        $("#btn_back")[0].click()
-                                    });
-                                    
-                                }
-                                else {
-                                    //rollback, delete lots by HWMS_ITASK
-                                    $("#modalConfirm #p_message").html(response.message);
-                                    $("#modalConfirm").modal("show");
-                                    $("#modalConfirm #confirm_btn").on("click", function () {
-                                        tasksForm.warningConfirm(0);
-                                        $.ajax({
-                                            url: app.url + "Tasks/Transaction/?handler=DeleteTaskLots&taskId=" + taskId,
-                                            type: 'DELETE',
-                                            success: function (result) {
-                                                tasksForm.endCurrentForm();
-                                                app.hideLoader();
-                                                $("#btn_back")[0].click()
-                                            }
-                                        });
-
-                                    });
-                                    
-                                }
-                            });
+                        tasksForm.saveRow(0);
+                        app.hideLoader();
                     });
                 });
-            })
+            });
         },
         reason => {
-            app.presentToast(reason.message);
+            app.presentToast(reason.message, null, error);
             //app.presentToast(reason.message);
             console.log(reason.message);
         }
     );
-    
-}
+
+};
 
 window.app.PostLotTransaction = async function (rows, taskType) {
     debugger;

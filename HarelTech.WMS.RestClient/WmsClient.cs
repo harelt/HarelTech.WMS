@@ -150,5 +150,19 @@ namespace HarelTech.WMS.RestClient
             var res = await _restClient.DeleteAsync<int>(req);
             return res;
         }
+
+        public  async Task<int> ActivateTask(ActivateTaskRequest request)
+        {
+            var req = $"Tasks/ActivateTask";
+            var res = await _restClient.PostAsync<int>(req, request);
+            return res;
+        }
+
+        public async Task<List<SerialModel>> GetSerials(SerialsRequest serialsRequest)
+        {
+            var req = $"Tasks/Serials";
+            var res = await _restClient.PostAsync<List<SerialModel>>(req, serialsRequest);
+            return res;
+        }
     }
 }

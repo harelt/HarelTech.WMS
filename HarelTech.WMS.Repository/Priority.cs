@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -10,8 +9,6 @@ using Dapper;
 using HarelTech.WMS.Common.Models;
 using HarelTech.WMS.Repository.Interfaces;
 using HarelTech.WMS.Common.Entities;
-using Microsoft.Extensions.Caching.Memory;
-using System.Diagnostics.CodeAnalysis;
 
 namespace HarelTech.WMS.Repository
 {
@@ -219,8 +216,8 @@ namespace HarelTech.WMS.Repository
         private async Task<List<CompleteTaskItem>> GetCompleteTaskItemsByGroupOrder(long userId, long warhouseId, EnumTaskType enumTaskType, string refOrder)
         {
             var qry = $@"SELECT HWMS_ITASKTYPES.HWMS_ITASKTYPE, reverse(HWMS_ITASKTYPES.HWMS_ITASKTYPEDES) as  HWMS_ITASKTYPEDES, 
-            HWMS_ITASKS.HWMS_REFORDER, HWMS_ITASKS.HWMS_ITASKNUM,  
-            HWMS_ITASKS.HWMS_ITASKTZONE, HWMS_ITASKS.HWMS_ITASKFZONE,
+            HWMS_ITASKS.HWMS_REFORDER, reverse(HWMS_ITASKS.HWMS_REFNAME) as HWMS_REFNAME, HWMS_ITASKNUM, 
+            HWMS_ITASKS.HWMS_ITASKTZONE, HWMS_ITASKS.HWMS_ITASKFZONE, reverse(HWMS_REFTYPES.HWMS_REFTYPENAME) as HWMS_REFTYPENAME,  
             HWMS_ITASKS.HWMS_ITASK , PART.PARTNAME , reverse(PART.PARTDES) as PARTDES, PART.SERNFLAG, PART.PART, 
             HWMS_ITASKS.HWMS_ITASKFROMBIN , HWMS_ITASKS.HWMS_ITASKTOBIN , 
             HWMS_ITASKS.HWMS_COMPLETEDQTY/1000 as CompletedTasks, HWMS_ITASKS.HWMS_TOTALQTY/1000 as TotalTasks
@@ -259,10 +256,10 @@ namespace HarelTech.WMS.Repository
             if (new[] { EnumTaskType.Pick, EnumTaskType.Ship, EnumTaskType.Transfer }.Contains(enumTaskType))
             {
                 qry = $@"SELECT HWMS_ITASKTYPES.HWMS_ITASKTYPE, reverse(HWMS_ITASKTYPES.HWMS_ITASKTYPEDES) as  HWMS_ITASKTYPEDES, 
-                HWMS_ITASKS.HWMS_REFORDER, HWMS_ITASKNUM,  
+                HWMS_ITASKS.HWMS_REFORDER, reverse(HWMS_ITASKS.HWMS_REFNAME) as HWMS_REFNAME, HWMS_ITASKNUM,  
                 HWMS_ITASKS.HWMS_ITASKTZONE, HWMS_ITASKS.HWMS_ITASKFZONE,
                 HWMS_ITASKS.HWMS_ITASK , PART.PARTNAME, reverse(PART.PARTDES) as PARTDES, PART.SERNFLAG, PART.PART, 
-                HWMS_ITASKS.HWMS_ITASKFROMBIN,  
+                HWMS_ITASKS.HWMS_ITASKFROMBIN, reverse(HWMS_REFTYPES.HWMS_REFTYPENAME) as HWMS_REFTYPENAME, 
                 HWMS_ITASKS.HWMS_COMPLETEDQTY/1000 as CompletedTasks, HWMS_ITASKS.HWMS_TOTALQTY/1000 as TotalTasks
                 FROM HWMS_ITASKS , HWMS_ITASKTYPES , HWMS_REFTYPES , PART, HWMS_WZONES 
                 WHERE HWMS_ITASKS.HWMS_ITASKTYPE =  HWMS_ITASKTYPES.HWMS_ITASKTYPE
@@ -283,10 +280,10 @@ namespace HarelTech.WMS.Repository
             else
             {
                 qry = $@"SELECT HWMS_ITASKTYPES.HWMS_ITASKTYPE, reverse(HWMS_ITASKTYPES.HWMS_ITASKTYPEDES) as  HWMS_ITASKTYPEDES, 
-                HWMS_ITASKS.HWMS_REFORDER, HWMS_ITASKNUM,  
+                HWMS_ITASKS.HWMS_REFORDER, reverse(HWMS_ITASKS.HWMS_REFNAME) as HWMS_REFNAME, HWMS_ITASKNUM,  
                 HWMS_ITASKS.HWMS_ITASKTZONE, HWMS_ITASKS.HWMS_ITASKFZONE,
                 HWMS_ITASKS.HWMS_ITASK, PART.PARTNAME, reverse(PART.PARTDES) as PARTDES, PART.SERNFLAG, PART.PART, 
-                HWMS_ITASKS.HWMS_ITASKTOBIN,  
+                HWMS_ITASKS.HWMS_ITASKTOBIN, reverse(HWMS_REFTYPES.HWMS_REFTYPENAME) as HWMS_REFTYPENAME, 
                 HWMS_ITASKS.HWMS_COMPLETEDQTY/1000 as CompletedTasks, HWMS_ITASKS.HWMS_TOTALQTY/1000 as TotalTasks
                 FROM HWMS_ITASKS , HWMS_ITASKTYPES , HWMS_REFTYPES , PART, HWMS_WZONES       
                 WHERE HWMS_ITASKS.HWMS_ITASKTYPE =  HWMS_ITASKTYPES.HWMS_ITASKTYPE
@@ -313,8 +310,8 @@ namespace HarelTech.WMS.Repository
             db.Open();
             var warhsname = await db.QuerySingleAsync<string>(sql).ConfigureAwait(false);
 
-            var qry = $@"SELECT SERIAL.SERIAL as LOT,  SERIAL.SERIALNAME as HWMS_ELOTNUMBER , CUSTOMERS.CUSTNAME AS STATUS , SERIAL.EXPIRYDATE ,WARHSBAL.BALANCE /1000 AS AVAILABLE,
-            WAREHOUSES.LOCNAME AS FROMBIN , UNIT.UNITNAME 
+            var qry = $@"SELECT SERIAL.SERIAL as HWMS_LOT,  SERIAL.SERIALNAME as HWMS_ELOTNUMBER , CUSTOMERS.CUSTNAME AS STATUS , SERIAL.EXPIRYDATE ,WARHSBAL.BALANCE /1000 AS AVAILABLE,
+            WAREHOUSES.LOCNAME AS FROMBIN , reverse(UNIT.UNITNAME) as  UNITNAME 
             FROM    WARHSBAL , WAREHOUSES , SERIAL , CUSTOMERS , PART ,UNIT
             WHERE   WAREHOUSES.WARHS      =    WARHSBAL.WARHS 
             AND     WARHSBAL.SERIAL       =    SERIAL.SERIAL
@@ -340,8 +337,27 @@ namespace HarelTech.WMS.Repository
         public async Task<bool> AddTaskLots(List<TaskLot> taskLots)
         {
             using var ctx = Context;
-            await ctx.TaskLots.AddRangeAsync(taskLots).ConfigureAwait(false);
-            await ctx.SaveChangesAsync().ConfigureAwait(false);
+            foreach (var lot in taskLots)
+            {
+                await ctx.TaskLots.AddAsync(lot).ConfigureAwait(false);
+                await ctx.SaveChangesAsync().ConfigureAwait(false);
+                if(lot.Serials != null && lot.Serials.Count > 0)
+                {
+                    var taskSerials = new List<TaskSerial>();
+                    foreach (var item in lot.Serials)
+                    {
+                        taskSerials.Add(new TaskSerial
+                        {
+                            HWMS_SERN = item.SerialId,
+                            HWMS_SERNUMBER = item.SerialNumber,
+                            HWMS_ITASKLOT = lot.HWMS_ITASKLOT
+                        });
+                    }
+                    await ctx.TaskSerials.AddRangeAsync(taskSerials).ConfigureAwait(false);
+                    await ctx.SaveChangesAsync().ConfigureAwait(false);
+                }
+            }
+
             return true;
         }
 
@@ -364,12 +380,59 @@ namespace HarelTech.WMS.Repository
             return results.ToList();
         }
 
+        public async Task<int> ActivateTask(long taskId, long userId)
+        {
+            using var ctx = Context;
+            var task = await ctx.Tasks.FindAsync(taskId).ConfigureAwait(false);
+            task.HWMS_ASSIGNUSER = userId;
+            task.HWMS_ITASKSTATUS = "A";
+            task.HWMS_TIMEASSIGNED = (long)DateTime.Now.Subtract(_baseDateTime).TotalMinutes;
+            ctx.Entry(task).State = EntityState.Modified;
+            var result = await ctx.SaveChangesAsync().ConfigureAwait(false);
+            return result;
+        }
+
         public async Task<int> DeleteTaskLots(long taskId)
         {
             using var db = DbConnection;
+            var lots = await db.QuerySingleAsync<List<long>>($"select HWMS_ITASKLOT from HWMS_ITASKLOTS where HWMS_ITASK = {taskId}");
+            await db.ExecuteAsync($"delete HWMS_ITASKSERIALS where HWMS_ITASKLOT in ({string.Join(",", lots)})");
             var sql = $"delete HWMS_ITASKLOTS where HWMS_ITASK = {taskId}";
             return await db.ExecuteAsync(sql).ConfigureAwait(false);
 
+        }
+
+        public async Task<List<SerialModel>> GetSerials(long partId, long serialId, string locName)
+        {
+            //priority bug of SERIAL
+            var serial = "";
+            if(serialId > 0) 
+                serial = $" SERNUMBERS.SERIAL = {serialId} ";
+            else
+                serial = $" SERNUMBERS.SERIAL in (-1, 0) ";
+            var sql = "";
+            if (!string.IsNullOrEmpty(locName))
+                sql = $@"SELECT  SERNUMBERS.SERN as Serial , SERNUMBERS.SERNUM AS SerialNumber , CUSTOMERS.CUSTNAME as [Status]
+            FROM    SERNUMBERS , WAREHOUSES ,CUSTOMERS
+            WHERE   SERNUMBERS.PART = {partId}  
+            AND     {serial}  
+            AND     SERNUMBERS.SERN  > 0 
+            AND     SERNUMBERS.WARHS  = WAREHOUSES.WARHS
+            AND     SERNUMBERS.STATUS = CUSTOMERS.CUST
+            AND     WAREHOUSES.LOCNAME = '{locName}'";
+            else
+                sql = $@"SELECT  SERNUMBERS.SERN as Serial , SERNUMBERS.SERNUM AS SerialNumber , CUSTOMERS.CUSTNAME as [Status]
+            FROM    SERNUMBERS , CUSTOMERS
+            WHERE   SERNUMBERS.PART = {partId}  
+            AND     {serial}  
+            AND     SERNUMBERS.SERN  > 0 
+            AND     SERNUMBERS.STATUS = CUSTOMERS.CUST";
+
+            using var db = DbConnection;
+            db.Open();
+            var results = await db.QueryAsync<SerialModel>(sql).ConfigureAwait(false);
+
+            return results.ToList();
         }
     }
 }

@@ -58,5 +58,11 @@ namespace HarelTech.WMS.App.Pages
 
             return Page();
         }
+
+        public async Task<IActionResult> OnGetCompany()
+        {
+            var companies = _cache.Get<string>($"{Utilities.UserId(User.Claims)}_companies");
+            return await Task.FromResult(RedirectToPage("/Account/Company", new { companies }));
+        }
     }
 }

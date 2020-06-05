@@ -50,9 +50,11 @@
                 </a>
             </div>
             <div class="tcube col mr-3 mt-2 text-center rounded" style="background-color: #4C545B;color:white">
-                <i class="mt-4 fas fa-shipping-fast fa-3x" style="color:white !important;"></i><br />
-                <p class="mt-2 font-weight-bold" style="font-size: large;">Ship</p>
-                <p class="font-weight-bold" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Ship).Count</p>
+                <a asp-page="/Tasks/Index" asp-route-company="@Model.Company" asp-route-warhouseId="@Model.Warhouse" asp-route-taskType="@EnumTaskType.Ship">
+                    <i class="mt-4 fas fa-shipping-fast fa-3x" style="color:white !important;"></i><br />
+                    <p class="mt-2 font-weight-bold" style="font-size: large;">Ship</p>
+                    <p class="font-weight-bold" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Ship).Count</p>
+                </a>
             </div>
         </div>
         <div class="row mt-2">
@@ -65,9 +67,11 @@
             </div>
 
             <div class="tcube col mr-3 mt-2 text-center rounded" style="background-color: #3DBFD9;color:white !important;">
-                <i class="mt-4 fas fa-store-alt fa-3x" style="color:white !important;"></i><br />
-                <p class="mt-2 font-weight-bold" style="font-size: large;">Store</p>
-                <p class="font-weight-bold" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Store).Count</p>
+                <a asp-page="/Tasks/Index" asp-route-company="@Model.Company" asp-route-warhouseId="@Model.Warhouse" asp-route-taskType="@EnumTaskType.Store">
+                    <i class="mt-4 fas fa-store-alt fa-3x" style="color:white !important;"></i><br />
+                    <p class="mt-2 font-weight-bold" style="font-size: large;">Store</p>
+                    <p class="font-weight-bold" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Store).Count</p>
+                </a>
             </div>
         </div>
         <div class="tcube row mr-1 ml-1 mt-3 rounded" style="background-color: #3DBFD9; color: white !important;">
@@ -75,8 +79,18 @@
                 <i class="mt-4 fas fa-exchange-alt fa-3x" style="color:white !important;"></i><br />
             </div>
             <div class="col-8">
-                <p class="mt-4 font-weight-bold" style="font-size: large;">Transfer</p>
-                <p class="font-weight-bold" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Transfer).Count</p>
+                <a asp-page="/Tasks/Index" asp-route-company="@Model.Company" asp-route-warhouseId="@Model.Warhouse" asp-route-taskType="@EnumTaskType.Transfer">
+                    <p class="mt-4 font-weight-bold" style="font-size: large;">Transfer</p>
+                    <p class="font-weight-bold" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Transfer).Count</p>
+                </a>
             </div>
         </div>
     </div>
+
+<script>
+    $(document).ready(function () {
+        $("#btn_back").attr("href", app.url + "/Index/?handler=Company");
+        $("#btn_back").show();
+
+    });
+</script>

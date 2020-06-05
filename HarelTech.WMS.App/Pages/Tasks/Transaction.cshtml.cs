@@ -46,7 +46,6 @@ namespace HarelTech.WMS.App.Pages.Tasks
         public async Task<IActionResult> OnGet(CompleteTaskItem taskItem)
         {
             var userid = Utilities.UserId(User.Claims);
-            ViewData["PageTitle"] = "Transaction";
             Company = _cache.Get<string>($"{userid}_company");
             WarhouseId = _cache.Get<long>($"{userid}_warhouseId");
             CurrentTaskType = _cache.Get<EnumTaskType>($"{userid}_taskType");
@@ -54,12 +53,23 @@ namespace HarelTech.WMS.App.Pages.Tasks
             UserName = Utilities.UserLogin(User.Claims);
             Password = Utilities.Password(User.Claims);
 
+            var tasksTypes = await _wmsClient.GetTaskTypesAsync(Company);
+            ViewData["PageTitle"] = tasksTypes.FirstOrDefault(w => w.HWMS_ITASKTYPE == (int)CurrentTaskType).HWMS_ITASKTYPEDES + " Transaction";
+
             TaskLot = await _wmsClient.GetTransactionItems(new TransactionItemsRequest
             {
                 Company = Company,
                 ParId = taskItem.PART,
                 WarhouseId = WarhouseId
             });
+
+            if (TaskLot != null && TaskLot.Count > 0)
+                await _wmsClient.ActivateTask(new ActivateTaskRequest
+                {
+                    Company = Company,
+                    TaskId = taskItem.HWMS_ITASK,
+                    UserId = userid
+                });
 
             switch (CurrentTaskType)
             {
@@ -103,19 +113,16 @@ namespace HarelTech.WMS.App.Pages.Tasks
             var userid = Utilities.UserId(User.Claims);
             Company = _cache.Get<string>($"{userid}_company");
             WarhouseId = _cache.Get<long>($"{userid}_warhouseId");
-            var key = $"{WarhouseId}_bins";
-            if (_cache.TryGetValue(key, out List<string> bins))
-                return new JsonResult(new { Success = true, bins });
 
-            bins = await _wmsClient.GetBins(Company, WarhouseId);
-            if(bins != null && bins.Count > 0)
-            {
-                _cache.Set(key, bins, DateTime.Now.AddHours(2));
-                return new JsonResult(new { Success = true, bins });
-            }
+            return await Task.FromResult( ViewComponent("Bins", new { company = Company, warhouseId = WarhouseId }));
 
-            return new JsonResult(new { Success = false });
+        }
 
+        public async Task<IActionResult> OnGetSerials(long partId, string locName="")
+        {
+            var userid = Utilities.UserId(User.Claims);
+            Company = _cache.Get<string>($"{userid}_company");
+            return await Task.FromResult(ViewComponent("Serials", new { company = Company, partId, locName }));
         }
 
         public async Task<IActionResult> OnDeleteTaskLots(long taskId)

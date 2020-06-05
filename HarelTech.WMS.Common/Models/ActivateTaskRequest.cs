@@ -1,15 +1,15 @@
-﻿using HarelTech.WMS.Common.Entities;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace HarelTech.WMS.Common.Models
 {
-    public class AddTaskLotsRequest
+    public class ActivateTaskRequest
     {
         [Required(AllowEmptyStrings = false)]
         public string Company { get; set; }
-        [Required]
-        public List<TaskLotSerial> Lots { get; set; }
-        
+        public long  UserId { get; set; }
+        public long TaskId { get; set; }
     }
 }

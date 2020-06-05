@@ -1,0 +1,51 @@
+﻿<!-- Modal -->
+<div class="modal fade right" id="binsModalPreview" tabindex="-1" role="dialog" aria-labelledby="exampleModalPreviewLabel" aria-hidden="true">
+    <div class="modal-dialog-full-width modal-dialog momodel modal-fluid" role="document">
+        <div class="modal-content-full-width modal-content ">
+            <div class=" modal-header-full-width   modal-header text-center">
+                <a href="#" id="btn_back" data-dismiss="modal"><i class="fas fa-chevron-left" style="font-size: 22px;margin-top: 5px;"></i></a>
+                @*<button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <span style="font-size: 1.4em;" aria-hidden="true">&times;</span>
+                </button>*@
+                <span class="navbar-brand mx-auto w-100" id="exampleModalPreviewLabel">Select Bin/Area</span>
+            </div>
+            <div class="modal-body" style="background-color: #EAEEF1 !important;">
+                <form id="frmSearchBin" class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
+                    <input id="search_bin" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Search Bin"
+                           aria-label="Search" onkeyup="search_bin_list();" autofocus>
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                </form>
+
+                <div id="list_bins"></div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<style>
+    .modal-dialog-full-width {
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: none !important;
+    }
+
+    .modal-content-full-width {
+        height: auto !important;
+        min-height: 100% !important;
+        border-radius: 0 !important;
+    }
+
+    .modal-header-full-width {
+        border-bottom: 1px solid #9ea2a2 !important;
+        background-color: #4C545B;
+        color: white !important;
+        height: 60px !important;
+    }
+
+    .modal-footer-full-width {
+        border-top: 1px solid #9ea2a2 !important;
+    }
+</style>

@@ -19,5 +19,9 @@ namespace HarelTech.WMS.RestClient
         Task<bool> AddTaskLots(AddTaskLotsRequest request);
         Task<List<string>> GetBins(string company, long warhouseId);
         Task<int> DeleteTaskLots(string company, long taskId);
+
+        Task<int> ActivateTask(ActivateTaskRequest request);
+
+        Task<List<SerialModel>> GetSerials(SerialsRequest request);
     }
 }

@@ -1,0 +1,26 @@
+﻿<div class="modal fade" id="modalConfirmPartialCompleteTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify modal-danger modal-dialog-centered" role="document">
+        <!--Content-->
+        <div class="modal-content text-center">
+            <!--Header-->
+            <div class="modal-header d-flex justify-content-center">
+                <p class="heading">Are you sure?</p>
+            </div>
+
+            <!--Body-->
+            <div class="modal-body">
+                <p id="p_message">Task will be completed and closed with missing quantitys:</p>
+                <p>Total Tasks: @Model.TaskItem.TotalTasks</p>
+                <p>Total Reported: <span id="total_reported"></span></p>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer flex-center">
+                <a href="#" onclick="finalize_task('p');" class="btn  btn-outline-danger">Yes</a>
+                <a type="button" class="btn  btn-danger waves-effect" data-dismiss="modal">No</a>
+            </div>
+        </div>
+        <!--/.Content-->
+    </div>
+</div>

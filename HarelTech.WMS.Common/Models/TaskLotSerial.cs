@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HarelTech.WMS.Common.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
@@ -21,5 +22,13 @@ namespace HarelTech.WMS.Common.Models
         public long Quantity { get; set; }
         public string HWMS_FCUSTNAME { get; set; }
         public string HWMS_TCUSTNAME { get; set; }
+        [NotMapped]
+        public List<Serial> Serials { get; set; }
+    }
+
+    public class Serial
+    {
+        public long SerialId { get; set; }
+        public string SerialNumber { get; set; }
     }
 }

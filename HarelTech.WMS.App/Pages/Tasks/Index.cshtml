@@ -33,15 +33,12 @@
         </div>
     </div>
 
-<script>
+    <script>
     $(document).ready(function () {
+        $("#btn_back").attr("href", app.url + "/Index");
         $("#btn_back").show();
         get_group_Tasks(1);
 
-        $("#btn_back").on("click", function () {
-            parent.history.back();
-            return false;
-        })
     });
 
     function get_group_Tasks(taskGroup) {
@@ -60,7 +57,7 @@
     }
 
     function search_on_list() {
-        
+
         var input = document.getElementById("search_group");
         var filter = input.value.toLowerCase();
         var nodes = $("#group_tasks .card");
@@ -76,6 +73,6 @@
                 nodes[i].style.display = "none";
             }
         }
-        
+
     }
-</script>
+    </script>
