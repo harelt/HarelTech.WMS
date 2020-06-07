@@ -48,13 +48,15 @@
 
                     </div>
                 </div>
-                <form id="frmSearchSerials" class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
+                <div id="frmSearchSerials" class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
                     <input id="search_serials" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Search Serial"
                            aria-label="Search" style="font-size: 1rem;" autofocus>
                     <i class="fas fa-search" aria-hidden="true" onclick="search_serials_list();"></i>&nbsp;&nbsp;
-                    <i id="i_show_serial_list" class="fas fa-list-alt" aria-hidden="true" data-toggle="collapse" data-target="#list_serials"></i>
-                </form>
-                <div id="list_serials" class="collapse">
+                    <a onclick="show_hide_serials_list();"  role="button" aria-expanded="false">
+                        <i id="i_show_serial_list" class="fas fa-list-alt" aria-hidden="false"></i>
+                    </a>
+                </div>
+                <div id="list_serials" class="mb-4">
                 </div>
                 @if(Model.HWMS_ITASKTYPE == 3)
                 {
@@ -63,7 +65,7 @@
                     </div>
                 }
                 <hr />
-                <div id="list_serials_selected">
+                <div id="list_serials_selected" class="mb-4">
                 </div>
             </div>
 
@@ -76,10 +78,22 @@
 </div>
 
 <script>
+    var show_serials_list = false;
     $("#search_serials").keypress(function (event) {
         if (event.keyCode !== 13) return;
         search_serials_list();
     });
+
+    function show_hide_serials_list() {
+        show_serials_list = !show_serials_list;
+        var nodes = $("#list_serials .card")
+        for (i = 0; i < nodes.length; i++) {
+            if (show_serials_list)
+                $("#" + nodes[i].id).fadeIn(100);
+            else
+                $("#" + nodes[i].id).fadeOut(100);
+        }
+    }
 
     function change_serial_selection(card) {
         var c = $("#list_serials_selected " + card);
@@ -104,6 +118,7 @@
         $.get(app.url + "/Tasks/Transaction/?handler=AddNewSerialCard&id=" + index + "&serialNumber=" + serialNumber,
             function (data) {
                 $("#list_serials_selected").prepend(data);
+                $("#serials_complete_tasks").html($("#list_serials_selected .card").length);
             });
         //var newserial = $("#serial_card_").clone();
         //newserial[0].id = "#serial_card_" + index;

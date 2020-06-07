@@ -23,41 +23,41 @@
     </div>
 
     <!-- Search-->
-    <form class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
+    <div class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
         <input id="search_group" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Search Bin"
                aria-label="Search Bin" onkeyup="search_on_list();" autofocus>
         <i class="fas fa-search" aria-hidden="true"></i>
-    </form>
+    </div>
 </div>
 
 <div id="task_item_list" class="animated fadeInDown">
     @foreach (var item in Model.CompleteTaskItems)
     {
-        var bin = item.HWMS_ITASKFROMBIN ?? item.HWMS_ITASKTOBIN;
+        var bin = curType != 3 ? item.HWMS_ITASKFROMBIN:item.HWMS_ITASKTOBIN;
         <div class="card promoting-card m-3">
             <div class="tcube card-body d-flex flex-row">
                 @if (item.CompletedTasks == 0)
                 {
-                    <span class="p-4 mr-2 mr-3 text-center" style="background-color: #9EADB9; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large">
-                        <i class="fas fa-pencil-alt" style="color: white !important;"></i>
+                    <span class="col-4 text-center" style="background-color: #9EADB9; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large">
+                        <i class="fas fa-pencil-alt mt-4" style="color: white !important;"></i>
                         <br /> @item.CompletedTasks/@item.TotalTasks
                     </span>
                 }
                 else if (item.CompletedTasks < item.TotalTasks)
                 {
-                    <span class="p-4 mr-2 mr-3 text-center" style="background-color: #FFD2D5; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large">
-                        <i class="fas fa-pencil-alt" style="color: white !important;"></i>
+                    <span class="col-4 text-center" style="background-color: #FFD2D5; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large">
+                        <i class="fas fa-pencil-alt mt-4" style="color: white !important;"></i>
                         <br /> @item.CompletedTasks/@item.TotalTasks
                     </span>
                 }
                 else
                 {
-                    <span class="p-4 mr-2 mr-3 text-center" style="background-color: #3DBFD9; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large">
-                        <i class="fas fa-pencil-alt" style="color: white !important;"></i>
+                    <span class="col-4 text-center" style="background-color: #3DBFD9; color: white;font-family: Montserrat !important; font-weight: 500;font-size:large">
+                        <i class="fas fa-pencil-alt mt-4" style="color: white !important;"></i>
                         <br /> @item.CompletedTasks/@item.TotalTasks
                     </span>
                 }
-            <div class="col-9 mt-1">
+            <div class="col-8 mt-1">
                 <!-- Title -->
                 @*<a href="/Tasks/TaskItems/TaskTransaction?part=@item.PART"><h6 class="card-title font-weight-bold mb-2" style="font-family: Montserrat !important;">@item.PARTDES</h6><i class="fa fa-chevron-right float-right" aria-hidden="true"></i></a>*@
                 <h6 class="card-title font-weight-bold mb-2" style="font-family: Montserrat !important;">@item.PARTDES</h6>
@@ -81,6 +81,7 @@
 <script>
     var search_subject = "Bin";
     $(document).ready(function () {
+        $("#btn_menu").hide();
         $("#btn_back").attr("href", app.url + "/Tasks/Index?taskType=@curType");
         $("#btn_back").show();
         //get_group_Tasks(1);

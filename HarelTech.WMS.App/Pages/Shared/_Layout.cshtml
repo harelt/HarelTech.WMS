@@ -45,12 +45,12 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container">
-                <button class="navbar-toggler" type="button" data-activates="slide-out"
+                <button id="btn_menu" class="navbar-toggler collapse" type="button" data-activates="slide-out"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+                <a href="#" id="btn_back" style="display: none"><i class="fas fa-chevron-left"></i></a>
                 <span id="page_title" class="navbar-brand mx-auto">@ViewData["PageTitle"]</span>
-                <a href="#" id="btn_back" style="display: none"><i class="fas fa-chevron-right"></i></a>
             </div>
         </nav>
     </header>

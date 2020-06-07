@@ -64,12 +64,32 @@ namespace HarelTech.WMS.App.Pages.Tasks
             });
 
             if (TaskLot != null && TaskLot.Count > 0)
+            {
                 await _wmsClient.ActivateTask(new ActivateTaskRequest
                 {
                     Company = Company,
                     TaskId = taskItem.HWMS_ITASK,
                     UserId = userid
                 });
+
+                List<TaskLotSerial> selectedLot=null;
+                if (CurrentTaskType != EnumTaskType.Receive)
+                {
+                    selectedLot = TaskLot.Where(w => w.FROMBIN == TaskItem.HWMS_ITASKFROMBIN).ToList();
+                }
+                else
+                {
+                    selectedLot = TaskLot.Where(w => w.TOBIN == TaskItem.HWMS_ITASKTOBIN).ToList();
+                }
+                if (selectedLot != null)
+                {
+                    var ids = selectedLot.Select(s => s.HWMS_ITASK).ToList();
+                    TaskLot.RemoveAll(w =>  ids.Contains(w.HWMS_ITASK));
+                    TaskLot.InsertRange(0, selectedLot);
+                }
+            }
+
+            
 
             switch (CurrentTaskType)
             {

@@ -149,7 +149,7 @@
     var card_serial;
     var card_serials;
     $(document).ready(function () {
-
+        $("#btn_menu").hide();
         $("#btn_back").attr("href", app.url + "/Tasks/TaskItems?taskType=@curType&refOrderZone=@Model.TaskItem.RefOrderOrZone");
         $("#btn_back").show();
             //get_group_Tasks(1);
@@ -176,7 +176,7 @@
             $.get(app.url + "/Tasks/Transaction/?handler=Serials&partId=" + partid + "&locName=" +
                 locname + "&serial=" + serial, function (data) {
                     $("#list_serials").html(data);
-                    $("#list_serials").toggle(false);
+                    //$("#list_serials").toggle(false);
                     $("#search_serials").val("");
             });
             app.hideLoader();
@@ -382,30 +382,27 @@
         var filter = input.value;
         var nodes = $("#list_serials .card h5 span");
         var show = false;
-
         if (!filter || filter === '') {
-            $("#list_serials").toggle(false);
-            $("#manual_add_serial").toggle(false);
+            show_serials_list = true;
+            show_hide_serials_list();
             return;
         }
-
-
+                
         for (i = 0; i < nodes.length; i++) {
             var node = nodes[i].innerText;
-
+            
             if (node.startsWith(filter)) {
-                $("#list_serials #card_" + i).show();
+                $(nodes[i].dataset["card"]).fadeIn(100);
                 show = true;
             } else {
-                $("#list_serials #card_" + i).hide();
+                $(nodes[i].dataset["card"]).fadeOut(100);
             }
         }
+
         if (show) {
-            $("#list_serials").toggle(true);
             $("#manual_add_serial").toggle(false);
         }
         else {
-            $("#list_serials").toggle(false);
             $("#manual_add_serial").toggle(true);
         }
 
@@ -413,7 +410,7 @@
     }
 
     function submit_selected_serials() {
-        debugger;
+        
         var chbs = $("#list_serials_selected .card");
         var serials = [];
 
