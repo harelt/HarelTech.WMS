@@ -20,7 +20,7 @@ namespace HarelTech.WMS.App.ViewComponents
             _cache = cache;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync(string company, long partId, long serial, string locName)
+        public async Task<IViewComponentResult> InvokeAsync(string company, long partId, long lot, string locName)
         {
             var key = $"{partId}_{locName}_serials";
             if (_cache.TryGetValue(key, out List<SerialModel> serials))
@@ -30,7 +30,7 @@ namespace HarelTech.WMS.App.ViewComponents
                 Company = company,
                 LocName = locName,
                 PartId = partId,
-                SerialId = serial
+                SerialId = lot
             });
             if (serials != null && serials.Count > 0)
             {

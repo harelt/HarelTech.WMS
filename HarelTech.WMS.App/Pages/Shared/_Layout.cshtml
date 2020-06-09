@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -54,32 +55,33 @@
             </div>
         </nav>
     </header>
-    }
-    <!-- Sidebar navigation -->
-    <div id="slide-out" class="side-nav fixed stylish-color">
-        <ul class="custom-scrollbar">
+
+ <!-- Sidebar navigation -->
+    <div id="slide-out" class="side-nav fixed">
+        <ul class="collapsible collapsible-accordion">
             <!-- Logo -->
-            @*<li>
-            <div class="logo-wrapper waves-light">
-                <a href="#">
-                    <img src="https://mdbootstrap.com/img/logo/mdb-transparent.png"
-                         class="img-fluid flex-center">
-                </a>
-            </div>
-        </li>*@
             <li>
-            <div class="logo-wrapper sn-ad-avatar-wrapper">
-                <a href="#">
-                    <img src="~/img/user.png"
-                         class="rounded-circle"><span>
-                        Anna
-                        Deynah
+                <div class="flex-center mt-4">
+                    <i class="fa fa-user-circle fa-4x" aria-hidden="true" style="color: #3DBFD9;"></i>
+                </div>
+            </li>
+            <li>
+                <div class="flex-center">
+                    <span>
+                        @User.Claims.FirstOrDefault(w => w.Type == ClaimTypes.Name).Value
                     </span>
-                </a>
-            </div>
+                </div>
+            </li>
+            <li>
+                <a href="#" class="waves-effect text-white">Dashboard <i class="fas fa-chevron-right float-right mt-3"></i></a>
+            </li>
+            <li>
+                <a href="#" class="waves-effect text-white">Select Company <i class="fas fa-chevron-right float-right mt-3"></i></a>
+            </li>
+            <li>
+                <a href="#" class="waves-effect text-white">Exit <i class="fas fa-chevron-right float-right mt-3"></i></a>
             </li>
             <!--/. Logo -->
-           
             <!--/.Search Form-->
             <!-- Side navigation links -->
             <li>
@@ -168,9 +170,9 @@
             </li>
             <!--/. Side navigation links -->
         </ul>
-        <div class="sidenav-bg rgba-blue-strong"></div>
+        <div class="sidenav-bg rgba-black-light"></div>
     </div>
-
+    }
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()

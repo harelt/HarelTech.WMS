@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -56,14 +55,19 @@ namespace HarelTech.WMS.App.Pages.Tasks
             var tasksTypes = await _wmsClient.GetTaskTypesAsync(Company);
             ViewData["PageTitle"] = tasksTypes.FirstOrDefault(w => w.HWMS_ITASKTYPE == (int)CurrentTaskType).HWMS_ITASKTYPEDES + " Transaction";
 
-            TaskLot = await _wmsClient.GetTransactionItems(new TransactionItemsRequest
+            if (CurrentTaskType != EnumTaskType.Receive)
             {
-                Company = Company,
-                ParId = taskItem.PART,
-                WarhouseId = WarhouseId
-            });
+                TaskLot = await _wmsClient.GetTransactionItems(new TransactionItemsRequest
+                {
+                    Company = Company,
+                    ParId = taskItem.PART,
+                    WarhouseId = WarhouseId
+                });
+            }
+            else
+                TaskLot = new List<TaskLotSerial>();
 
-            if (TaskLot != null && TaskLot.Count > 0)
+            if (TaskLot != null && TaskLot.Count >= 0)
             {
                 await _wmsClient.ActivateTask(new ActivateTaskRequest
                 {
@@ -88,7 +92,6 @@ namespace HarelTech.WMS.App.Pages.Tasks
                     TaskLot.InsertRange(0, selectedLot);
                 }
             }
-
             
 
             switch (CurrentTaskType)
@@ -138,11 +141,11 @@ namespace HarelTech.WMS.App.Pages.Tasks
 
         }
 
-        public async Task<IActionResult> OnGetSerials(long partId, string locName="")
+        public async Task<IActionResult> OnGetSerials(long partId, long lot, string locName="")
         {
             var userid = Utilities.UserId(User.Claims);
             Company = _cache.Get<string>($"{userid}_company");
-            return await Task.FromResult(ViewComponent("Serials", new { company = Company, partId, locName }));
+            return await Task.FromResult(ViewComponent("Serials", new { company = Company, partId, lot, locName }));
         }
 
         public async Task<IActionResult> OnDeleteTaskLots(long taskId)
@@ -163,6 +166,11 @@ namespace HarelTech.WMS.App.Pages.Tasks
                 ViewName = "_newSerialCard",
                 ViewData = ViewData
             });
+        }
+
+        public async Task<IActionResult> OnPostAddNewLot([FromBody]AddNewLotRequest request)
+        {
+            return await Task.FromResult(Partial("_newLotCard", request));
         }
     }
 }

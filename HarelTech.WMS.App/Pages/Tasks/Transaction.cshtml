@@ -49,12 +49,18 @@
         </div>
     </div>
     <!-- Search-->
-    <form class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
+    <div class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
         <input id="search_group" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Scan Lot"
-               aria-label="Search Bin" onkeyup="search_on_list();" autofocus>
-        <i class="fas fa-search" aria-hidden="true"></i>
-    </form>
+               aria-label="Search Bin" autofocus>
+        <i class="fas fa-search" aria-hidden="true" onclick="search_on_list();"></i>
+    </div>
 </div>
+@if(curType  == 3)
+{
+    <div id="manual_add_lot" class="text-center">
+        <a href="#" onclick="add_manual_lot();"><i class="fas fa-plus-circle"></i> Add Lot</a>
+    </div>
+}
 <div id="task_lots" class="animated fadeInY" style="margin-bottom: 4rem !important;">
     @foreach (var item in Model.TaskLot)
     {
@@ -109,20 +115,22 @@
                 </div>
             </div>
             @if(sernflag != "")
-                    {
-            <div class="row mr-2 ml-2">
-                <a data-toggle="modal" data-target="#serialsModalPreview" data-card="#card_@i"
-                   data-lot="@item.HWMS_ELOTNUMBER" data-partid="@Model.TaskItem.PART"
-                   data-locname="@Model.TaskItem.HWMS_ITASKFROMBIN" data-serial="@item.HWMS_LOT"
-                   class="btn btn-outline-cyan btn-block mt-2" style="color: #3DBFD9;border-color: #3DBFD9 !important">Add Serial numbers <i class="fas fa-arrow-right float-right"></i></a>
-            </div>
-                    }
+            {
+                var bin = curType != 3 ? Model.TaskItem.HWMS_ITASKFROMBIN: "";
+                <div class="row mr-2 ml-2">
+                    <a data-toggle="modal" data-target="#serialsModalPreview" data-card="#card_@i"
+                       data-lot="@item.HWMS_ELOTNUMBER" data-partid="@Model.TaskItem.PART"
+                       data-locname="@bin" data-serial="@item.HWMS_LOT"
+                       class="btn btn-outline-cyan btn-block mt-2" style="color: #3DBFD9;border-color: #3DBFD9 !important">Add Serial numbers <i class="fas fa-arrow-right float-right"></i></a>
+                </div>
+            }
         </div>
     </div>
         i++;
     }
 
 </div>
+<!--Footer -->
 <nav class="navbar fixed-bottom navbar-expand-lg text-center" style="background-color: #3DBFD9 !important">
     @*<button id="btn_login" class="btn btn-primary btn-block my-4 waves-effect" style="background-color:#3DBFD9 !important;color: white;">
             Post Transaction
@@ -173,7 +181,7 @@
             card_serial = $(e.relatedTarget).data('card');
             $("#serialsModalPreview #lot_number").html(lot);
             app.showLoader();
-            $.get(app.url + "/Tasks/Transaction/?handler=Serials&partId=" + partid + "&locName=" +
+            $.get(app.url + "/Tasks/Transaction/?handler=Serials&partId=" + partid + "&lot=" + serial + "&locName=" +
                 locname + "&serial=" + serial, function (data) {
                     $("#list_serials").html(data);
                     //$("#list_serials").toggle(false);
@@ -182,6 +190,11 @@
             app.hideLoader();
         });
 
+        //fire if enter on search
+        $("#search_group").keypress(function (event) {
+            if (event.keyCode !== 13) return;
+            search_on_list();
+        });
 
         config = {username: '@Model.UserName', password: '@Model.Password',
         url: app.priorityUrl,
@@ -223,7 +236,7 @@
         var input = document.getElementById("search_group");
         var filter = input.value.toLowerCase();
         var nodes = $("#task_lots .card");
-
+        var show = false;
         for (i = 0; i < nodes.length; i++) {
             if (!filter || filter === '') {
                 nodes[i].style.display = "block";
@@ -231,10 +244,15 @@
             }
             if (nodes[i].innerText.toLowerCase().includes(filter)) {
                 nodes[i].style.display = "block";
+                show = true;
             } else {
                 nodes[i].style.display = "none";
             }
         }
+        if (!show && $("#manual_add_lot")) {
+            app.presentToast("Bin not found.", top, "error");
+        }
+
     }
 
     function plusQty(elm) {
@@ -374,10 +392,11 @@
                 $("#list_bins #card_" + i).hide();
             }
         }
+
     }
 
     function search_serials_list() {
-        
+
         var input = document.getElementById("search_serials");
         var filter = input.value;
         var nodes = $("#list_serials .card h5 span");
@@ -387,10 +406,10 @@
             show_hide_serials_list();
             return;
         }
-                
+
         for (i = 0; i < nodes.length; i++) {
             var node = nodes[i].innerText;
-            
+
             if (node.startsWith(filter)) {
                 $(nodes[i].dataset["card"]).fadeIn(100);
                 show = true;
@@ -410,7 +429,7 @@
     }
 
     function submit_selected_serials() {
-        
+
         var chbs = $("#list_serials_selected .card");
         var serials = [];
 
@@ -424,13 +443,46 @@
             var serialno = chbs[i].dataset["serialno"];
             serials.push({ "SerialId": parseInt(serial), "SerialNumber": serialno });
         }
-                
+
         card_serials = [];
         $(card_serial + " .quantity").val(serials.length);
         card_serials.push({ card: card_serial, serials: serials });
         card_serial = "";
         update_total_tasks();
         $("#serialsModalPreview").modal('hide');
+    }
+
+    function add_manual_lot() {
+        request = {
+            "Id": $("#task_lots .card").length,
+            "TaskId": parseInt("@Model.TaskItem.HWMS_ITASK"),
+            "LotNumber": $("#search_group").val(),
+            "PartId": parseInt("@Model.TaskItem.PART"),
+            "SernFlag": "@Model.TaskItem.SERNFLAG",
+            "TaskType": parseInt($("#task_type").val()),
+            "FromBin": "@Model.TaskItem.HWMS_ITASKFROMBIN"
+        };
+
+        $.ajax({
+            type: "POST",
+            url: app.url + "/Tasks/Transaction/?handler=AddNewLot",
+            beforeSend: function (xhr) {
+                xhr.setRequestHeader("RequestVerificationToken",
+                    $('input:hidden[name="__RequestVerificationToken"]').val());
+            },
+            data: JSON.stringify(request),
+            success: function (response) {
+                $("#task_lots").prepend(response);
+            },
+            failure: function (response) {
+                console.log(response);
+            },
+            error: function (response) {
+                console.log(response);
+            },
+            contentType: "application/json; charset=utf-8"
+            //dataType: "json"
+        });
     }
 </script>
 
