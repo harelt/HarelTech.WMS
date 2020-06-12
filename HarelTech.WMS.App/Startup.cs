@@ -51,7 +51,7 @@ namespace HarelTech.WMS.App
                     .AllowAnyMethod();
                 });
             });
-            services.AddSingleton<IWmsClient>(s => new WmsClient(Configuration["WebApi:Url"], Configuration["WebApi:UserName"], Configuration["WebApi:Password"]));
+            services.AddTransient<IWmsClient>(s => new WmsClient(Configuration["WebApi:Url"], Configuration["WebApi:UserName"], Configuration["WebApi:Password"]));
             services.AddMemoryCache();
         }
 

@@ -32,16 +32,16 @@
                  data-parent="#accordionEx1">
                 <div class="card-body">
                     <div class="row mt-2" style="font-weight: 600 !important">
-                        <div class="col-6">Ref:</div>
-                        <div class="col-6">@Model.TaskItem.HWMS_REFNAME</div>
+                        <div class="col-4">Ref:</div>
+                        <div class="col-8">@Model.TaskItem.HWMS_REFNAME</div>
                     </div>
                     <div class="row mt-2" style="font-weight: 600 !important">
-                        <div class="col-6">Order/Doc:</div>
-                        <div class="col-6">@Model.TaskItem.HWMS_REFORDER</div>
+                        <div class="col-4">Order/Doc:</div>
+                        <div class="col-8">@Model.TaskItem.HWMS_REFORDER</div>
                     </div>
                     <div class="row mt-2" style="font-weight: 600 !important">
-                        <div class="col-6">Task #:</div>
-                        <div class="col-6">@Model.TaskItem.HWMS_ITASKNUM</div>
+                        <div class="col-4">Task #:</div>
+                        <div class="col-8">@Model.TaskItem.HWMS_ITASKNUM</div>
                     </div>
                 </div>
             </div>
@@ -66,7 +66,7 @@
     {
         var sernflag = Model.TaskItem.SERNFLAG == "Y" ? "disabled":"";
         var background = Model.TaskItem.SERNFLAG == "Y" ? "lightgray":"white";
-    <input type="hidden" id="lot_id" />
+    @*<input type="hidden" id="lot_id" />*@
     <div id="card_@i" class="card m-2" data-lotnumber="@item.HWMS_ELOTNUMBER" data-lot="@item.HWMS_LOT" data-taskid="@Model.TaskItem.HWMS_ITASK" data-serials="">
         <div class="card-body m-2">
             <div class="row" style="font-weight: 700 !important">
@@ -94,9 +94,9 @@
             <div class="row" style="font-weight: 600 !important;background-color: #E9F5FF;">
                 <div class="col-6">To Bin/Area:</div>
                 @if (!Model.ChangeToBin)
-                    {<div class="col-6" id="tobin_@i">@Model.TaskItem.HWMS_ITASKTOBIN</div>}
+                    {<div class="col-6" id="span_tobin_@i">@Model.TaskItem.HWMS_ITASKTOBIN</div>}
                     else
-                    {<div class="col-6" id="tobin_@i">
+                    {<div class="col-6" id="span_tobin_@i">
                         <a data-toggle="modal" data-target="#binsModalPreview" data-spanid="span_tobin_@i">
                             <span id="span_tobin_@i" data-wow-iteration="5">@Model.TaskItem.HWMS_ITASKTOBIN</span>
                             <i class="fas fa-arrow-right float-right"></i>
@@ -120,7 +120,7 @@
                 <div class="row mr-2 ml-2">
                     <a data-toggle="modal" data-target="#serialsModalPreview" data-card="#card_@i"
                        data-lot="@item.HWMS_ELOTNUMBER" data-partid="@Model.TaskItem.PART"
-                       data-locname="@bin" data-serial="@item.HWMS_LOT"
+                       data-locname="@bin" data-serial="@item.HWMS_LOT" data-qty="@Model.TaskItem.TotalTasks"
                        class="btn btn-outline-cyan btn-block mt-2" style="color: #3DBFD9;border-color: #3DBFD9 !important">Add Serial numbers <i class="fas fa-arrow-right float-right"></i></a>
                 </div>
             }
@@ -308,11 +308,14 @@
         else
             $("#modalConfirmPartialCompleteTask").modal('hide')
         app.showLoader();
-
+        var breakLoop = false;
         var tasks = JSON.parse($("#jsonTasks").val());
         var taskLots = [];
+        var len = taskLots.length;
+        if (len === 0) //Receive new tasks
+            len = $("#task_lots .card").length;
 
-        for (var i = 0; i < tasks.length; i++) {
+        for (var i = 0; i < len; i++) {
             var qty = parseInt($("#qty_" + i).val());
             if (qty === 0)
                 continue;
@@ -326,7 +329,7 @@
                 "Quantity": qty,
                 "FROMBIN": $("#frombin_" + i).html(),
                 "TOBIN": $("#span_tobin_" + i).html(),
-                "ExpDate": $("#exp_date_" + i).html(),
+                "ExpDate": !$("#exp_date_" + i).html() ? $("#exp_date_" + i).val() : $("#exp_date_" + i).html(),
                 "HWMS_LOT": $("#card_" + i).data("lot"),
                 "HWMS_ITASK": $("#card_" + i).data("taskid"),
                 "STATUS": '',
@@ -336,12 +339,19 @@
                 "HWMS_FCUSTNAME": $("#status_" + i).html(),
                 "HWMS_TCUSTNAME": $("#status_" + i).html(),
                 "Serials": serials
-             });
+            });
 
+            if (taskLots[i].HWMS_ELOTNUMBER === "") {
+                app.presentToast("Lot number can not be empty", top, "error");
+                $("#card_" + i).focus();
+                breakLoop = true;
+                app.hideLoader();
+                break;
+                //$('body').scrollTo("#card_" + i);
+            }
         }
-
+        if (breakLoop) return;
         //call add task
-        debugger;
         $.ajax({
             type: "POST",
             url: app.url + "/Tasks/Transaction/?handler=AddTaskLots",
@@ -369,8 +379,10 @@
     }
 
     function bin_selected(bin) {
+        debugger;
         $("#binsModalPreview").modal('hide')
         $("#" + tobin).html(bin);
+        $("#" + tobin).val(bin);
         $("#" + tobin).addClass("animated flash");
     }
 
@@ -460,7 +472,9 @@
             "PartId": parseInt("@Model.TaskItem.PART"),
             "SernFlag": "@Model.TaskItem.SERNFLAG",
             "TaskType": parseInt($("#task_type").val()),
-            "FromBin": "@Model.TaskItem.HWMS_ITASKFROMBIN"
+            "FromBin": "@Model.TaskItem.HWMS_ITASKFROMBIN",
+            "ToBin": "@Model.TaskItem.HWMS_ITASKTOBIN",
+            "Qty": parseInt("@Model.TaskItem.TotalTasks")
         };
 
         $.ajax({
@@ -473,6 +487,7 @@
             data: JSON.stringify(request),
             success: function (response) {
                 $("#task_lots").prepend(response);
+                $("#search_group").val("");
             },
             failure: function (response) {
                 console.log(response);

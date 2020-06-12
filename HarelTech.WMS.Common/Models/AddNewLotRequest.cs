@@ -13,5 +13,7 @@ namespace HarelTech.WMS.Common.Models
         public string SernFlag { get; set; }
         public int TaskType { get; set; }
         public string FromBin { get; set; }
+        public string ToBin { get; set; }
+        public int Qty { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using HarelTech.WMS.Common.Entities;
@@ -102,6 +103,16 @@ namespace HarelTech.WMS.Api.Controllers
                     HWMS_TCUSTNAME = item.HWMS_TCUSTNAME,
                     Serials = item.Serials
                 };
+                if (item.HWMS_ELOTNUMBER == "0")
+                    tl.HWMS_EXPDATE = 0;
+                else
+                {
+                    CultureInfo uk = new CultureInfo("en-UK", false);
+                    var expDate = DateTime.Parse(item.ExpDate, uk);
+                    tl.HWMS_EXPDATE = (long)expDate.Subtract(new DateTime(1988, 1, 1, 0, 0, 0)).TotalMinutes;
+                }
+
+                lots.Add(tl);
             }
             var result = await _priority.CompanyDb(request.Company).AddTaskLots(lots);
             return Ok(result);

@@ -8,7 +8,7 @@ namespace HarelTech.WMS.Common.Models
     public class TasksSummerize
     {
         public List<TaskSum> Tasks { get; set; }
-        public int Open { get; set; }
+        public int Done { get; set; }
         public int Total { get; set; }
     }
 
@@ -16,6 +16,7 @@ namespace HarelTech.WMS.Common.Models
     {
         public long Task { get; set; }
         public int Count { get; set; }
+        public string show { get; set; } = "";
     }
 
     

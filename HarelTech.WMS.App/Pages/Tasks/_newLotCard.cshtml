@@ -2,24 +2,31 @@
 @{
     var i = Model.Id;
     var sernflag = Model.SernFlag;
+    var qtyDisabled = string.IsNullOrEmpty(Model.SernFlag) ? "":"disabled";
     var partId = Model.PartId;
     var curType = Model.TaskType;
 }
 <div id="card_@i" class="card m-2 animated fadeInDown" data-taskid="@Model.TaskId" data-lot="0" data-lotnumber="@Model.LotNumber">
     <div class="card-body m-2">
-        <div class="form-row" style="font-weight: 700 !important">
-            <div class="col">Lot #:</div>
-            <div class="col md-form" style="color: #3DBFD9;">
-                <input class="form-control" id="lot_number_@i" value="@Model.LotNumber" placeholder="Lot Number">
+        <div class="md-form input-group mb-3" style="font-weight: 700 !important">
+            <div class="input-group-prepend">
+                <span class="input-group-text md-addon" id="material-addon1">Lot #:</span>
             </div>
+            <input type="text" class="form-control" id="lot_number_@i" value="@Model.LotNumber" onchange="update_lotnumber(@i);"
+                   aria-describedby="material-addon1" style="color: #3DBFD9;" required>
         </div>
-        <div class="form-row" style="font-weight: 700 !important">
-            <div class="col">Status:</div>
-            <div class="col" id="status_@i">Goods</div>
+
+        <div class="md-form input-group mb-3" style="font-weight: 700 !important">
+            <div class="input-group-prepend">
+                <span class="input-group-text md-addon" id="material-addon2">Status: </span>
+            </div>
+            <div class="col mt-1" id="status_@i" aria-describedby="material-addon2">Goods</div>
         </div>
-        <div class="form-row" style="font-weight: 700 !important">
-            <div class="col">Exp:</div>
-            <div class="col">
+        <div class="md-form input-group mb-3" style="font-weight: 700 !important">
+            <div class="input-group-prepend">
+                <span class="input-group-text md-addon" id="material-addon3">Exp: </span>
+            </div>
+            <div class="col mt-2" aria-describedby="material-addon3">
                 <div class="md-form md-outline input-with-post-icon datepicker">
                     <input placeholder="Select date" type="text" id="exp_date_@i" class="form-control" value="@DateTime.Now.AddYears(1).ToString("dd/MM/yyyy")">
                     <i class="fas fa-calendar input-prefix" tabindex=0></i>
@@ -28,21 +35,26 @@
         </div>
         <hr />
 
-        <div class="form-row" style="font-weight: 600 !important;background-color: #E9F5FF;">
-            <div class="col">To Bin/Area:</div>
-            <div class="col" id="tobin_@i">
-                <a data-toggle="modal" data-target="#binsModalPreview" data-spanid="span_tobin_@i">
-                    <input class="form-control" id="span_tobin_@i" value="" />
-                    <i class="fas fa-arrow-right float-right"></i>
-                </a>
+        <div class="md-form input-group mb-3" style="font-weight: 600 !important;background-color: #E9F5FF;">
+            <div class="input-group-prepend">
+                <span class="input-group-text md-addon" id="material-addon4">To Bin/Area: </span>
             </div>
+            <div class="col" id="tobin_@i" aria-describedby="material-addon4">
+                <input class="form-control" id="span_tobin_@i" value="@Model.ToBin" disabled/>
+            </div>
+            <a data-toggle="modal" data-target="#binsModalPreview" data-spanid="span_tobin_@i">
+                <div class="input-group-append mt-2">
+                    <i class="fas fa-arrow-right float-right"></i>
+                </div>
+            </a>
         </div>
+
         <div class="row text-center mt-4">
             <div class="col-4" style="font-weight: 600 !important;">Quantity:</div>
             <div class="col-8">
                 <div class="def-number-input number-input safari_only" style="background-color:#3DBFD9;">
                     <button onclick="minusQty('qty_@i');" class="minus"></button>
-                    <input id="qty_@i" class="quantity" min="1" name="quantity" value="0" type="number" onchange="update_total_tasks();" required>
+                    <input id="qty_@i" class="quantity" min="1" name="quantity" value="@Model.Qty" type="number" onchange="update_total_tasks();" required @qtyDisabled>
                     <button onclick="plusQty('qty_@i');" class="plus"></button>
                 </div>
             </div>
@@ -66,4 +78,17 @@
             format: 'dd/mm/yyyy',
         });
     });
+
+    function update_lotnumber(i) {
+        $("#task_lots #card_" + i).data("lotnumber", $("#task_lots #lot_number_" + i).val());
+    }
 </script>
+
+<style>
+    .md-form {
+        margin-top: 0px !important;
+    }
+    .md-form.input-group .input-group-text.md-addon {
+        font-weight: 700;
+    }
+</style>

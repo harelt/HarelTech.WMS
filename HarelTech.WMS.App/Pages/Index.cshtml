@@ -5,11 +5,18 @@
     ViewData["Title"] = "Home page";
     ViewData["PageTitle"] = "Dashboard";
     var percent = 0.0;
+    var pn = $"{Model.TasksSummerize.Done}/{Model.TasksSummerize.Total}";
     if (Model.TasksSummerize.Total != 0)
     {
-        percent = 100 - ((double)Model.TasksSummerize.Open / Model.TasksSummerize.Total * 100);
+        percent = (double)Model.TasksSummerize.Done / Model.TasksSummerize.Total * 100;
         //percent = Math.Round(percent, 0);
     }
+    //var pick = Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Pick).show;
+    //var show = Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Ship).show;
+    //var store = Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Store).show;
+    //var receive = Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Receive).show;
+    //var transfer = Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Transfer).show;
+
 }
 
 @Html.AntiForgeryToken()
@@ -20,7 +27,7 @@
     }
 </style>
 
-    <div class="animated fadeIn fast" style="margin-top:20px;">
+    <div class="animated fadeIn faster" style="margin-top:20px;">
         <div class="row mt-2">
             <div class="col-12 col-md-8 col-lg-4 mx-auto">
                 <div class="card border border-2 rounded" style="border-color: #3DBFD9 !important;border-width:2px !important;">
@@ -33,7 +40,7 @@
                                 <label class="ml-3" id="warhouse">@Model.WarhouseName</label>
                             </div>
                             <div class="col-4 ml-2">
-                                <div id="circle_text" class="circle" style="background: radial-gradient(circle at center,white 54%,transparent 54.5%), linear-gradient(to right,#3DBFD9 @percent%,#4C545B 0);">@percent%</div>
+                                <div id="circle_text" class="circle" style="background: radial-gradient(circle at center,white 59%,transparent 59%), linear-gradient(to right,#3DBFD9 @percent%,#4C545B 0);">@pn</div>
                             </div>
                         </div>
                     </div>
@@ -68,7 +75,7 @@
 
             <div class="tcube col mr-3 mt-2 text-center rounded" style="background-color: #3DBFD9;color:white !important;">
                 <a asp-page="/Tasks/Index" asp-route-company="@Model.Company" asp-route-warhouseId="@Model.Warhouse" asp-route-taskType="@EnumTaskType.Store">
-                    <i class="mt-4 fas fa-store-alt fa-3x" style="color:white !important;"></i><br />
+                    <i class="mt-4 fas fa-dolly-flatbed fa-3x" style="color:white !important;"></i><br />
                     <p class="mt-2 font-weight-bold" style="font-size: large;">Store</p>
                     <p class="font-weight-bold" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Store).Count</p>
                 </a>
@@ -80,8 +87,8 @@
             </div>
             <div class="col-8">
                 <a asp-page="/Tasks/Index" asp-route-company="@Model.Company" asp-route-warhouseId="@Model.Warhouse" asp-route-taskType="@EnumTaskType.Transfer">
-                    <p class="mt-4 font-weight-bold" style="font-size: large;">Transfer</p>
-                    <p class="font-weight-bold" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Transfer).Count</p>
+                    <p class="mt-4 font-weight-bold mr-5" style="font-size: large;">Transfer</p>
+                    <p class="font-weight-bold ml-4" style="font-size:x-large">@Model.TasksSummerize.Tasks.First(w => w.Task == (int)EnumTaskType.Transfer).Count</p>
                 </a>
             </div>
         </div>

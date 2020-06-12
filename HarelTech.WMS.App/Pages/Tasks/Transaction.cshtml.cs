@@ -170,6 +170,7 @@ namespace HarelTech.WMS.App.Pages.Tasks
 
         public async Task<IActionResult> OnPostAddNewLot([FromBody]AddNewLotRequest request)
         {
+            request.LotNumber = request.LotNumber == "" ? "0" : request.LotNumber;
             return await Task.FromResult(Partial("_newLotCard", request));
         }
     }

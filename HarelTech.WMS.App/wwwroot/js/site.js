@@ -16,6 +16,7 @@ app.profile = {
     "user_group": 0
 };
 
+
 function priorityReady () {
     console.log("Priority Ready");
 }

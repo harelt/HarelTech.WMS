@@ -75,7 +75,7 @@ namespace HarelTech.WMS.Repository
             //tasks by type
             var qry = new System.Text.StringBuilder($@"SELECT HWMS_ITASKTYPE as Task , COUNT(*) as Count
                 FROM HWMS_ITASKS
-                WHERE HWMS_ITASKSTATUS NOT IN ( 'F' , 'C' )
+                WHERE HWMS_ITASKSTATUS NOT IN ( 'F' , 'C', 'N' )
                 AND HWMS_ITASKWARHS = {warhouseId}
                 AND HWMS_ITASK > 0
                 AND ( HWMS_ASSIGNUSER = 0  OR HWMS_ASSIGNUSER = {userId} )
@@ -84,7 +84,7 @@ namespace HarelTech.WMS.Repository
             //open tasks
             qry.AppendLine($@"SELECT  COUNT(1) as OpenTasks
                 FROM  HWMS_ITASKS 
-                WHERE HWMS_ITASKSTATUS NOT IN ( 'F' , 'C' )
+                WHERE HWMS_ITASKSTATUS NOT IN ( 'F' , 'C', 'N' )
                 AND   HWMS_ITASKWARHS = {warhouseId}
                 AND   HWMS_ITASK > 0
                 AND ( HWMS_ASSIGNUSER = 0  OR HWMS_ASSIGNUSER = {userId} ) ;
@@ -105,9 +105,9 @@ namespace HarelTech.WMS.Repository
             var multi = await db.QueryMultipleAsync(qry.ToString(), null);
 
             ts.Tasks = multi.Read<TaskSum>().ToList();
-            ts.Open = multi.Read<int>().Single();
             ts.Total = multi.Read<int>().Single();
-            ts.Total += ts.Open;
+            ts.Done = multi.Read<int>().Single();
+            ts.Total += ts.Done;
 
             return ts;
         }

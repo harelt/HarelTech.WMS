@@ -83,5 +83,11 @@ namespace HarelTech.WMS.App.Pages
             return RedirectToPage("Company", new { companies = UserLogin.Companies });
             //return new JsonResult(new { success = true, message = "" });
         }
+
+        public async Task<IActionResult> OnGetLogout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToPage("Login");
+        }
     }
 }

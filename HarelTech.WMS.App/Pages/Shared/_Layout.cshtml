@@ -40,139 +40,8 @@
     </div>
     <!-- preloader -->
 
-
-    @if (User.Identity.IsAuthenticated)
-    {
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark">
-            <div class="container">
-                <button id="btn_menu" class="navbar-toggler collapse" type="button" data-activates="slide-out"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <a href="#" id="btn_back" style="display: none"><i class="fas fa-chevron-left"></i></a>
-                <span id="page_title" class="navbar-brand mx-auto">@ViewData["PageTitle"]</span>
-            </div>
-        </nav>
-    </header>
-
- <!-- Sidebar navigation -->
-    <div id="slide-out" class="side-nav fixed">
-        <ul class="collapsible collapsible-accordion">
-            <!-- Logo -->
-            <li>
-                <div class="flex-center mt-4">
-                    <i class="fa fa-user-circle fa-4x" aria-hidden="true" style="color: #3DBFD9;"></i>
-                </div>
-            </li>
-            <li>
-                <div class="flex-center">
-                    <span>
-                        @User.Claims.FirstOrDefault(w => w.Type == ClaimTypes.Name).Value
-                    </span>
-                </div>
-            </li>
-            <li>
-                <a href="#" class="waves-effect text-white">Dashboard <i class="fas fa-chevron-right float-right mt-3"></i></a>
-            </li>
-            <li>
-                <a href="#" class="waves-effect text-white">Select Company <i class="fas fa-chevron-right float-right mt-3"></i></a>
-            </li>
-            <li>
-                <a href="#" class="waves-effect text-white">Exit <i class="fas fa-chevron-right float-right mt-3"></i></a>
-            </li>
-            <!--/. Logo -->
-            <!--/.Search Form-->
-            <!-- Side navigation links -->
-            <li>
-                <ul class="collapsible collapsible-accordion">
-                    <li>
-                        <a class="collapsible-header waves-effect arrow-r">
-                            <i class="fas fa-chevron-right"></i> Submit
-                            blog<i class="fas fa-angle-down rotate-icon"></i>
-                        </a>
-                        <div class="collapsible-body">
-                            <ul>
-                                <li>
-                                    <a href="#" class="waves-effect">Submit listing</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="waves-effect">Registration form</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li>
-                        <a class="collapsible-header waves-effect arrow-r">
-                            <i class="far fa-hand-pointer"></i>
-                            Instruction<i class="fas fa-angle-down rotate-icon"></i>
-                        </a>
-                        <div class="collapsible-body">
-                            <ul>
-                                <li>
-                                    <a href="#" class="waves-effect">For bloggers</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="waves-effect">For authors</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li>
-                        <a class="collapsible-header waves-effect arrow-r">
-                            <i class="fas fa-eye"></i> About<i class="fas fa-angle-down rotate-icon"></i>
-                        </a>
-                        <div class="collapsible-body">
-                            <ul>
-                                <li>
-                                    <a href="#" class="waves-effect">Introduction</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="waves-effect">Monthly meetings</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li>
-                        <a class="collapsible-header waves-effect arrow-r">
-                            <i class="far fa-envelope"></i> Contact me<i class="fas fa-angle-down rotate-icon"></i>
-                        </a>
-                        <div class="collapsible-body">
-                            <ul>
-                                <li>
-                                    <a href="#" class="waves-effect">FAQ</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="waves-effect">Write a message</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="waves-effect">FAQ</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="waves-effect">Write a message</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="waves-effect">FAQ</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="waves-effect">Write a message</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="waves-effect">FAQ</a>
-                                </li>
-                                <li>
-                                    <a href="#" class="waves-effect">Write a message</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-            </li>
-            <!--/. Side navigation links -->
-        </ul>
-        <div class="sidenav-bg rgba-black-light"></div>
-    </div>
-    }
+    @await Html.PartialAsync("_nav")
+    
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -220,7 +89,6 @@
         $(window).on('load', function () {
             $('#mdb-preloader').hide();
         });
-
         $(document).ready(function () {
             // SideNav Button Initialization
             $(".navbar-toggler").sideNav();
@@ -228,6 +96,8 @@
             var sideNavScrollbar = document.querySelector('.custom-scrollbar');
             var ps = new PerfectScrollbar(sideNavScrollbar);
         });
+
+        
     </script>
     @RenderSection("Scripts", required: false)
 </body>

@@ -56,6 +56,11 @@ namespace HarelTech.WMS.App.Pages
                 TasksSummerize.Tasks.Add(new TaskSum { Task = item.HWMS_ITASKTYPE, Count = 0 });
             }
 
+            foreach (var item in TasksSummerize.Tasks)
+            {
+                if (item.Count == 0) item.show = "disabled";
+            }
+
             return Page();
         }
 

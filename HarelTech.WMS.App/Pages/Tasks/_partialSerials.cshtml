@@ -33,7 +33,7 @@
                             <div class="card-body">
                                 <div class="row mt-2" style="font-weight: 600 !important">
                                     <div class="col-6">Ref:</div>
-                                    <div class="col-6">@Model.RefOrderOrZone</div>
+                                    <div class="col-6">@Model.HWMS_REFNAME</div>
                                 </div>
                                 <div class="row mt-2" style="font-weight: 600 !important">
                                     <div class="col-6">Order/Doc:</div>
@@ -119,6 +119,8 @@
             function (data) {
                 $("#list_serials_selected").prepend(data);
                 $("#serials_complete_tasks").html($("#list_serials_selected .card").length);
+                $("#search_serials").val("");
+                $("#search_serials").focus();
             });
         //var newserial = $("#serial_card_").clone();
         //newserial[0].id = "#serial_card_" + index;

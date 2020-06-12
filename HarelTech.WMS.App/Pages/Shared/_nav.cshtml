@@ -1,0 +1,68 @@
+﻿@using System.Security.Claims;
+@{ 
+    bool notShow = Context.Request.Path.ToString().Contains("Login") || Context.Request.Path.ToString().Contains("Company");
+}
+@if (User.Identity.IsAuthenticated)
+{
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <button id="btn_menu" class="navbar-toggler collapse" type="button" data-activates="slide-out"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a href="#" id="btn_back" style="display: none"><i class="fas fa-chevron-left"></i></a>
+                <span id="page_title" class="navbar-brand mx-auto">@ViewData["PageTitle"]</span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sidebar navigation -->
+    <div id="slide-out" class="side-nav fixed sn-bg-2" style="width: 0px !important;">
+        <ul class="custom-scrollbar" style="font-weight: 700; font-size: 16px;">
+            <!-- Logo -->
+            <li>
+                <div class="flex-center mt-5">
+                    <i class="fa fa-user-circle fa-4x" aria-hidden="true" style="color: #3DBFD9;"></i>
+                </div>
+            </li>
+            <li>
+                <div class="flex-center">
+                    <span>
+                        @User.Claims.FirstOrDefault(w => w.Type == ClaimTypes.Name).Value
+                    </span>
+                </div>
+            </li>
+            <li><hr style="color: white !important;" /></li>
+            <li>
+                <a asp-page="/Account/Index" asp-page-handler="Company" class="waves-effect text-white">Select Company <i class="fas fa-chevron-right float-right mt-4 mr-4"></i></a>
+            </li>
+            @if(!notShow)
+            {
+            <li>
+                <a asp-page="/Index" class="waves-effect text-white">Dashboard <i class="fas fa-chevron-right float-right mt-4 mr-4"></i></a>
+            </li>
+            <li>
+                <a asp-page="/Tasks/Index" asp-route-taskType="1" class="waves-effect text-white">Pick <i class="fas fa-chevron-right float-right mt-4 mr-4"></i></a>
+            </li>
+            <li>
+                <a asp-page="/Tasks/Index" asp-route-taskType="2" class="waves-effect text-white">Ship <i class="fas fa-chevron-right float-right mt-4 mr-4"></i></a>
+            </li>
+            <li>
+                <a asp-page="/Tasks/Index" asp-route-taskType="3" class="waves-effect text-white">Receive <i class="fas fa-chevron-right float-right mt-4 mr-4"></i></a>
+            </li>
+            <li>
+                <a asp-page="/Tasks/Index" asp-route-taskType="4" class="waves-effect text-white">Store <i class="fas fa-chevron-right float-right mt-4 mr-4"></i></a>
+            </li>
+            <li>
+                <a asp-page="/Tasks/Index" asp-route-taskType="5" class="waves-effect text-white">Transfer <i class="fas fa-chevron-right float-right mt-4 mr-4"></i></a>
+            </li>
+
+            <li>
+                <a asp-page="/Account/Login" asp-page-handler="Logout" class="waves-effect text-white">Exit <i class="fas fa-chevron-right float-right mt-4 mr-4"></i></a>
+            </li>
+            }
+        </ul>
+        <div class="sidenav-bg rgba-black-light"></div>
+    </div>
+}
