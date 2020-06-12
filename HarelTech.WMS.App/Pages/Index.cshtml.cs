@@ -58,7 +58,8 @@ namespace HarelTech.WMS.App.Pages
 
             foreach (var item in TasksSummerize.Tasks)
             {
-                if (item.Count == 0) item.show = "disabled";
+                if (item.Count == 0) item.show = "none";
+                else item.show = "all";
             }
 
             return Page();
