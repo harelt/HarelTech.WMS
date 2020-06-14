@@ -21,7 +21,7 @@
             <div class="card-header" role="tab" id="headingTwoTs">
                 <a class="collapsed" data-toggle="collapse" data-parent="#accordionTs" href="#collapseTwoTs"
                    aria-expanded="false" aria-controls="collapseTwoTs" style="color: black !important;">
-                    <h5 class="mb-0">
+                    <h5 class="mb-0 mr-1">
                         @Model.TaskItem.PARTDES <span class="float-right" style="color: #3DBFD9 !important;"><span id="complete_tasks">@Model.TaskItem.CompletedTasks</span>/@Model.TaskItem.TotalTasks</span>
                     </h5>
                 </a>
@@ -51,7 +51,7 @@
     <!-- Search-->
     <div class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
         <input id="search_group" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Scan Lot"
-               aria-label="Search Bin" autofocus>
+               aria-label="Search Bin" autofocus autocomplete="off">
         <i class="fas fa-search" aria-hidden="true" onclick="search_on_list();"></i>
     </div>
 </div>
@@ -109,7 +109,7 @@
                 <div class="col-8">
                     <div class="def-number-input number-input safari_only" style="background-color:#3DBFD9;">
                         <button onclick="minusQty('qty_@i');" class="minus" @sernflag></button>
-                        <input id="qty_@i" class="quantity" min="0" max="@item.AVAILABLE" name="quantity" value="0" type="number" onchange="update_total_tasks();" required style="background-color: @background;" @sernflag>
+                        <input id="qty_@i" class="quantity" min="0" max="@item.AVAILABLE" name="quantity" value="0" type="number" onchange="update_total_tasks('#qty_@i',@item.AVAILABLE);" required style="background-color: @background;" @sernflag>
                         <button onclick="plusQty('qty_@i');" class="plus" @sernflag></button>
                     </div>
                 </div>
@@ -265,7 +265,15 @@
         update_total_tasks();
     }
 
-    function update_total_tasks() {
+    function update_total_tasks(elm, max) {
+        if (elm) {
+            var q = parseInt($(elm).val());
+            if (q > max) {
+                $(elm).val(max);
+                return;
+            }
+        }
+
         var cards = $("#task_lots .card");
         var tot = 0;
         for (var i = 0; i < cards.length; i++) {
@@ -287,8 +295,8 @@
         var totalTasks = parseInt($("#total_tasks").val());
         $("#total_reported").html(totalCount);
         if (totalCount > totalTasks) {
-            $("#modalConfirmCompleteTask #p_message").html(`Quantity reported is higher than ${totalTasks} ins!`);
-            $("#modalConfirmCompleteTask").modal("show");
+            $("#modalConfirmPartialCompleteTask #p_message").html(`Quantity reported is higher than ${totalTasks} ins!`);
+            $("#modalConfirmPartialCompleteTask").modal("show");
         }
         else if (totalCount === totalTasks)
         {
@@ -328,7 +336,7 @@
                 "HWMS_ELOTNUMBER": $("#card_" + i).data("lotnumber").toString(),
                 "Quantity": qty,
                 "FROMBIN": $("#frombin_" + i).html(),
-                "TOBIN": $("#span_tobin_" + i).html(),
+                "TOBIN": $("#span_tobin_" + i + " span").html(),
                 "ExpDate": !$("#exp_date_" + i).html() ? $("#exp_date_" + i).val() : $("#exp_date_" + i).html(),
                 "HWMS_LOT": $("#card_" + i).data("lot"),
                 "HWMS_ITASK": $("#card_" + i).data("taskid"),
@@ -341,14 +349,15 @@
                 "Serials": serials
             });
 
-            if (taskLots[i].HWMS_ELOTNUMBER === "") {
-                app.presentToast("Lot number can not be empty", top, "error");
-                $("#card_" + i).focus();
-                breakLoop = true;
-                app.hideLoader();
-                break;
-                //$('body').scrollTo("#card_" + i);
-            }
+            
+            //if (taskLots[i].HWMS_ELOTNUMBER === "") {
+            //    app.presentToast("Lot number can not be empty", top, "error");
+            //    $("#card_" + i).focus();
+            //    breakLoop = true;
+            //    app.hideLoader();
+            //    break;
+            //    //$('body').scrollTo("#card_" + i);
+            //}
         }
         if (breakLoop) return;
         //call add task

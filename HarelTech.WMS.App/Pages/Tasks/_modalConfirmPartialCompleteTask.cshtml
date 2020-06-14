@@ -1,5 +1,5 @@
 ﻿<div class="modal fade" id="modalConfirmPartialCompleteTask" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
+     aria-hidden="true" style="font-weight: 700 !important;">
     <div class="modal-dialog modal-sm modal-notify modal-danger modal-dialog-centered" role="document">
         <!--Content-->
         <div class="modal-content text-center">
@@ -11,7 +11,7 @@
             <!--Body-->
             <div class="modal-body">
                 <p id="p_message">Task will be completed and closed with missing quantitys:</p>
-                <p>Total Tasks: @Model.TaskItem.TotalTasks</p>
+                <p>Total Required: @Model.TaskItem.TotalTasks</p>
                 <p>Total Reported: <span id="total_reported"></span></p>
             </div>
 

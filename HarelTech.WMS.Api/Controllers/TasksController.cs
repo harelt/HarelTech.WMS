@@ -108,7 +108,7 @@ namespace HarelTech.WMS.Api.Controllers
                 else
                 {
                     CultureInfo uk = new CultureInfo("en-UK", false);
-                    var expDate = DateTime.Parse(item.ExpDate, uk);
+                    var expDate = DateTime.ParseExact(item.ExpDate, "dd/MM/yyyy", uk);
                     tl.HWMS_EXPDATE = (long)expDate.Subtract(new DateTime(1988, 1, 1, 0, 0, 0)).TotalMinutes;
                 }
 

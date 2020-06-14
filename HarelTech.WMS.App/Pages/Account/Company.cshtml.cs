@@ -54,5 +54,11 @@ namespace HarelTech.WMS.App
             _cache.Set($"{Utilities.UserId(User.Claims)}_warhouseName", Request.Form["WarhouseName"].ToString());
             return await Task.FromResult(RedirectToPage("../Index"));
         }
+
+        public async Task<IActionResult> OnGetCompanies()
+        {
+            var companies = _cache.Get<string>($"{Utilities.UserId(User.Claims)}_companies");
+            return await Task.FromResult(RedirectToAction("OnGet", new { companies }));
+        }
     }
 }

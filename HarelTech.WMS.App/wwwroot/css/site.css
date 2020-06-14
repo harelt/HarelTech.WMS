@@ -129,3 +129,13 @@ html {
 .card .card-body .card-text{
     font-size: 1.1rem !important;
 }
+
+modal-dialog.modal-notify.modal-info .modal-header {
+    background-color: #4dd0e1 !important;
+}
+
+.btn-outline-info {
+    color: #4dd0e1 !important;
+    background-color: transparent !important;
+    border: 2px solid #4dd0e1 !important;
+}
