@@ -376,10 +376,12 @@
             },
             data:  JSON.stringify(taskLots) ,
             success: function (response) {
+                debugger;
                 if (response.success)
                     window.app.taskForm('@Model.UserName', '@Model.Password', filter, '@Model.Company', totalQty, @Model.TaskItem.HWMS_ITASK);
                 else {
-                    app.presentToast("An error occured with sending task. Please try again...");
+                    app.presentToast("An error occured with sending task. Please try again...", top, "error");
+                    app.hideLoader();
                 }
             },
             failure: function (response) {

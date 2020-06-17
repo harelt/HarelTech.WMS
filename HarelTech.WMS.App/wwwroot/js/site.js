@@ -120,7 +120,7 @@ function showMessage(message) {
     }
     else {
         //rollback, delete lots by HWMS_ITASK
-        $("#modalConfirm #p_message").html(response.message);
+        $("#modalConfirm #p_message").html(message.message);
         $("#modalConfirm").modal("show");
         $("#modalConfirm #confirm_btn").on("click", function () {
             tasksForm.warningConfirm(0);
@@ -211,8 +211,9 @@ window.app.taskForm = async function (username, password, filter, company, qty, 
                         console.log("Row fetched done done...");
                         //tasksForm.fieldUpdate("HWMS_AUSERLOGIN", username, null, function (msg) { alert(msg); });
                         tasksForm.fieldUpdate("HWMS_COMPLETEDQTY", qty, null, function (msg) { alert(msg); });
-                        tasksForm.fieldUpdate("HWMS_ITASKSTATUS", "F", null, function (msg) { alert(msg); });
-                        tasksForm.saveRow(0);
+                        //tasksForm.fieldUpdate("HWMS_ITASKSTATUS", "F", null, function (msg) { alert(msg); });
+                        tasksForm.fieldUpdate("HWMS_ITASKSTATUS", "F");
+                        tasksForm.saveRow(0, null, showMessage);
                         app.hideLoader();
                     });
                 });
