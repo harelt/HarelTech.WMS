@@ -137,7 +137,7 @@ namespace HarelTech.WMS.Repository
             FROM HWMS_ITASKS , HWMS_ITASKTYPES , HWMS_REFTYPES
             WHERE HWMS_ITASKS.HWMS_ITASKTYPE =  HWMS_ITASKTYPES.HWMS_ITASKTYPE
             AND  HWMS_REFTYPES.HWMS_REFTYPE  = HWMS_ITASKS.HWMS_REFTYPE
-            AND  HWMS_ITASKSTATUS NOT IN ( 'C' )
+            AND  HWMS_ITASKSTATUS NOT IN (  'C', 'F', 'N' )
             AND  HWMS_ITASKS.HWMS_ITASKWARHS = {warhouseId}
             AND  HWMS_ITASKTYPES.HWMS_ITASKTYPE = {(int)taskType}
             AND  HWMS_ITASKS.HWMS_ITASK > 0
@@ -176,7 +176,7 @@ namespace HarelTech.WMS.Repository
                 FROM HWMS_ITASKS , HWMS_ITASKTYPES , HWMS_WZONES 
                 WHERE HWMS_ITASKS.HWMS_ITASKTYPE =  HWMS_ITASKTYPES.HWMS_ITASKTYPE
                 AND  HWMS_ITASKS.HWMS_ITASKFZONE =  HWMS_WZONES.HWMS_WZONE
-                AND  HWMS_ITASKSTATUS NOT IN (  'C' )
+                AND  HWMS_ITASKSTATUS NOT IN (  'C', 'F', 'N' )
                 AND  HWMS_ITASKS.HWMS_ITASKWARHS = {warhouseId}
                 AND  HWMS_ITASKTYPES.HWMS_ITASKTYPE = {(int)enumTaskType}
                 AND  HWMS_ITASKS.HWMS_ITASK > 0
@@ -193,7 +193,7 @@ namespace HarelTech.WMS.Repository
                 FROM HWMS_ITASKS , HWMS_ITASKTYPES , HWMS_WZONES 
                 WHERE HWMS_ITASKS.HWMS_ITASKTYPE =  HWMS_ITASKTYPES.HWMS_ITASKTYPE
                 AND  HWMS_ITASKS.HWMS_ITASKTZONE =  HWMS_WZONES.HWMS_WZONE
-                AND  HWMS_ITASKSTATUS NOT IN (  'C' )
+                AND  HWMS_ITASKSTATUS NOT IN (  'C', 'F', 'N' )
                 AND  HWMS_ITASKS.HWMS_ITASKWARHS = {warhouseId}
                 AND  HWMS_ITASKTYPES.HWMS_ITASKTYPE = {(int)enumTaskType}
                 AND  HWMS_ITASKS.HWMS_ITASK > 0

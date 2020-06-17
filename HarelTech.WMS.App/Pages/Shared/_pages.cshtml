@@ -1,0 +1,33 @@
+﻿@page
+<!--Modal: modalConfirm-->
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-notify modal-info" role="document">
+        <!--Content-->
+        <div class="modal-content text-center">
+            <!--Header-->
+            <div class="modal-header d-flex justify-content-center">
+                <p class="heading">Priority Message</p>
+            </div>
+
+            <!--Body-->
+            <div class="modal-body">
+                <p id="p_message"></p>
+            </div>
+
+            <!--Footer-->
+            <div class="modal-footer flex-center">
+                <a id="confirm_btn" type="button" class="btn  btn-info waves-effect" data-dismiss="modal">Ok</a>
+            </div>
+        </div>
+        <!--/.Content-->
+    </div>
+</div>
+<!--Modal: modalConfirm-->
+<!--Modal: modalConfirmPartialCompleteTask-->
+@await Html.PartialAsync("_modalConfirmPartialCompleteTask")
+<!--Modal: modalConfirmCompleteTask-->
+@await Html.PartialAsync("_modalConfirmCompleteTask")
+<!-- Bins -->
+@await Html.PartialAsync("_partialBins")
+

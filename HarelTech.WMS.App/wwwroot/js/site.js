@@ -16,6 +16,19 @@ app.profile = {
     "user_group": 0
 };
 
+window.addEventListener("load", () => {
+    function handleNetworkChange(event) {
+        if (navigator.onLine) {
+            //document.body.classList.remove("offline");
+            app.network("You are online..", "info");
+        } else {
+            app.network("No network connection. You are offline.", "error");
+        }
+    }
+    window.addEventListener("online", handleNetworkChange);
+    window.addEventListener("offline", handleNetworkChange);
+});
+
 
 function priorityReady () {
     console.log("Priority Ready");
@@ -91,7 +104,6 @@ window.app.signin = async function (username, password) {
 };
 
 function showMessage(message) {
-    debugger;
     if (message.type === "information" || message.type === "warning") {
         //all good
         $("#modalConfirm #p_message").html(message.message);
@@ -159,10 +171,19 @@ window.app.presentToast = async function presentToast(message, top, msgtype) {
     }
     else
     toastr.options = {
-        "positionClass": "lg-toast-bottom-center"
+        "positionClass": "md-toast-bottom-center",
         }
     toastr[msgtype](message);
 
+};
+
+window.app.network = function (message, msgtype) {
+    toastr.options = {
+        "positionClass": "md-toast-bottom-center",
+        "autohide": false,
+        "closeButton": true
+    }
+    toastr[msgtype](message);
 };
 
 window.app.taskForm = async function (username, password, filter, company, qty, taskId) {
@@ -207,7 +228,6 @@ window.app.taskForm = async function (username, password, filter, company, qty, 
 };
 
 window.app.PostLotTransaction = async function (rows, taskType) {
-    debugger;
     //app.tasksForm.isAlive(function () { alert('live'); }, function () { alert('dead'); }) 
     app.tasksForm.startSubForm("HWMS_ITASKLOTS", null, null,
         function (subform) {
@@ -226,8 +246,6 @@ window.app.PostSerialTransaction = async function () {
 };
 
 window.app.AddLotRows = async function (rows, taskType) {
-    debugger;
-
     app.tasksForm.startSubForm("HWMS_ITASKLOTS", null, null,
         function (subform) {
             //app.tasksSubForm = subform;

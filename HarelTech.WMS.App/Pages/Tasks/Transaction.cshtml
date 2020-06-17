@@ -96,7 +96,7 @@
                 @if (!Model.ChangeToBin)
                     {<div class="col-6" id="span_tobin_@i">@Model.TaskItem.HWMS_ITASKTOBIN</div>}
                     else
-                    {<div class="col-6" id="span_tobin_@i">
+                    {<div class="col-6">
                         <a data-toggle="modal" data-target="#binsModalPreview" data-spanid="span_tobin_@i">
                             <span id="span_tobin_@i" data-wow-iteration="5">@Model.TaskItem.HWMS_ITASKTOBIN</span>
                             <i class="fas fa-arrow-right float-right"></i>
@@ -336,7 +336,7 @@
                 "HWMS_ELOTNUMBER": $("#card_" + i).data("lotnumber").toString(),
                 "Quantity": qty,
                 "FROMBIN": $("#frombin_" + i).html(),
-                "TOBIN": $("#span_tobin_" + i + " span").html(),
+                "TOBIN": $("#span_tobin_" + i).html(),
                 "ExpDate": !$("#exp_date_" + i).html() ? $("#exp_date_" + i).val() : $("#exp_date_" + i).html(),
                 "HWMS_LOT": $("#card_" + i).data("lot"),
                 "HWMS_ITASK": $("#card_" + i).data("taskid"),
@@ -349,7 +349,13 @@
                 "Serials": serials
             });
 
-            
+            if (taskLots[i].FROMBIN === "" || taskLots[i].TOBIN === "") {
+                app.presentToast("FROMBIN OR TOBIN can not be empty.", top, "error");
+                $("#card_" + i).focus();
+                breakLoop = true;
+                app.hideLoader();
+                break;
+            }
             //if (taskLots[i].HWMS_ELOTNUMBER === "") {
             //    app.presentToast("Lot number can not be empty", top, "error");
             //    $("#card_" + i).focus();
@@ -370,8 +376,11 @@
             },
             data:  JSON.stringify(taskLots) ,
             success: function (response) {
-                if (response.success);
-                window.app.taskForm('@Model.UserName', '@Model.Password', filter, '@Model.Company', totalQty, @Model.TaskItem.HWMS_ITASK);
+                if (response.success)
+                    window.app.taskForm('@Model.UserName', '@Model.Password', filter, '@Model.Company', totalQty, @Model.TaskItem.HWMS_ITASK);
+                else {
+                    app.presentToast("An error occured with sending task. Please try again...");
+                }
             },
             failure: function (response) {
                 console.log(response);
@@ -388,10 +397,9 @@
     }
 
     function bin_selected(bin) {
-        debugger;
         $("#binsModalPreview").modal('hide')
         $("#" + tobin).html(bin);
-        $("#" + tobin).val(bin);
+        //$("#" + tobin).val(bin);
         $("#" + tobin).addClass("animated flash");
     }
 
@@ -507,6 +515,17 @@
             contentType: "application/json; charset=utf-8"
             //dataType: "json"
         });
+
+        
+    }
+
+    function remove_bin_card(card) {
+        $("#task_lots #" + card).addClass('animated fadeOut');
+        setTimeout(function () {
+            $("#task_lots #" + card).remove();
+            update_total_tasks();
+        }, 1000);
+        
     }
 </script>
 

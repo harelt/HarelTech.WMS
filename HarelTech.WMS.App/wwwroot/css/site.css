@@ -130,7 +130,8 @@ html {
     font-size: 1.1rem !important;
 }
 
-modal-dialog.modal-notify.modal-info .modal-header {
+
+.modal-dialog.modal-notify.modal-info .modal-header {
     background-color: #4dd0e1 !important;
 }
 

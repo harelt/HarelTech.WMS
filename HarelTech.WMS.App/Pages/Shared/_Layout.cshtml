@@ -4,6 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="manifest" href="~/manifest.json" />
+    <meta name="mobile-web-app-capable" content="yes">
     <title>@ViewData["Title"] - HarelTech WMS App</title>
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" async />
@@ -18,7 +20,7 @@
     <link rel="stylesheet" href="~/css/site.css" />
     <script src="https://cdn.priority-software.com/upgrades/var/api/head/priorityapp.nocache.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/@@pwabuilder/pwaupdate"></script>
 </head>
 
 <body>
@@ -41,7 +43,7 @@
     <!-- preloader -->
 
     @await Html.PartialAsync("_nav")
-    
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -95,10 +97,15 @@
             // SideNav Scrollbar Initialization
             var sideNavScrollbar = document.querySelector('.custom-scrollbar');
             var ps = new PerfectScrollbar(sideNavScrollbar);
+
+            const el = document.createElement('pwa-update');
+            document.body.appendChild(el);
         });
 
-        
+
     </script>
+    
+    
     @RenderSection("Scripts", required: false)
 </body>
 </html>

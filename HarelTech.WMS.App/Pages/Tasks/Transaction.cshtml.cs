@@ -8,6 +8,7 @@ using HarelTech.WMS.RestClient;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Caching.Memory;
+using Serilog;
 
 namespace HarelTech.WMS.App.Pages.Tasks
 {
@@ -121,14 +122,24 @@ namespace HarelTech.WMS.App.Pages.Tasks
 
         public async Task<IActionResult> OnPostAddTaskLots([FromBody]List<TaskLotSerial> taskLots)
         {
-            var userid = Utilities.UserId(User.Claims);
-            var result = await _wmsClient.AddTaskLots(new AddTaskLotsRequest
+            try
             {
-                Company = _cache.Get<string>($"{userid}_company"),
-                Lots = taskLots
-            });
+                var userid = Utilities.UserId(User.Claims);
+                var result = await _wmsClient.AddTaskLots(new AddTaskLotsRequest
+                {
+                    Company = _cache.Get<string>($"{userid}_company"),
+                    Lots = taskLots
+                });
+                return new JsonResult(new { Success = result });
+            }
+            catch (System.Exception ex)
+            {
+                Log.Error(ex, "OnPostAddTaskLots");
+                return new JsonResult(new { Success = false });
+            }
+            
 
-            return new JsonResult(new { Success = result });
+            
         }
 
         public async Task<IActionResult> OnGetBins()

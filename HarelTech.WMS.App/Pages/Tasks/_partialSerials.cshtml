@@ -50,7 +50,7 @@
                 </div>
                 <div id="frmSearchSerials" class="form-inline d-flex justify-content-center md-form form-sm active-cyan-2 mt-4">
                     <input id="search_serials" class="form-control form-control-sm mr-2 w-75" type="text" placeholder="Search Serial"
-                           aria-label="Search" style="font-size: 1rem;" autofocus>
+                           aria-label="Search" style="font-size: 1rem;" autofocus autocomplete="off">
                     <i class="fas fa-search" aria-hidden="true" onclick="search_serials_list();"></i>&nbsp;&nbsp;
                     <a onclick="show_hide_serials_list();"  role="button" aria-expanded="false">
                         <i id="i_show_serial_list" class="fas fa-list-alt" aria-hidden="false"></i>
@@ -111,10 +111,8 @@
     }
 
     function AddManualSerial() {
-        debugger;
         var index = $("#list_serials .card").length + 1;
         var serialNumber = $("#search_serials").val();
-        debugger;
         $.get(app.url + "/Tasks/Transaction/?handler=AddNewSerialCard&id=" + index + "&serialNumber=" + serialNumber,
             function (data) {
                 $("#list_serials_selected").prepend(data);

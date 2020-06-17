@@ -7,6 +7,7 @@
     var curType = Model.TaskType;
 }
 <div id="card_@i" class="card m-2 animated fadeInDown" data-taskid="@Model.TaskId" data-lot="0" data-lotnumber="@Model.LotNumber">
+    <a onclick="remove_bin_card('card_@i');" class="btn-floating btn-action ml-auto mr-1" style="background-color:white;">    <i class="fas fa-minus" style="background-color: white;"></i></a>
     <div class="card-body m-2">
         <div class="md-form input-group mb-3" style="font-weight: 700 !important">
             <div class="input-group-prepend">
@@ -40,7 +41,7 @@
                 <span class="input-group-text md-addon" id="material-addon4">To Bin/Area: </span>
             </div>
             <div class="col" id="tobin_@i" aria-describedby="material-addon4">
-                <input class="form-control" id="span_tobin_@i" value="@Model.ToBin" disabled/>
+                <input class="form-control" id="span_tobin_@i" value="@Model.ToBin" disabled />
             </div>
             <a data-toggle="modal" data-target="#binsModalPreview" data-spanid="span_tobin_@i">
                 <div class="input-group-append mt-2">
@@ -54,7 +55,7 @@
             <div class="col-8">
                 <div class="def-number-input number-input safari_only" style="background-color:#3DBFD9;">
                     <button onclick="minusQty('qty_@i');" class="minus"></button>
-                    <input id="qty_@i" class="quantity" min="1" name="quantity" value="@Model.Qty" type="number" onchange="update_total_tasks();" required @qtyDisabled>
+                    <input id="qty_@i" class="quantity" min="1" name="quantity" value="0" type="number" onchange="update_total_tasks();" required @qtyDisabled>
                     <button onclick="plusQty('qty_@i');" class="plus"></button>
                 </div>
             </div>
@@ -82,6 +83,7 @@
     function update_lotnumber(i) {
         $("#task_lots #card_" + i).data("lotnumber", $("#task_lots #lot_number_" + i).val());
     }
+
 </script>
 
 <style>
