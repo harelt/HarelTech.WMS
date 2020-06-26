@@ -1,6 +1,6 @@
 /*!
  * Material Design for Bootstrap 4
- *   Version: MDB LITE 4.17.0
+ *   Version: MDB LITE 4.19.0
  * 
  * 
  *   Copyright: Material Design for Bootstrap
@@ -404,10 +404,10 @@
     }
 }, function(t, e, n) {
     var i = n(8),
-        r = n(62),
+        r = n(63),
         o = n(25),
         a = n(19),
-        s = n(63),
+        s = n(64),
         l = n(36),
         c = n(24)("IE_PROTO"),
         u = function() {},
@@ -616,7 +616,7 @@
         r = n(52),
         o = n(60),
         a = n(28),
-        s = n(87),
+        s = n(88),
         l = a.set,
         c = a.getterFor("Array Iterator");
     t.exports = s(Array, "Array", (function(t, e) {
@@ -719,6 +719,13 @@
         }
     }
 }, function(t, e, n) {
+    var i = n(14),
+        r = n(101),
+        o = Object.prototype;
+    r !== o.toString && i(o, "toString", r, {
+        unsafe: !0
+    })
+}, function(t, e, n) {
     var i = n(7),
         r = n(9),
         o = n(8),
@@ -731,13 +738,6 @@
 }, function(t, e, n) {
     var i = n(32);
     t.exports = i("document", "documentElement")
-}, function(t, e, n) {
-    var i = n(14),
-        r = n(101),
-        o = Object.prototype;
-    r !== o.toString && i(o, "toString", r, {
-        unsafe: !0
-    })
 }, function(t, e, n) {
     "use strict";
     var i, r = n(7),
@@ -870,17 +870,6 @@
         var a = i(e);
         a in t ? r.f(t, a, o(0, n)) : t[a] = n
     }
-}, function(t, e, n) {
-    "use strict";
-    var i = n(3),
-        r = n(56);
-    i({
-        target: "RegExp",
-        proto: !0,
-        forced: /./.exec !== r
-    }, {
-        exec: r
-    })
 }, function(t, e, n) {
     "use strict";
     var i = n(3),
@@ -1102,8 +1091,17 @@
             }), i[1] = e, Y.apply(F, i)
         }
     }), N.prototype[V] || O(N.prototype, V, N.prototype.valueOf), R(N, "Symbol"), A[D] = !0
-}, function(t, e) {
-    t.exports = "\t\n\v\f\r                　\u2028\u2029\ufeff"
+}, function(t, e, n) {
+    "use strict";
+    var i = n(3),
+        r = n(56);
+    i({
+        target: "RegExp",
+        proto: !0,
+        forced: /./.exec !== r
+    }, {
+        exec: r
+    })
 }, function(t, e, n) {
     "use strict";
     var i = n(3),
@@ -1149,7 +1147,7 @@
     "use strict";
     var i = n(79).charAt,
         r = n(28),
-        o = n(87),
+        o = n(88),
         a = r.set,
         s = r.getterFor("String Iterator");
     o(String, "String", (function(t) {
@@ -1197,6 +1195,8 @@
                     }
         }
     }
+}, function(t, e) {
+    t.exports = "\t\n\v\f\r                　\u2028\u2029\ufeff"
 }, function(t, e) {
     (function(e) {
         t.exports = e
@@ -1398,6 +1398,15 @@
         return r.call(t, e)
     }
 }, function(t, e, n) {
+    var i = n(14),
+        r = Date.prototype,
+        o = r.toString,
+        a = r.getTime;
+    new Date(NaN) + "" != "Invalid Date" && i(r, "toString", (function() {
+        var t = a.call(this);
+        return t == t ? o.call(this) : "Invalid Date"
+    }))
+}, function(t, e, n) {
     "use strict";
     var i = n(84),
         r = n(8),
@@ -1492,7 +1501,7 @@
         u = n(2),
         d = n(30),
         f = n(60),
-        h = n(88),
+        h = n(89),
         p = h.IteratorPrototype,
         v = h.BUGGY_SAFARI_ITERATORS,
         g = u("iterator"),
@@ -1554,17 +1563,8 @@
         BUGGY_SAFARI_ITERATORS: f
     }
 }, function(t, e, n) {
-    var i = n(14),
-        r = Date.prototype,
-        o = r.toString,
-        a = r.getTime;
-    new Date(NaN) + "" != "Invalid Date" && i(r, "toString", (function() {
-        var t = a.call(this);
-        return t == t ? o.call(this) : "Invalid Date"
-    }))
-}, function(t, e, n) {
     var i = n(13),
-        r = "[" + n(70) + "]",
+        r = "[" + n(74) + "]",
         o = RegExp("^" + r + r + "*"),
         a = RegExp(r + r + "*$"),
         s = function(t) {
@@ -1826,7 +1826,7 @@
     }
 }, function(t, e, n) {
     "use strict";
-    var i = n(88).IteratorPrototype,
+    var i = n(89).IteratorPrototype,
         r = n(33),
         o = n(18),
         a = n(59),
@@ -2073,7 +2073,7 @@
     })
 }, function(t, e, n) {
     var i = n(1),
-        r = n(70);
+        r = n(74);
     t.exports = function(t) {
         return i((function() {
             return !!r[t]() || "​᠎" != "​᠎" [t]() || r[t].name !== t
@@ -2084,7 +2084,7 @@
     n.r(e), n.d(e, "default", (function() {
         return r
     }));
-    n(82), n(91), n(43), n(66), n(78), n(68), n(86), n(98), n(112);
+    n(82), n(91), n(43), n(66), n(78), n(69), n(87), n(98), n(112);
 
     function i(t, e) {
         for (var n = 0; n < e.length; n++) {
@@ -2382,7 +2382,7 @@
 }, function(t, e, n) {
     var i = n(0),
         r = n(90).trim,
-        o = n(70),
+        o = n(74),
         a = i.parseFloat,
         s = 1 / a(o + "-0") != -1 / 0;
     t.exports = s ? function(t) {
@@ -2424,7 +2424,7 @@
     n.r(e), n.d(e, "default", (function() {
         return o
     }));
-    n(82), n(91), n(43), n(122), n(66), n(96), n(113), n(68), n(123), n(86), n(112);
+    n(82), n(91), n(43), n(122), n(66), n(96), n(113), n(69), n(123), n(87), n(112);
     var i = n(121);
 
     function r(t, e) {
@@ -3030,7 +3030,7 @@
 }, , , , function(t, e, n) {
     var i = n(0),
         r = n(90).trim,
-        o = n(70),
+        o = n(74),
         a = i.parseInt,
         s = /^[+-]?0[Xx]/,
         l = 8 !== a(o + "08") || 22 !== a(o + "0x16");
@@ -3349,7 +3349,7 @@
 }, function(t, e, n) {
     "use strict";
     n.r(e);
-    n(43), n(78), n(96), n(111), n(68), n(86);
+    n(43), n(78), n(96), n(111), n(69), n(87);
 
     function i(t, e) {
         for (var n = 0; n < e.length; n++) {
@@ -3563,7 +3563,7 @@
 }, function(t, e, n) {
     "use strict";
     n.r(e);
-    n(100), n(89), n(64), n(97);
+    n(100), n(86), n(62), n(97);
 
     function i(t, e) {
         if (!(t instanceof e)) throw new TypeError("Cannot call a class as a function")
@@ -4148,7 +4148,7 @@
 }, function(t, e, n) {
     "use strict";
     n.r(e);
-    n(69), n(71), n(72), n(43), n(54), n(89), n(111), n(64), n(97), n(73), n(74);
+    n(68), n(70), n(71), n(43), n(54), n(86), n(111), n(62), n(97), n(72), n(73);
 
     function i(t, e) {
         return function(t) {
@@ -4219,7 +4219,7 @@
                         endPosition: 0,
                         endTime: 0
                     }
-                }, this.$body = t("body"), this.$menu = t("#".concat(this.$element.attr("data-activates"))), this.$sidenavOverlay = t("#sidenav-overlay"), this.$dragTarget = t('<div class="drag-target"></div>'), this.$body.append(this.$dragTarget)
+                }, this.$body = t("body"), this.$menu = t("#".concat(this.$element.attr("data-activates"))), this.$sidenavOverlay = t("#sidenav-overlay"), this.$dragTarget = t('<div class="drag-target"></div>'), this.isTouchDevice = "ontouchstart" in document.documentElement, this.$body.append(this.$dragTarget)
             }
             var n, o, a;
             return n = e, (o = [{
@@ -4249,11 +4249,12 @@
                     })), this.$menu.hasClass("fixed") && (window.innerWidth > this.options.breakpoint ? (this.menuOut = !0, this.$menu.css("transform", "translateX(0)")) : this.menuOut = !1, this.$menu.find("input[type=text]").on("touchstart", (function() {
                         e.$menu.addClass("transform-fix-input")
                     })), t(window).on("resize", (function() {
-                        if (t(".fixed-sn main, .fixed-sn footer").css("padding-left", e.options.menuWidth), window.innerWidth > e.options.breakpoint) e.$sidenavOverlay.length ? (e.removeMenu(!0), t(".fixed-sn main, .fixed-sn footer").css("padding-left", e.options.menuWidth)) : (!1 === e.menuOut && t(e).trigger("sidenav_open", [e.options.onOpen]), e.$menu.css("transform", "translateX(0%)"), e.menuOut = !0);
-                        else if (!1 === e.menuOut) {
+                        if (e.isTouchDevice || t(".fixed-sn main, .fixed-sn footer").css("padding-left", e.options.menuWidth), window.innerWidth > e.options.breakpoint) e.$sidenavOverlay.length ? (e.removeMenu(!0), t(".fixed-sn main, .fixed-sn footer").css("padding-left", e.options.menuWidth)) : (!1 === e.menuOut && t(e).trigger("sidenav_open", [e.options.onOpen]), e.$menu.css("transform", "translateX(0%)"), e.menuOut = !0);
+                        else if (!1 !== e.menuOut || e.isTouchDevice) e.isTouchDevice || (e.menuOut = !1, e.removeMenu(!0));
+                        else {
                             var n = "left" === e.options.edge ? "-100" : "100";
                             e.$menu.css("transform", "translateX(".concat(n, "%)")), e.removeMenu(!0)
-                        } else e.menuOut = !1, e.removeMenu(!0)
+                        }
                     })))
                 }
             }, {
@@ -4286,7 +4287,7 @@
                     var e = this;
                     this.$element.on("click", (function(n) {
                         if (n.preventDefault(), !0 === e.menuOut) return e.removeMenu();
-                        t(e).trigger("sidenav_open", [e.options.onOpen]), !0 === e.options.showOverlay ? t("#sidenav-overlay").length || e.showSidenavOverlay() : e.showCloseButton();
+                        t(e).trigger("sidenav_open", [e.options.onOpen]), e.menuOut = !0, !0 === e.options.showOverlay ? t("#sidenav-overlay").length || e.showSidenavOverlay() : e.showCloseButton();
                         var i = [];
                         i = "left" === e.options.edge ? [0, -1 * e.options.menuWidth] : [0, e.options.menuWidth], "matrix(1, 0, 0, 1, 0, 0)" !== e.$menu.css("transform") && e.$menu.velocity({
                             translateX: i
@@ -4495,7 +4496,7 @@
 }, function(t, e, n) {
     "use strict";
     n.r(e);
-    n(69), n(71), n(72), n(66), n(54), n(64), n(73), n(74);
+    n(68), n(70), n(71), n(66), n(54), n(62), n(72), n(73);
 
     function i(t) {
         return (i = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(t) {
@@ -4522,7 +4523,7 @@
 }, function(t, e, n) {
     "use strict";
     n.r(e);
-    n(69), n(82), n(91), n(43), n(107), n(78), n(167), n(168), n(113), n(109);
+    n(68), n(82), n(91), n(43), n(107), n(78), n(167), n(168), n(113), n(109);
 
     function i(t, e) {
         var n = Object.keys(t);
@@ -4795,6 +4796,10 @@
             }
             var i = new e(this, t);
             return i.init(), i.returnPublicInterface()
+        }, t.dropdown = {
+            initAnimations: function() {
+                e.bindBootstrapEvents()
+            }
         }, e.mdbDropdownAutoInit()
     }))
 }, function(t, e, n) {
@@ -4913,7 +4918,7 @@
 }, function(t, e, n) {
     "use strict";
     n.r(e);
-    n(82), n(43), n(107), n(66), n(108), n(89), n(64), n(68), n(97), n(86), n(112), n(109);
+    n(82), n(43), n(107), n(66), n(108), n(86), n(62), n(69), n(97), n(87), n(112), n(109);
     var i = n(126);
 
     function r(t, e) {
@@ -5213,7 +5218,7 @@
     "use strict";
     (function(t) {
         var e;
-        n(69), n(71), n(72), n(82), n(54), n(78), n(133), n(100), n(177), n(89), n(64), n(115), n(119), n(127), n(68), n(97), n(73), n(117), n(86), n(98), n(179), n(184), n(186), n(187), n(188), n(189), n(190), n(191), n(192), n(193), n(194), n(195), n(196), n(197), n(198), n(199), n(200), n(201), n(202), n(203), n(204), n(205), n(206), n(207), n(74);
+        n(68), n(70), n(71), n(82), n(54), n(78), n(133), n(100), n(177), n(86), n(62), n(115), n(119), n(127), n(69), n(97), n(72), n(117), n(87), n(98), n(179), n(184), n(186), n(187), n(188), n(189), n(190), n(191), n(192), n(193), n(194), n(195), n(196), n(197), n(198), n(199), n(200), n(201), n(202), n(203), n(204), n(205), n(206), n(207), n(73);
 
         function i(t) {
             return (i = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(t) {
@@ -6837,7 +6842,7 @@
 }, function(t, e, n) {
     "use strict";
     (function(t) {
-        n(69), n(71), n(72), n(66), n(54), n(78), n(89), n(111), n(64), n(97), n(73), n(74);
+        n(68), n(70), n(71), n(66), n(54), n(78), n(86), n(111), n(62), n(97), n(72), n(73);
 
         function e(t) {
             return (e = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(t) {
@@ -7114,7 +7119,7 @@
     "use strict";
     (function(t) {
         var e, i;
-        n(69), n(71), n(72), n(211), n(91), n(107), n(66), n(54), n(78), n(108), n(89), n(113), n(64), n(119), n(68), n(73), n(117), n(98), n(109), n(74);
+        n(68), n(70), n(71), n(211), n(91), n(107), n(66), n(54), n(78), n(108), n(86), n(113), n(62), n(119), n(69), n(72), n(117), n(98), n(109), n(73);
 
         function r(t) {
             return (r = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function(t) {
@@ -7636,7 +7641,7 @@
 }, function(t, e, n) {
     "use strict";
     (function(t) {
-        n(89), n(115);
+        n(86), n(115);
         ! function(t) {
             t(["jquery"], (function(t) {
                 return function() {

@@ -412,7 +412,7 @@ namespace HarelTech.WMS.Repository
                 serial = $" SERNUMBERS.SERIAL in (-1, 0) ";
             var sql = "";
             if (!string.IsNullOrEmpty(locName))
-                sql = $@"SELECT  SERNUMBERS.SERN as Serial , SERNUMBERS.SERNUM AS SerialNumber , CUSTOMERS.CUSTNAME as [Status]
+                sql = $@"SELECT  SERNUMBERS.SERN as Serial , SERNUMBERS.SERNUM AS SerialNumber , CUSTOMERS.CUSTNAME as [Status], {serialId} as Lot
             FROM    SERNUMBERS , WAREHOUSES ,CUSTOMERS
             WHERE   SERNUMBERS.PART = {partId}  
             AND     {serial}  
@@ -421,7 +421,7 @@ namespace HarelTech.WMS.Repository
             AND     SERNUMBERS.STATUS = CUSTOMERS.CUST
             AND     WAREHOUSES.LOCNAME = '{locName}'";
             else
-                sql = $@"SELECT  SERNUMBERS.SERN as Serial , SERNUMBERS.SERNUM AS SerialNumber , CUSTOMERS.CUSTNAME as [Status]
+                sql = $@"SELECT  SERNUMBERS.SERN as Serial , SERNUMBERS.SERNUM AS SerialNumber , CUSTOMERS.CUSTNAME as [Status], {serialId} as Lot
             FROM    SERNUMBERS , CUSTOMERS
             WHERE   SERNUMBERS.PART = {partId}  
             AND     {serial}  

@@ -2,6 +2,7 @@
 for details on configuring this project to bundle and minify static web assets. */
 
 body {
+    overscroll-behavior: contain !important;
     background-color: #EAEEF1 !important;
     background: #EAEEF1 !important;
     color: #4C545B !important;
@@ -10,7 +11,7 @@ body {
     padding: 0px !important;
     direction: ltr;
     font-family: Montserrat !important;
-    font-size: 16px !important;    
+    font-size: 16px !important;
     /* Margin bottom by footer height */
     /*margin-bottom: 60px;*/
 }

@@ -2,7 +2,7 @@
 
 /*!
  * Material Design for Bootstrap 4
- *   Version: MDB LITE 4.17.0
+ *   Version: MDB LITE 4.19.0
  * 
  * 
  *   Copyright: Material Design for Bootstrap
@@ -13682,7 +13682,7 @@ select:disabled {
     top: 10px;
     width: 0;
     height: 0;
-    background-color: #4285f4;
+    background-color: #1266f1;
     border: none;
     border-radius: 50%;
     -webkit-transform: rotate(-45deg);
@@ -13695,7 +13695,7 @@ select:disabled {
     display: block;
     width: 30px;
     font-size: 0;
-    color: #4285f4;
+    color: #1266f1;
     text-align: center;
     -webkit-transform: rotate(45deg);
     transform: rotate(45deg)
@@ -13722,7 +13722,7 @@ select:disabled {
     width: 14px;
     height: 14px;
     margin: -5px 0 0 0;
-    background-color: #4285f4;
+    background-color: #1266f1;
     border: none;
     border-radius: 50%;
     -webkit-transition: .3s;
@@ -13747,7 +13747,7 @@ select:disabled {
     width: 14px;
     height: 14px;
     margin-top: -5px;
-    background: #4285f4;
+    background: #1266f1;
     border: none;
     border-radius: 50%
 }
@@ -13780,7 +13780,7 @@ select:disabled {
 .range-field input[type="range"]::-ms-thumb {
     width: 14px;
     height: 14px;
-    background: #4285f4;
+    background: #1266f1;
     border: none;
     border-radius: 50%
 }
