@@ -95,18 +95,21 @@
         }
     }
 
-    function change_serial_selection(card) {
+    function change_serial_selection(card, withMessage) {
         var c = $("#list_serials_selected " + card);
         if (c.length === 0) {
             $(card).prependTo("#list_serials_selected");
-            app.presentToast("Serial added to list", top, "success");
             $("#serials_complete_tasks").html($("#list_serials_selected .card").length);
+            if (withMessage)
+                app.presentToast("Serial added to list", top, "success");
         }
         else {
             $(card).prependTo("#list_serials");
             $(card).hide();
-            app.presentToast("Serial removed from list", top, "success");
             $("#serials_complete_tasks").html($("#list_serials_selected .card").length);
+            if (withMessage)
+                app.presentToast("Serial removed from list", top, "success");
+            
         }
     }
 

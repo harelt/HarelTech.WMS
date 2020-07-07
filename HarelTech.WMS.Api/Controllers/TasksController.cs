@@ -114,8 +114,49 @@ namespace HarelTech.WMS.Api.Controllers
 
                 lots.Add(tl);
             }
+            
             var result = await _priority.CompanyDb(request.Company).AddTaskLots(lots);
             return Ok(result);
+        }
+
+        [HttpPost("AddTaskLot")]
+        public async Task<IActionResult> AddTaskLot(AddTaskLotsRequest request)
+        {
+            Log.Information($"AddTaskLots: {request.Dump()}");
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var lots = new List<TaskLot>();
+            foreach (var item in request.Lots)
+            {
+                var tl = new TaskLot
+                {
+                    HWMS_ITASKLOT = item.HWMS_ITASKLOT,
+                    HWMS_EXPDATE = 0,
+                    HWMS_FROMBIN = item.FROMBIN,
+                    HWMS_ITASK = item.HWMS_ITASK,
+                    HWMS_LOT = item.HWMS_LOT,
+                    HWMS_LOTNUMBER = item.HWMS_ELOTNUMBER,
+                    HWMS_LOTQUANTITY = item.Quantity * 1000,
+                    HWMS_TOBIN = item.TOBIN,
+                    HWMS_FCUSTNAME = item.HWMS_FCUSTNAME,
+                    HWMS_TCUSTNAME = item.HWMS_TCUSTNAME,
+                    Serials = item.Serials
+                };
+                if (item.HWMS_ELOTNUMBER == "0")
+                    tl.HWMS_EXPDATE = 0;
+                else
+                {
+                    CultureInfo uk = new CultureInfo("en-UK", false);
+                    var expDate = DateTime.ParseExact(item.ExpDate, "dd/MM/yyyy", uk);
+                    tl.HWMS_EXPDATE = (long)expDate.Subtract(new DateTime(1988, 1, 1, 0, 0, 0)).TotalMinutes;
+                }
+
+                lots.Add(tl);
+            }
+
+            var addLot = await _priority.CompanyDb(request.Company).AddTaskLotSerials(lots[0]);
+            return Ok(addLot);
         }
 
         [HttpGet("Bins/{company}/{warhouseId}")]
@@ -153,6 +194,35 @@ namespace HarelTech.WMS.Api.Controllers
             var results = await _priority.CompanyDb(serialsRequest.Company).GetSerials(serialsRequest.PartId,
                 serialsRequest.SerialId, serialsRequest.LocName);
 
+            return Ok(results);
+        }
+
+        [HttpGet("Serials/Selected/{company}/{iTaskLot}")]
+        public async Task<IActionResult> GetSelectedSerials(string company, long iTaskLot)
+        {
+            if (string.IsNullOrEmpty(company) || iTaskLot == 0)
+                return BadRequest();
+            var results = await _priority.CompanyDb(company).GetSelectedSerials(iTaskLot);
+            return Ok(results);
+        }
+
+        [HttpGet("OpenedTaskLots/{company}/{taskId}")]
+        public async Task<IActionResult> GetOpenedTaskLots(string company, long taskId)
+        {
+            if (string.IsNullOrEmpty(company) || taskId == 0)
+                return BadRequest();
+
+            var results = await _priority.CompanyDb(company).GetOpenedTaskLots(taskId);
+            return Ok(results);
+        }
+
+        [HttpDelete("DeleteOpenTaskSerials/{company}/{taskLot}")]
+        public async Task<IActionResult> DeleteOpenTaskSerialselete(string company, long taskLot)
+        {
+            if (string.IsNullOrEmpty(company) || taskLot == 0)
+                return BadRequest();
+
+            var results = await _priority.CompanyDb(company).DeleteOpenTaskSerials(taskLot);
             return Ok(results);
         }
     }

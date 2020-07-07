@@ -9,5 +9,6 @@ namespace HarelTech.WMS.Common.Models
         public long PartId { get; set; }
         public long SerialId { get; set; }
         public string LocName { get; set; }
+
     }
 }

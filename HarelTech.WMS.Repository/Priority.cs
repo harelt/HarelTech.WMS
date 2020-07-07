@@ -361,6 +361,41 @@ namespace HarelTech.WMS.Repository
             return true;
         }
 
+        public async Task<long> AddTaskLotSerials(TaskLot taskLot)
+        {
+            using var ctx = Context;
+            if (taskLot.HWMS_ITASKLOT == 0)  //new
+            {
+                await ctx.TaskLots.AddAsync(taskLot).ConfigureAwait(false);
+                await ctx.SaveChangesAsync().ConfigureAwait(false);
+            }
+            if (taskLot.Serials != null && taskLot.Serials.Count > 0)
+            {
+                //first remove if there is existing seriasl
+                var extSerials = ctx.TaskSerials.Where(s => s.HWMS_ITASKLOT == taskLot.HWMS_ITASKLOT)?.ToList();
+                if(extSerials != null && extSerials.Any())
+                {
+                    ctx.TaskSerials.RemoveRange(extSerials);
+                    ctx.SaveChanges();
+                }
+                //add current serials
+                var taskSerials = new List<TaskSerial>();
+                foreach (var item in taskLot.Serials)
+                {
+                    taskSerials.Add(new TaskSerial
+                    {
+                        HWMS_SERN = item.SerialId,
+                        HWMS_SERNUMBER = item.SerialNumber,
+                        HWMS_ITASKLOT = taskLot.HWMS_ITASKLOT
+                    });
+                }
+                await ctx.TaskSerials.AddRangeAsync(taskSerials).ConfigureAwait(false);
+                await ctx.SaveChangesAsync().ConfigureAwait(false);
+            }
+            
+            return taskLot.HWMS_ITASKLOT;
+        }
+
         public async Task<List<string>> GetBins(long warhouseId)
         {
             var sql = $"select TRIM(WARHSNAME) from WAREHOUSES where WARHS = {warhouseId}";
@@ -433,6 +468,45 @@ namespace HarelTech.WMS.Repository
             var results = await db.QueryAsync<SerialModel>(sql).ConfigureAwait(false);
 
             return results.ToList();
+        }
+
+        public async Task<List<SerialModel>> GetSelectedSerials(long iTaskId)
+        {
+            var qry = $"SELECT  HWMS_SERN as Serial , HWMS_SERNUMBER as SerialNumber from HWMS_ITASKSERIALS where HWMS_ITASKLOT = {iTaskId}";
+            using var db = DbConnection;
+            db.Open();
+            var results = await db.QueryAsync<SerialModel>(qry).ConfigureAwait(false);
+
+            return results.ToList();
+        }
+
+        public async Task<List<ITaskLotModel>> GetOpenedTaskLots(long taskId)
+        {
+            var qry = $"SELECT  HWMS_ITASKLOT, HWMS_LOT, HWMS_ITASK, 0 as Quantity from HWMS_ITASKLOTS where HWMS_ITASK = {taskId}";
+            using var db = DbConnection;
+            db.Open();
+            var results = await db.QueryAsync<ITaskLotModel>(qry).ConfigureAwait(false);
+            //get quantity
+            if(results.Any())
+            {
+                qry = $"select count(1) as Quantity from HWMS_ITASKSERIALS where HWMS_ITASKLOT = {results.First().HWMS_ITASKLOT}";
+                var resQty = await db.QueryAsync<long>(qry).ConfigureAwait(false);
+                results.First().Quantity = resQty.FirstOrDefault();
+            }
+
+
+            return results.ToList();
+        }
+
+        public async Task<bool> DeleteOpenTaskSerials(long taskLot)
+        {
+            var qry = $"Delete HWMS_ITASKSERIALS where HWMS_ITASKLOT = {taskLot}";
+            using var db = DbConnection;
+            db.Open();
+            var res = await db.ExecuteAsync(qry);
+            if (res > 0)
+                return true;
+            return false;
         }
     }
 }

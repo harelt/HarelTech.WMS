@@ -17,11 +17,15 @@ namespace HarelTech.WMS.RestClient
         Task<List<CompleteTaskItem>> GetCompleteTaskItems(CompleteTaskItemsRequest request);
         Task<List<TaskLotSerial>> GetTransactionItems(TransactionItemsRequest request);
         Task<bool> AddTaskLots(AddTaskLotsRequest request);
+        Task<long> AddTaskLot(AddTaskLotsRequest request);
         Task<List<string>> GetBins(string company, long warhouseId);
         Task<int> DeleteTaskLots(string company, long taskId);
 
         Task<int> ActivateTask(ActivateTaskRequest request);
 
         Task<List<SerialModel>> GetSerials(SerialsRequest request);
+        Task<List<SerialModel>> GetSelectedSerials(string company, long iTasklot);
+        Task<List<ITaskLotModel>> GetOpenedTaskLots(string company, long TaskId);
+        Task<bool> DeleteOpenedTaskLotSerials(string company, long taskLot);
     }
 }

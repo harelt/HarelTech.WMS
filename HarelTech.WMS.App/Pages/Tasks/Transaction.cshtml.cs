@@ -35,6 +35,8 @@ namespace HarelTech.WMS.App.Pages.Tasks
         public bool DisplayToBin { get; set; }
         [BindProperty]
         public bool ChangeToBin { get; set; }
+        [BindProperty]
+        public  List<ITaskLotModel> OpenedTaskLots { get; set; }
         public string UserName;
         public string Password;
         public string TaskLotJson { get; set; }
@@ -55,7 +57,7 @@ namespace HarelTech.WMS.App.Pages.Tasks
 
             var tasksTypes = await _wmsClient.GetTaskTypesAsync(Company);
             ViewData["PageTitle"] = tasksTypes.FirstOrDefault(w => w.HWMS_ITASKTYPE == (int)CurrentTaskType).HWMS_ITASKTYPEDES + " Transaction";
-
+            OpenedTaskLots = new List<ITaskLotModel>();
             if (CurrentTaskType != EnumTaskType.Receive)
             {
                 TaskLot = await _wmsClient.GetTransactionItems(new TransactionItemsRequest
@@ -64,6 +66,8 @@ namespace HarelTech.WMS.App.Pages.Tasks
                     ParId = taskItem.PART,
                     WarhouseId = WarhouseId
                 });
+
+                OpenedTaskLots = await _wmsClient.GetOpenedTaskLots(Company, taskItem.HWMS_ITASK);
             }
             else
                 TaskLot = new List<TaskLotSerial>();
@@ -125,12 +129,25 @@ namespace HarelTech.WMS.App.Pages.Tasks
             try
             {
                 var userid = Utilities.UserId(User.Claims);
-                var result = await _wmsClient.AddTaskLots(new AddTaskLotsRequest
+                if (taskLots.Any() && taskLots[0].Serials == null)
+                {
+                    var result = await _wmsClient.AddTaskLots(new AddTaskLotsRequest
+                    {
+                        Company = _cache.Get<string>($"{userid}_company"),
+                        Lots = taskLots
+                    });
+                    return new JsonResult(new { Success = result });
+                }
+
+                //serials
+                var taskLotId = await _wmsClient.AddTaskLot(new AddTaskLotsRequest
                 {
                     Company = _cache.Get<string>($"{userid}_company"),
                     Lots = taskLots
                 });
-                return new JsonResult(new { Success = result });
+
+                return new JsonResult(new { taskLotId });
+
             }
             catch (System.Exception ex)
             {
@@ -152,11 +169,11 @@ namespace HarelTech.WMS.App.Pages.Tasks
 
         }
 
-        public async Task<IActionResult> OnGetSerials(long partId, long lot, string locName="")
+        public async Task<IActionResult> OnGetSerials(long partId, long lot, long iTaskLot ,string locName="")
         {
             var userid = Utilities.UserId(User.Claims);
             Company = _cache.Get<string>($"{userid}_company");
-            return await Task.FromResult(ViewComponent("Serials", new { company = Company, partId, lot, locName }));
+            return await Task.FromResult(ViewComponent("Serials", new { company = Company, partId, lot, locName, iTaskLot }));
         }
 
         public async Task<IActionResult> OnDeleteTaskLots(long taskId)
@@ -183,6 +200,14 @@ namespace HarelTech.WMS.App.Pages.Tasks
         {
             request.LotNumber = request.LotNumber == "" ? "0" : request.LotNumber;
             return await Task.FromResult(Partial("_newLotCard", request));
+        }
+
+        public async Task<IActionResult> OnGetDeleteOpenTaskSerials(long taskLot)
+        {
+            var userid = Utilities.UserId(User.Claims);
+            Company = _cache.Get<string>($"{userid}_company");
+            var result = await _wmsClient.DeleteOpenedTaskLotSerials(Company, taskLot);
+            return new JsonResult(new { Success = result });
         }
     }
 }

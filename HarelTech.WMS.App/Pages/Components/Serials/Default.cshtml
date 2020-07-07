@@ -15,8 +15,10 @@
 
 @foreach (var item in Model)
 {
+    var chk = item.AlradySelected == true ? "checked" : "";
     <!-- Card -->
-    <div id="serial_card_@i" class="tcube card promoting-card m-3 collapse" data-serial="@item.Serial" data-serialno="@item.SerialNumber">
+    <div id="serial_card_@i" class="tcube card promoting-card m-3 collapse" data-chk="@chk"
+         data-serial="@item.Serial" data-serialno="@item.SerialNumber" data-selected="@item.AlradySelected">
         <!-- Card content -->
         <div class="card-body d-flex flex-row">
             <!-- Content -->
@@ -26,7 +28,7 @@
                 <h5>Status  : @item.Status</h5>
                 <div class="form-check checkbox-teal mb-2 p-0">
                     <input type="checkbox" class="form-check-input" id="chk_@i" 
-                           onchange="change_serial_selection('#serial_card_@i');">
+                           onchange="change_serial_selection('#serial_card_@i', true);" @chk>
                     <label class="form-check-label" for="chk_@i">Add Serial</label>
                 </div>
             </div>

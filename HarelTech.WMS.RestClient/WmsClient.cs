@@ -137,6 +137,13 @@ namespace HarelTech.WMS.RestClient
             return res;
         }
 
+        public async Task<long> AddTaskLot(AddTaskLotsRequest request)
+        {
+            var req = $"Tasks/AddTaskLot";
+            var res = await _restClient.PostAsync<long>(req, request);
+            return res;
+        }
+
         public async Task<List<string>> GetBins(string company, long warhouseId)
         {
             var req = $"Tasks/Bins/{company}/{warhouseId}";
@@ -162,6 +169,26 @@ namespace HarelTech.WMS.RestClient
         {
             var req = $"Tasks/Serials";
             var res = await _restClient.PostAsync<List<SerialModel>>(req, serialsRequest);
+            return res;
+        }
+        public async Task<List<SerialModel>> GetSelectedSerials(string company, long iTaslLot)
+        {
+            var req = $"Tasks/Serials/Selected/{company}/{iTaslLot}";
+            var res = await _restClient.GetAsync<List<SerialModel>>(req);
+            return res;
+        }
+
+        public async Task<List<ITaskLotModel>> GetOpenedTaskLots(string company, long TaskId)
+        {
+            var req = $"Tasks/OpenedTaskLots/{company}/{TaskId}";
+            var res = await _restClient.GetAsync<List<ITaskLotModel>>(req);
+            return res;
+        }
+
+        public async Task<bool> DeleteOpenedTaskLotSerials(string company, long taskLot)
+        {
+            var req = $"Tasks/DeleteOpenTaskSerials/{company}/{taskLot}";
+            var res = await _restClient.DeleteAsync<bool>(req);
             return res;
         }
     }

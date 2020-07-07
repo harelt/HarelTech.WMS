@@ -16,6 +16,7 @@ namespace HarelTech.WMS.Repository.Interfaces
         Task<List<CompleteTaskItem>> GetCompleteTaskItemsByGroup(long userId, long warhouseId, EnumTaskType enumTaskType, EnumTaskGroup enumTaskGroup, string refOrderOrZone);
         Task<List<TaskLotSerial>> GetTransactionLotSerial(long warhouseId, long partId);
         Task<bool> AddTaskLots(List<TaskLot> taskLots);
+        Task<long> AddTaskLotSerials(TaskLot taskLot);
         Task<List<string>> GetBins(long warhouseId);
 
         Task<int> DeleteTaskLots(long taskId);
@@ -23,5 +24,8 @@ namespace HarelTech.WMS.Repository.Interfaces
         Task<int> ActivateTask(long taskId, long userId);
 
         Task<List<SerialModel>> GetSerials(long partId, long serialId, string locName);
+        Task<List<SerialModel>> GetSelectedSerials(long iTaskId);
+        Task<List<ITaskLotModel>> GetOpenedTaskLots(long taskId);
+        Task<bool> DeleteOpenTaskSerials(long taskLot);
     }
 }

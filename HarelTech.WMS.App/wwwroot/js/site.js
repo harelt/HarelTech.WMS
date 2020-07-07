@@ -95,6 +95,7 @@ window.app.signin = async function (username, password) {
         reason => {
             $("#login_error_message").html(reason.message);
             $("#login_error").show();
+            app.hideLoader();
             //app.presentToast(reason.message);
             console.log(reason.message);
         }

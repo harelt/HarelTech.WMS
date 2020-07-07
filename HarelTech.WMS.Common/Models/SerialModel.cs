@@ -6,5 +6,6 @@
         public string SerialNumber { get; set; }
         public string  Status { get; set; }
         public long Lot { get; set; }
+        public bool AlradySelected { get; set; }
     }
 }

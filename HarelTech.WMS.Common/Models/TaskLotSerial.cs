@@ -8,6 +8,7 @@ namespace HarelTech.WMS.Common.Models
 {
     public class TaskLotSerial
     {
+        public long HWMS_ITASKLOT { get; set; }
         public string HWMS_ELOTNUMBER { get; set; }
         public string FROMBIN { get; set; }
         public string TOBIN { get; set; }
@@ -24,6 +25,8 @@ namespace HarelTech.WMS.Common.Models
         public string HWMS_TCUSTNAME { get; set; }
         [NotMapped]
         public List<Serial> Serials { get; set; }
+        [NotMapped]
+        public long ITaskLot { get; set; }
     }
 
     public class Serial
