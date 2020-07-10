@@ -79,7 +79,9 @@
         }
 
         @*<input type="hidden" id="lot_id" />*@
-        <div id="card_@i" class="card m-2" data-lotnumber="@item.HWMS_ELOTNUMBER" data-lot="@item.HWMS_LOT" data-taskid="@Model.TaskItem.HWMS_ITASK" data-serials="">
+        <div id="card_@i" class="card m-2" data-lotnumber="@item.HWMS_ELOTNUMBER" 
+             data-lot="@item.HWMS_LOT" data-taskid="@Model.TaskItem.HWMS_ITASK" data-serials="" 
+             data-tasklotid="@itaskLot">
             <div class="card-body m-2">
                 <div class="row" style="font-weight: 700 !important">
                     <div class="col-6">Lot #:</div>
@@ -130,18 +132,20 @@
                 {
                     var bin = curType != 3 ? Model.TaskItem.HWMS_ITASKFROMBIN : "";
                     var color = "#3DBFD9";
-                    var showDelete = false;
-                    if (itaskLot > 0)
+                    var showDelete = true;
+                    if (Qty > 0)
                     {
                         color = "#FFD2D5";
-                        showDelete = true;
+                       // showDelete = true;
                     }
                     @if (!showDelete)
                     {
                         <div class="row mr-2 ml-2">
-                            <a data-toggle="modal" data-target="#serialsModalPreview" data-card="#card_@i"
-                               data-lot="@item.HWMS_ELOTNUMBER" data-partid="@Model.TaskItem.PART" data-tasklotid="@itaskLot"
-                               data-locname="@bin" data-serial="@item.HWMS_LOT" data-qty="@Model.TaskItem.TotalTasks"
+                            <a id="a_card_@i" data-toggle="modal" data-target="#serialsModalPreview" 
+                               data-card="#card_@i" data-lot="@item.HWMS_ELOTNUMBER"
+                               data-partid="@Model.TaskItem.PART" data-tasklotid="@itaskLot"
+                               data-locname="@bin" data-serial="@item.HWMS_LOT" 
+                               data-qty="@Model.TaskItem.TotalTasks"
                                class="btn btn-outline-cyan btn-block mt-2" style="color: @color;border-color: @color !important">
                                 Add Serial numbers <i class="fas fa-arrow-right float-right"></i>
                             </a>
@@ -151,10 +155,11 @@
                     {
                         <div class="d-flex mr-1 ml-1">
                             <div class="p-3">
-                                <a data-toggle="modal" data-target="#modalConfirmDeleteSerials" data-tasklotid="@itaskLot"><i class="fas fa-trash fa-2x" style="color: @color !important;"></i></a>
+                                <a id="a_can_@i" data-toggle="modal" data-target="#modalConfirmDeleteSerials" data-tasklotid="@itaskLot"
+                                   data-card="#card_@i" data-alink="a_can_@i"><i id="icon_@i" class="fas fa-trash fa-2x" style="color: @color !important;"></i></a>
                             </div>
                             <div class="p-2">
-                                <a data-toggle="modal" data-target="#serialsModalPreview" data-card="#card_@i"
+                                <a id="a_card_@i" data-toggle="modal" data-target="#serialsModalPreview" data-card="#card_@i"
                                    data-lot="@item.HWMS_ELOTNUMBER" data-partid="@Model.TaskItem.PART" data-tasklotid="@itaskLot"
                                    data-locname="@bin" data-serial="@item.HWMS_LOT" data-qty="@Model.TaskItem.TotalTasks"
                                    class="btn btn-outline-cyan btn-block mt-2" style="color: @color;border-color: @color !important;width:240px;">
@@ -199,6 +204,7 @@
     var card_serial;
     var card_serials;
     var currentDeleteLotSerials = 0;
+    var currentDeletedCardSerials;
     $(document).ready(function () {
         $("#btn_menu").hide();
         $("#btn_back").attr("href", app.url + "/Tasks/TaskItems?taskType=@curType&refOrderZone=@Model.TaskItem.RefOrderOrZone");
@@ -217,12 +223,13 @@
 
         //fire if serial selected
         $("#serialsModalPreview").on("shown.bs.modal", function (e) {
-
+            
             var lot = $(e.relatedTarget).data('lot');
             var partid = $(e.relatedTarget).data('partid');
             var locname = $(e.relatedTarget).data('locname');
             var serial = $(e.relatedTarget).data('serial');
             var iTaskLot = $(e.relatedTarget).data('tasklotid');
+            currentDeletedCardSerials = e.relatedTarget.attributes[0].value;
             card_serial = $(e.relatedTarget).data('card');
             $("#serialsModalPreview #lot_number").html(lot);
             app.showLoader();
@@ -254,6 +261,8 @@
         $("#modalConfirmDeleteSerials").on("shown.bs.modal", function (e) {
             debugger;
             currentDeleteLotSerials = $(e.relatedTarget).data('tasklotid');
+            currentDeletedCardSerials = $(e.relatedTarget).data('alink');
+            card_serial = $(e.relatedTarget).data('card');
         });
 
         config = {username: '@Model.UserName', password: '@Model.Password',
@@ -534,7 +543,7 @@
             var serialno = chbs[i].dataset["serialno"];
             serials.push({ "SerialId": parseInt(serial), "SerialNumber": serialno });
         }
-
+        debugger;
         //submit the serial with task to save it
         var taskLots = [];
         card_serials = [];
@@ -572,12 +581,16 @@
                 debugger;
                 if (response.taskLotId > 0) {
                     //do if saved
+                    var i = card_serial.replace("#card_", "");
                     $(card_serial + " .quantity").val(serials.length);
-                    $(card_serial).data("itasllot", response.taskLotId); //set tasklotid for future use
+                    //$(card_serial).data("itasklot", response.taskLotId); //set tasklotid for future use
                     update_total_tasks();
-                    card_serial = "";
-
+                    $("#a_card_" + i).data("tasklotid", response.taskLotId);
+                    $("#a_can_" + i).data("tasklotid", response.taskLotId);
+                    $("#a_card_" + i).attr('style', 'border-color: #FFD2D5 !important;width:240px;');
+                    $("#icon_" + i).attr('style', 'color: #FFD2D5 !important;');
                     $("#serialsModalPreview").modal('hide');
+                    card_serial = "";
                 }
                 else {
                     app.presentToast("An error occured with sending task. Please try again...", top, "error");
@@ -649,8 +662,14 @@
         app.showLoader();
         $.get(app.url + "/Tasks/Transaction/?handler=DeleteOpenTaskSerials&taskLot=" + currentDeleteLotSerials, function (data) {
             app.hideLoader();
+            debugger;
             if (data.success) {
+                //extract card id
+                var i = card_serial.replace("#card_", "");
+                $("#qty_" + i).val("0");
+                $("#icon_" + i).attr('style', 'color: #3DBFD9 !important;');
                 update_total_tasks();
+                $("#a_card_" + i).attr('style', 'border-coloer: #3DBFD9 !important;width:240px;');
                 //app.presentToast()
             }
             else {

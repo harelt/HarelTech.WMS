@@ -309,4 +309,3 @@ window.app.CloseForm = async function (finilize) {
         alert("close sub form " + formName + ": " + msg);
     });
 };
-

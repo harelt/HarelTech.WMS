@@ -207,7 +207,7 @@ namespace HarelTech.WMS.App.Pages.Tasks
             var userid = Utilities.UserId(User.Claims);
             Company = _cache.Get<string>($"{userid}_company");
             var result = await _wmsClient.DeleteOpenedTaskLotSerials(Company, taskLot);
-            return new JsonResult(new { Success = result });
+                return new JsonResult(new { Success = result });
         }
     }
 }

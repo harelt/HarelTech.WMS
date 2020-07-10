@@ -98,8 +98,11 @@
     function change_serial_selection(card, withMessage) {
         var c = $("#list_serials_selected " + card);
         if (c.length === 0) {
-            $(card).prependTo("#list_serials_selected");
-            $("#serials_complete_tasks").html($("#list_serials_selected .card").length);
+            $(card).fadeOut(1000, function () {
+                $(this).prependTo("#list_serials_selected").fadeIn(1000);
+                $("#serials_complete_tasks").html($("#list_serials_selected .card").length);
+            });
+            
             if (withMessage)
                 app.presentToast("Serial added to list", top, "success");
         }
