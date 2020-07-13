@@ -137,7 +137,7 @@ namespace HarelTech.WMS.Repository
             FROM HWMS_ITASKS , HWMS_ITASKTYPES , HWMS_REFTYPES
             WHERE HWMS_ITASKS.HWMS_ITASKTYPE =  HWMS_ITASKTYPES.HWMS_ITASKTYPE
             AND  HWMS_REFTYPES.HWMS_REFTYPE  = HWMS_ITASKS.HWMS_REFTYPE
-            AND  HWMS_ITASKSTATUS NOT IN (  'C', 'F', 'N' )
+            AND  HWMS_ITASKSTATUS NOT IN (  'C', 'N' )
             AND  HWMS_ITASKS.HWMS_ITASKWARHS = {warhouseId}
             AND  HWMS_ITASKTYPES.HWMS_ITASKTYPE = {(int)taskType}
             AND  HWMS_ITASKS.HWMS_ITASK > 0
@@ -171,12 +171,12 @@ namespace HarelTech.WMS.Repository
             if (new[] { EnumTaskType.Pick, EnumTaskType.Ship, EnumTaskType.Transfer }.Contains(enumTaskType))
             {
                 qry = @$"SELECT HWMS_ITASKTYPES.HWMS_ITASKTYPE, reverse(HWMS_WZONES.HWMS_WZONENAME) as HWMS_REFNAME, HWMS_WZONES.HWMS_WZONECODE as HWMS_REFORDER , reverse(HWMS_WZONES.HWMS_WZONENAME) as HWMS_WZONENAME  , 'Zone' as HWMS_REFTYPENAME,
-                ( COUNT(*)-SUM(CASE WHEN HWMS_ITASKS.HWMS_ITASKSTATUS = 'F' then 0 else  1 end)) as CompleteTasks,
+                ( COUNT(*)-SUM(CASE WHEN HWMS_ITASKS.HWMS_ITASKSTATUS = 'F' then 0 else 1 end)) as CompleteTasks,
                 COUNT(*) as TotalTasks
                 FROM HWMS_ITASKS , HWMS_ITASKTYPES , HWMS_WZONES 
                 WHERE HWMS_ITASKS.HWMS_ITASKTYPE =  HWMS_ITASKTYPES.HWMS_ITASKTYPE
                 AND  HWMS_ITASKS.HWMS_ITASKFZONE =  HWMS_WZONES.HWMS_WZONE
-                AND  HWMS_ITASKSTATUS NOT IN (  'C', 'F', 'N' )
+                AND  HWMS_ITASKSTATUS NOT IN (  'C', 'N' )
                 AND  HWMS_ITASKS.HWMS_ITASKWARHS = {warhouseId}
                 AND  HWMS_ITASKTYPES.HWMS_ITASKTYPE = {(int)enumTaskType}
                 AND  HWMS_ITASKS.HWMS_ITASK > 0
@@ -193,7 +193,7 @@ namespace HarelTech.WMS.Repository
                 FROM HWMS_ITASKS , HWMS_ITASKTYPES , HWMS_WZONES 
                 WHERE HWMS_ITASKS.HWMS_ITASKTYPE =  HWMS_ITASKTYPES.HWMS_ITASKTYPE
                 AND  HWMS_ITASKS.HWMS_ITASKTZONE =  HWMS_WZONES.HWMS_WZONE
-                AND  HWMS_ITASKSTATUS NOT IN (  'C', 'F', 'N' )
+                AND  HWMS_ITASKSTATUS NOT IN (  'C', 'N' )
                 AND  HWMS_ITASKS.HWMS_ITASKWARHS = {warhouseId}
                 AND  HWMS_ITASKTYPES.HWMS_ITASKTYPE = {(int)enumTaskType}
                 AND  HWMS_ITASKS.HWMS_ITASK > 0

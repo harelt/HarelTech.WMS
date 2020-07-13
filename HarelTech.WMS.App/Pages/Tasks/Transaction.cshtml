@@ -4,6 +4,7 @@
     ViewData["Title"] = "Transaction";
     var i = 0;
     var curType = (long)Model.CurrentTaskType;
+    var sernflag = Model.TaskItem.SERNFLAG == "Y" ? "disabled" : "";
 }
 
 @Html.AntiForgeryToken()
@@ -12,7 +13,7 @@
 <input type="hidden" id="priority_ready" value="false" />
 <input type="hidden" id="total_tasks" value="@Model.TaskItem.TotalTasks" />
 <input type="hidden" id="jsonTasks" value="@Model.TaskLotJson" />
-
+<input type="hidden" id="SernFlagMode" value="@sernflag" />
 <div class="animated flipInY fast" style="margin-top:20px;">
     <div class="accordion md-accordion m-3" id="accordionTs" role="tablist" aria-multiselectable="false">
         <!-- Accordion card -->
@@ -64,7 +65,6 @@
 <div id="task_lots" class="animated fadeInY" style="margin-bottom: 4rem !important;">
     @foreach (var item in Model.TaskLot)
     {
-        var sernflag = Model.TaskItem.SERNFLAG == "Y" ? "disabled" : "";
         var background = Model.TaskItem.SERNFLAG == "Y" ? "lightgray" : "white";
         var taskLot = Model.OpenedTaskLots.FirstOrDefault(w => w.HWMS_ITASK == Model.TaskItem.HWMS_ITASK
             && w.HWMS_LOT == item.HWMS_LOT);
@@ -223,7 +223,7 @@
 
         //fire if serial selected
         $("#serialsModalPreview").on("shown.bs.modal", function (e) {
-            
+
             var lot = $(e.relatedTarget).data('lot');
             var partid = $(e.relatedTarget).data('partid');
             var locname = $(e.relatedTarget).data('locname');
@@ -259,8 +259,7 @@
 
         //fire if delete lot serials pressed
         $("#modalConfirmDeleteSerials").on("shown.bs.modal", function (e) {
-            debugger;
-            currentDeleteLotSerials = $(e.relatedTarget).data('tasklotid');
+             currentDeleteLotSerials = $(e.relatedTarget).data('tasklotid');
             currentDeletedCardSerials = $(e.relatedTarget).data('alink');
             card_serial = $(e.relatedTarget).data('card');
         });
@@ -385,6 +384,13 @@
         else
             $("#modalConfirmPartialCompleteTask").modal('hide')
         app.showLoader();
+
+
+        //check is sernflag mode
+        if ($("#SernFlagMode").val() !== "") {
+            window.app.taskForm('@Model.UserName', '@Model.Password', filter, '@Model.Company', totalQty, @Model.TaskItem.HWMS_ITASK);
+        }
+
         var breakLoop = false;
         var tasks = JSON.parse($("#jsonTasks").val());
         var taskLots = [];
@@ -445,8 +451,7 @@
             },
             data:  JSON.stringify(taskLots) ,
             success: function (response) {
-                debugger;
-                if (response.success)
+                 if (response.success)
                     window.app.taskForm('@Model.UserName', '@Model.Password', filter, '@Model.Company', totalQty, @Model.TaskItem.HWMS_ITASK);
                 else {
                     app.presentToast("An error occured with sending task. Please try again...", top, "error");
@@ -543,8 +548,7 @@
             var serialno = chbs[i].dataset["serialno"];
             serials.push({ "SerialId": parseInt(serial), "SerialNumber": serialno });
         }
-        debugger;
-        //submit the serial with task to save it
+         //submit the serial with task to save it
         var taskLots = [];
         card_serials = [];
 
@@ -578,7 +582,6 @@
             },
             data:  JSON.stringify(taskLots) ,
             success: function (response) {
-                debugger;
                 if (response.taskLotId > 0) {
                     //do if saved
                     var i = card_serial.replace("#card_", "");
@@ -658,11 +661,14 @@
     }
 
     function delete_open_task_serials() {
+        if (currentDeleteLotSerials === 0) {
+            $("#modalConfirmDeleteSerials").modal('hide');
+            return;
+        }
         $("#modalConfirmDeleteSerials").modal('hide');
         app.showLoader();
         $.get(app.url + "/Tasks/Transaction/?handler=DeleteOpenTaskSerials&taskLot=" + currentDeleteLotSerials, function (data) {
             app.hideLoader();
-            debugger;
             if (data.success) {
                 //extract card id
                 var i = card_serial.replace("#card_", "");
@@ -676,7 +682,7 @@
 
             }
         });
-        
+
     }
 </script>
 
