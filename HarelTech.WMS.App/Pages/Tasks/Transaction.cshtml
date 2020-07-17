@@ -532,8 +532,8 @@
         else {
             $("#manual_add_serial").toggle(true);
         }
-
-        $("#search_serials").focus().select();
+        $("#search_serials").val("");
+        $("#search_serials").focus();
     }
 
     function submit_selected_serials() {
