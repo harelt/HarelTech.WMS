@@ -102,25 +102,25 @@
                     <div class="col-6">@item.AVAILABLE @item.UNITNAME</div>
                 </div>
                 <div class="row mt-4" style="font-weight: 600 !important;background-color: #E9F5FF;">
-                    <div class="col-6">From Bin/Area:</div>
-                    <div class="col-6" id="frombin_@i">@item.FROMBIN</div>
+                    <div class="col-4">From:</div>
+                    <div class="col-8" id="frombin_@i">@item.FROMBIN</div>
                 </div>
                 <div class="row" style="font-weight: 600 !important;background-color: #E9F5FF;">
-                    <div class="col-6">To Bin/Area:</div>
+                    <div class="col-4">To:</div>
                     @if (!Model.ChangeToBin)
-                    {<div class="col-6" id="span_tobin_@i">@Model.TaskItem.HWMS_ITASKTOBIN</div>}
-                else
-                {<div class="col-6">
-                        <a data-toggle="modal" data-target="#binsModalPreview" data-spanid="span_tobin_@i">
-                            <span id="span_tobin_@i" data-wow-iteration="5">@Model.TaskItem.HWMS_ITASKTOBIN</span>
-                            <i class="fas fa-arrow-right float-right"></i>
-                        </a>
-                    </div>
-                }
+                    {<div class="col-8" id="span_tobin_@i">@Model.TaskItem.HWMS_ITASKTOBIN</div>}
+                    else
+                    {<div class="col-8">
+                            <a data-toggle="modal" data-target="#binsModalPreview" data-spanid="span_tobin_@i">
+                                <span id="span_tobin_@i" data-wow-iteration="5">@Model.TaskItem.HWMS_ITASKTOBIN</span>
+                                <i class="fas fa-arrow-right float-right"></i>
+                            </a>
+                        </div>
+                    }
                 </div>
                 <div class="row text-center mt-4">
-                    <div class="col-4" style="font-weight: 600 !important;">Quantity:</div>
-                    <div class="col-8">
+                    <div class="col-5" style="font-weight: 600 !important;">Quantity:</div>
+                    <div class="col-7">
                         <div class="def-number-input number-input safari_only" style="background-color:#3DBFD9;">
                             <button onclick="minusQty('qty_@i');" class="minus" @sernflag></button>
                             <input id="qty_@i" class="quantity" min="0" max="@item.AVAILABLE" name="quantity" value="@Qty" type="number" onchange="update_total_tasks('#qty_@i',@item.AVAILABLE);" required style="background-color: @background;" @sernflag>
@@ -153,16 +153,18 @@
                     }
                     else
                     {
-                        <div class="d-flex mr-1 ml-1">
-                            <div class="p-3">
-                                <a id="a_can_@i" data-toggle="modal" data-target="#modalConfirmDeleteSerials" data-tasklotid="@itaskLot"
-                                   data-card="#card_@i" data-alink="a_can_@i"><i id="icon_@i" class="fas fa-trash fa-2x" style="color: @color !important;"></i></a>
+                        <div class="row mt-2">
+                            <div class="col-2">
+                                <a id="a_can_@i" class="mt-1" data-toggle="modal" data-target="#modalConfirmDeleteSerials" data-tasklotid="@itaskLot"
+                                   data-card="#card_@i" data-alink="a_can_@i">
+                                <i id="icon_@i" class="fas fa-trash fa-2x mt-2" style="color: @color !important;"></i>
+                                </a>
                             </div>
-                            <div class="p-2">
+                            <div class="col-10">
                                 <a id="a_card_@i" data-toggle="modal" data-target="#serialsModalPreview" data-card="#card_@i"
                                    data-lot="@item.HWMS_ELOTNUMBER" data-partid="@Model.TaskItem.PART" data-tasklotid="@itaskLot"
                                    data-locname="@bin" data-serial="@item.HWMS_LOT" data-qty="@Model.TaskItem.TotalTasks"
-                                   class="btn btn-outline-cyan btn-block mt-2" style="color: @color;border-color: @color !important;width:240px;">
+                                   class="btn btn-outline-cyan btn-block mt-2" style="color: @color;border-color: @color !important;">
                                     Add Serial numbers <i class="fas fa-arrow-right float-right"></i>
                                 </a>
                             </div>
@@ -247,6 +249,7 @@
                             $('#serial_card_' + i).show();
                         }
                     }
+                    $("#search_serials").focus();
             });
             app.hideLoader();
         });

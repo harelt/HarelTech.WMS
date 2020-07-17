@@ -97,9 +97,9 @@ namespace HarelTech.WMS.Repository
                 AND   HWMS_ITASKWARHS  = {warhouseId}
                 AND   HWMS_ITASK > 0
                 AND   HWMS_ITASKFDATE  = {dnumber}
-                AND   HWMS_USERUPDATED = {userId}
-                AND ( HWMS_ASSIGNUSER  = 0  OR HWMS_ASSIGNUSER = {userId} ) ;
-            ");
+                AND   HWMS_ASSIGNUSER = {userId}");
+            //     AND ( HWMS_ASSIGNUSER  = 0  OR HWMS_ASSIGNUSER = {userId} ) ;
+            //");
 
             db.Open();
             var multi = await db.QueryMultipleAsync(qry.ToString(), null);
